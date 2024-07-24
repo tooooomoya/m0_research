@@ -1,5 +1,6 @@
 ディレクトリ構造を作る。以下参考。
 
+<pre>
 .
 ├── README.md
 ├── config
@@ -27,6 +28,7 @@
 └── tool
     ├── clickgenerator.jl
     └── parse_result.py
+</pre>
 
 * 俺のDockerのromantic_formetイメージにipynbファイルをアップロードした。
   →立ち上げ方：
