@@ -1,3 +1,4 @@
+package utils;
 import java.util.Arrays;
 
 public class matrix_util {
@@ -82,6 +83,40 @@ public class matrix_util {
         }
         
         return transposed;
+    }
+
+    // Create the Laplacian matrix L = D - A
+    public static double[][] createL(double[][] adjacencyMatrix, int size) {
+        int n = size;
+        double[][] L = new double[n][n];
+
+        // Create degree matrix D
+        double[][] D = new double[n][n];
+        for (int i = 0; i < n; i++) {
+            double degree = 0;
+            for (int j = 0; j < n; j++) {
+                degree += adjacencyMatrix[i][j];
+            }
+            D[i][i] = degree;
+        }
+
+        // Compute L = D - A
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                L[i][j] = D[i][j] - adjacencyMatrix[i][j];
+            }
+        }
+
+        return L;
+    }
+
+    // Create an identity matrix of size n x n
+    public static double[][] createIdentityMatrix(int size) {
+        double[][] identityMatrix = new double[size][size];
+        for (int i = 0; i < size; i++) {
+            identityMatrix[i][i] = 1.0;
+        }
+        return identityMatrix;
     }
 
     // print matrix
