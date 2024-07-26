@@ -1,0 +1,7 @@
+{
+    "java.project.sourcePaths": [
+        "test_for_javaenv",
+        "reproduce00",
+        "hello-world/src/main/java/org/tkr/app"
+    ]
+}

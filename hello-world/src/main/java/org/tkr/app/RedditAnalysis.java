@@ -1,3 +1,5 @@
+import org.apache.commons.math3.linear.*;
+
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -5,7 +7,7 @@ import java.util.stream.Collectors;
 public class RedditAnalysis {
     public static void main(String[] args) {
         int nReddit = 556;
-        double[][] A = new double[nReddit][nReddit];
+        RealMatrix A = MatrixUtils.createRealMatrix(nReddit, nReddit);
         Map<Integer, List<Double>> zDict = new HashMap<>();
         
         // Initialize zDict
@@ -20,8 +22,8 @@ public class RedditAnalysis {
                 String[] parts = line.split("\t");
                 int u = Integer.parseInt(parts[0]) - 1;
                 int v = Integer.parseInt(parts[1]) - 1;
-                A[u][v]++;
-                A[v][u]++;
+                A.addToEntry(u, v, 1.0);
+                A.addToEntry(v, u, 1.0);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -43,79 +45,52 @@ public class RedditAnalysis {
         // Remove nodes not connected in graph
         List<Integer> notConnected = new ArrayList<>();
         for (int i = 0; i < nReddit; i++) {
-            boolean isConnected = false;
-            for (int j = 0; j < nReddit; j++) {
-                if (A[i][j] > 0) {
-                    isConnected = true;
-                    break;
-                }
-            }
-            if (!isConnected) {
+            if (A.getRowVector(i).getL1Norm() == 0) {
                 notConnected.add(i);
             }
         }
 
-        // Create a new adjacency matrix with disconnected nodes removed
-        double[][] ATrimmed = new double[nReddit - notConnected.size()][nReddit - notConnected.size()];
-        Map<Integer, Integer> indexMap = new HashMap<>();
-        int newIndex = 0;
+        int newSize = nReddit - notConnected.size();
+        RealMatrix ATrimmed = MatrixUtils.createRealMatrix(newSize, newSize);
+        int index = 0;
         for (int i = 0; i < nReddit; i++) {
             if (!notConnected.contains(i)) {
-                indexMap.put(i, newIndex++);
-            }
-        }
-
-        for (int i = 0; i < nReddit; i++) {
-            if (!notConnected.contains(i)) {
-                int newI = indexMap.get(i);
+                int innerIndex = 0;
                 for (int j = 0; j < nReddit; j++) {
                     if (!notConnected.contains(j)) {
-                        int newJ = indexMap.get(j);
-                        ATrimmed[newI][newJ] = A[i][j];
+                        ATrimmed.setEntry(index, innerIndex, A.getEntry(i, j));
+                        innerIndex++;
                     }
                 }
+                index++;
             }
         }
-
-        nReddit = ATrimmed.length;
+        nReddit = newSize;
 
         // Create z (averaging posts)
         double[] z = new double[nReddit];
         for (int i = 0; i < nReddit; i++) {
-            List<Double> opinions = zDict.get(i);
-            z[i] = opinions.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+            z[i] = zDict.get(i).stream().mapToDouble(val -> val).average().orElse(0.0);
         }
 
         // Create innate opinions from z (i.e. s = (L + I) * z)
-        double[][] L = new double[nReddit][nReddit];
+        RealMatrix L = MatrixUtils.createRealMatrix(nReddit, nReddit);
         for (int i = 0; i < nReddit; i++) {
-            double sum = Arrays.stream(ATrimmed[i]).sum();
-            L[i][i] = sum;
+            double sum = ATrimmed.getRowVector(i).getL1Norm();
+            L.setEntry(i, i, sum);
         }
+        L = L.subtract(ATrimmed);
+        RealMatrix I = MatrixUtils.createRealIdentityMatrix(nReddit);
+        RealVector zVector = new ArrayRealVector(z);
+        RealVector s = L.add(I).operate(zVector);
 
-        // L = L - ATrimmed
+        // Clamp s values to be within [0, 1]
         for (int i = 0; i < nReddit; i++) {
-            for (int j = 0; j < nReddit; j++) {
-                L[i][j] -= ATrimmed[i][j];
-            }
-        }
-
-        // Add identity matrix I
-        for (int i = 0; i < nReddit; i++) {
-            L[i][i] += 1.0;
-        }
-
-        // Multiply (L + I) * z
-        double[] s = new double[nReddit];
-        for (int i = 0; i < nReddit; i++) {
-            s[i] = 0;
-            for (int j = 0; j < nReddit; j++) {
-                s[i] += L[i][j] * z[j];
-            }
-            s[i] = Math.max(0, Math.min(1, s[i]));
+            double value = s.getEntry(i);
+            s.setEntry(i, Math.max(0, Math.min(1, value)));
         }
 
         // Output s
-        System.out.println(Arrays.toString(s));
+        System.out.println(Arrays.toString(s.toArray()));
     }
 }
