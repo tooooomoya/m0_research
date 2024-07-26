@@ -1,6 +1,8 @@
 ## Remind
 * 俺のDockerのromantic_formetイメージにipynbファイルをアップロードした。
-  →立ち上げ方：
+  →立ち上げ方：	docker login
+  		docker run -it -p 8888:8888 kikagaku/pytorch-topgear
+  		8888 port で kikagaku と入力
 
 ## Memo
 * グラフ描画フレームワーク：JgraphTが一番有名らしい。Jungというのがあるらしい
