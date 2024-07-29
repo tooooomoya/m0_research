@@ -4,6 +4,12 @@
   		docker run -it -p 8888:8888 kikagaku/pytorch-topgear
   		8888 port で kikagaku と入力
 
+## Progress
+* 7/28
+	ln[268]の"load NW and Opinion"まで終了
+* 7/29
+	
+
 ## Memo
 * グラフ描画フレームワーク：JgraphTが一番有名らしい。Jungというのがあるらしい
 	->例のMavenを使わなきゃいけない。自分で作れんのか？
@@ -43,13 +49,18 @@
 │   ├── 
 │   ├── 
 │   └── 
-├── 
+├── Network
+│   ├── Agent.java
+│   ├── Edge.java
+│   ├── Network.java
+│   └── 	
 ├── Data			結果データの格納
 │   ├── 
 │   ├── 
 │   ├── 
 │   └── 
-└── util
+└── utils
     ├── graph_util.java		グラフ描画
+    ├── 
     └── matrix_util.java	行列計算
 </pre>
