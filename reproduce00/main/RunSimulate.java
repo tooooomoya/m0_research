@@ -34,5 +34,7 @@ public class RunSimulate{
             rd.put(lamList[i], resultNoFix);
             rdFix.put(lamList[i], resultFix);
         }
+
+        //return rd, rdFix;
     }
 }

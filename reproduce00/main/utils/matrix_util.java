@@ -154,6 +154,12 @@ public class matrix_util {
         return identityMatrix;
     }
 
+    public static double[][] createZeroMatrix(int rows, int cols) {
+        double[][] matrix = new double[rows][cols]; // 指定されたサイズの行列を作成
+        // デフォルトでは、double型の配列はすべて0で初期化される
+        return matrix;
+    }
+
     // print matrix
     public static void printMatrix(double[][] matrix) {
         for (double[] row : matrix) {
