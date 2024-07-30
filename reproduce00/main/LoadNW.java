@@ -26,20 +26,24 @@ public class LoadNW {
             String opinionFilePath = directory + "/" + name + "_opinion.txt";
 
             double[][] A = new double[nSNS][nSNS];
+            //Map Structure(contains opinon value z): key -> int, value -> list of double
             Map<Integer, List<Double>> zDict = new HashMap<>();
             for(int i=0; i < nSNS; i++){
+                //put `nSNS` vacant entries to zDict (initialization)
                 zDict.put(i, new ArrayList<>());
             }
 
             try (BufferedReader br = new BufferedReader(new FileReader(edgesFilePath))) {
                 String line;
                 while ((line = br.readLine()) != null) {
-                    String[] parts = line.split("\t"); // 正しいタブ文字のエスケープ
-                    if (parts.length >= 2) { // 分割結果が2つ以上の要素を持つことを確認
+                    String[] parts = line.split("\t"); // split the data by tabs
+                    if (parts.length >= 2) { // confirm that the split data contains more than 2 elements
                         try {
+                            //-1 means the index is ZERO based
                             int u = Integer.parseInt(parts[0].trim()) - 1;
                             int v = Integer.parseInt(parts[1].trim()) - 1;
                             if (u >= 0 && u < nSNS && v >= 0 && v < nSNS) {
+                                //2 sets of edges in the file mean connected
                                 A[u][v] += 1;
                                 A[v][u] += 1;
                             }
@@ -58,7 +62,7 @@ public class LoadNW {
                 while((line = br.readLine())!=null){
                     String[] parts = line.split("\t");
                     int u = Integer.parseInt(parts[0]) -1;
-                    double w = Double.parseDouble((parts[1]));
+                    double w = Double.parseDouble((parts[2]));
                     zDict.get(u).add(w);
                 }
             }catch(IOException e){
@@ -96,6 +100,11 @@ public class LoadNW {
             double[][] L = matrix_util.createL(A, nSNS);
             double[][] I = matrix_util.createIdentityMatrix(nSNS);
             double[][] LPlusI = matrix_util.add(L, I);
-            matrix_util.printMatrix(LPlusI);
+            double[] s = matrix_util.multiplyMatrixVector(LPlusI, z);
+            // clipping to the scale of max 1, min 0
+            for(int i=0; i < s.length; i++){
+                s[i]=Math.min(Math.max(s[i], 0), 1);
+            }
+            matrix_util.printVector(s);
     }
 }

@@ -2,6 +2,20 @@ package utils;
 import java.util.Arrays;
 
 public class matrix_util {
+    // COPY matrix
+    public static double[][] copyMatrix(double[][] matrix) {
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        double[][] newMatrix = new double[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                newMatrix[i][j] = matrix[i][j];
+            }
+        }
+        return newMatrix;
+    }
+    
+
     //ADD with matrix
     public static double[][] add(double[][] matrix1, double[][] matrix2) {
         int rows = matrix1.length;
@@ -54,6 +68,27 @@ public class matrix_util {
         }
         return result;
     }
+
+    //MUL matrix with vector
+    public static double[] multiplyMatrixVector(double[][] matrix, double[] vector) {
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        
+        if (cols != vector.length) {
+            throw new IllegalArgumentException("Matrix columns must be equal to vector length");
+        }
+        
+        double[] result = new double[rows];
+        
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                result[i] += matrix[i][j] * vector[j];
+            }
+        }
+        
+        return result;
+    }
+
 
 
     // ScalarMUL with matrix
@@ -123,6 +158,13 @@ public class matrix_util {
     public static void printMatrix(double[][] matrix) {
         for (double[] row : matrix) {
             System.out.println(Arrays.toString(row));
+        }
+    }
+
+    //print vector
+    public static void printVector(double[] vector) {
+        for (double row : vector) {
+            System.out.println(row);
         }
     }
 
