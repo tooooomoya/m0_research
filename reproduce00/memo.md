@@ -1,10 +1,22 @@
 ## Remind
 * 俺のDockerのromantic_formetイメージにipynbファイルをアップロードした。
-  →立ち上げ方：
+  →立ち上げ方：	docker login
+  		docker run -it -p 8888:8888 kikagaku/pytorch-topgear
+  		8888 port で kikagaku と入力
+
+## Progress
+* 7/28
+	ln[268]の"load NW and Opinion"まで終了
+* 7/29
+	
 
 ## Memo
 * グラフ描画フレームワーク：JgraphTが一番有名らしい。Jungというのがあるらしい
 	->例のMavenを使わなきゃいけない。自分で作れんのか？
+* なぜ、sの作り方があれなのか。初期値を反映しているのかあれで。
+* 環境変数にしたいもの
+	ノード数nSNS、Regularized指標
+* グラフ描画用のコードも載ってる。
 
 ## ToDo
 * 行列計算をutilとして実装しておく。
@@ -41,13 +53,18 @@
 │   ├── 
 │   ├── 
 │   └── 
-├── 
+├── Network
+│   ├── Agent.java
+│   ├── Edge.java
+│   ├── Network.java
+│   └── 	
 ├── Data			結果データの格納
 │   ├── 
 │   ├── 
 │   ├── 
 │   └── 
-└── util
+└── utils
     ├── graph_util.java		グラフ描画
+    ├── 
     └── matrix_util.java	行列計算
 </pre>
