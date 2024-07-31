@@ -1,6 +1,14 @@
 ## Remind
+#### ローカルリポジトリを最新の状態に保つ
+```
+git fetch origin main
+```
+```
+git merge origin/main
+```
+
 * 普通にipynbファイルはVSCodeで見れました。
-* 俺のDockerのromantic_formetイメージにipynbファイルをアップロードした。
+#### 俺のDockerのromantic_formetイメージにipynbファイルをアップロードした。
   →立ち上げ方：	
 
 ```
