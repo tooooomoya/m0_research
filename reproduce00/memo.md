@@ -3,21 +3,33 @@
 * 俺のDockerのromantic_formetイメージにipynbファイルをアップロードした。
   →立ち上げ方：	
 
-	```docker login```
-	```docker run -it -p 8888:8888 kikagaku/pytorch-topgear```
+```
+docker login
+```
+```
+docker run -it -p 8888:8888 kikagaku/pytorch-topgear
+```
 	
-	8888 port で kikagaku と入力
+ 8888 port で kikagaku と入力
 
 * portが占有されている場合は、まずPIDを確認
-	* windows
+* windows
 
-	```netstat -ano | findstr :8888```
-	```taskkill /PID <enter pid here> /F```
+```
+netstat -ano | findstr :8888
+```
+```
+taskkill /PID <enter pid here> /F
+```
 
-	* Mac
+* Mac
 
-	```lsof -i :8888```
-	```kill -9 <enter pid here>```
+```
+lsof -i :8888
+```
+```
+kill -9 <enter pid here>
+```
 
 ## Progress
 * 7/28
