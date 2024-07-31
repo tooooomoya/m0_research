@@ -32,6 +32,7 @@ public class AdminGame {
                 flag = false;
             }
 
+            
             z = znew;
             W = Wnew;
             i++;

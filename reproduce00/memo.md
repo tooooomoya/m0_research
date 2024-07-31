@@ -1,8 +1,23 @@
 ## Remind
+* 普通にipynbファイルはVSCodeで見れました。
 * 俺のDockerのromantic_formetイメージにipynbファイルをアップロードした。
-  →立ち上げ方：	docker login
-  		docker run -it -p 8888:8888 kikagaku/pytorch-topgear
-  		8888 port で kikagaku と入力
+  →立ち上げ方：	
+
+	```docker login```
+	```docker run -it -p 8888:8888 kikagaku/pytorch-topgear```
+	
+	8888 port で kikagaku と入力
+
+* portが占有されている場合は、まずPIDを確認
+	* windows
+
+	```netstat -ano | findstr :8888```
+	```taskkill /PID <enter pid here> /F```
+
+	* Mac
+
+	```lsof -i :8888```
+	```kill -9 <enter pid here>```
 
 ## Progress
 * 7/28
@@ -10,9 +25,9 @@
 * 7/29
 	
 * 7/30
-	結果を格納するrdの型が違いそう。本家では、２個目のインデックスでdisaggとplsを区別できている。
-	最適化の部分と、逆行列の計算でJavaフレームワークが必要そう。
 	結果の出力もフレームワーク導入で何とかなるが、とりあえずはcsvに書き出すようにした。
+* 7/31
+	
 
 ## Memo
 * グラフ描画フレームワーク：JgraphTが一番有名らしい。Jungというのがあるらしい
@@ -25,6 +40,9 @@
 ## ToDo
 * 行列計算をutilとして実装しておく。
 	→逆行列だけは面倒い。フレームワークもだるい。pythonかませるか？
+	フレームワークかな（7/30）
+* 結果を格納するrdの型が違いそう。本家では、２個目のインデックスでdisaggとplsを区別できている。
+	最適化の部分と、逆行列の計算でJavaフレームワークが必要そう。
 
 ### Finished 
 参考にして

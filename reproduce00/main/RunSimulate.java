@@ -1,8 +1,6 @@
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.naming.spi.DirStateFactory.Result;
-
 public class RunSimulate{
     private double[][] A;
     private double[][] s;
@@ -12,7 +10,7 @@ public class RunSimulate{
         this.s = s;
     }
 
-    public RunDynamics(){
+    public ResultPair runDynamics(){
         // because of time issues, we run the NA dynamics separately 
         double[] lamList = {0.1, 0.2, 0.3, 0.4, 0.5};
         // double lamList = [0.6, 0.7, 0.8, 0.9, 1.0];
@@ -22,19 +20,21 @@ public class RunSimulate{
         int maxIter = 7;
         double gam = 0.2; // L2 regularization coefficient 
 
-        for(double i; i<lamList.length; i++){
+        for(double i = 0; i<lamList.length; i++){
             System.out.println(("no fix"));
             System.out.println("lam:" + lamList[i]);
-            Result resultNoFix = am(A, s, lamList[i], false, 0, maxIter);
+            Result resultNoFix = AdminGame.am(A, s, lamList[i], false, 0, maxIter);
             
             System.out.println("with fix");
             System.out.println("lam:" + lamList[i]);
-            Result resultFix = am(A, s, lamList[i], true, gam, maxIter);
+            Result resultFix = AdminGame.am(A, s, lamList[i], true, gam, maxIter);
 
             rd.put(lamList[i], resultNoFix);
             rdFix.put(lamList[i], resultFix);
         }
 
-        //return rd, rdFix;
+        ResultPair resultPair = new ResultPair(rd, rdFix);
+
+        return resultPair;
     }
 }
