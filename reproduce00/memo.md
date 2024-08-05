@@ -1,23 +1,43 @@
 ## Remind
+#### ローカルリポジトリを最新の状態に保つ
+```
+git fetch origin main
+```
+```
+git merge origin/main
+```
+
 * 普通にipynbファイルはVSCodeで見れました。
-* 俺のDockerのromantic_formetイメージにipynbファイルをアップロードした。
+#### 俺のDockerのromantic_formetイメージにipynbファイルをアップロードした。
   →立ち上げ方：	
 
-	```docker login```
-	```docker run -it -p 8888:8888 kikagaku/pytorch-topgear```
+```
+docker login
+```
+```
+docker run -it -p 8888:8888 kikagaku/pytorch-topgear
+```
 	
-	8888 port で kikagaku と入力
+ 8888 port で kikagaku と入力
 
 * portが占有されている場合は、まずPIDを確認
-	* windows
+* windows
 
-	```netstat -ano | findstr :8888```
-	```taskkill /PID <enter pid here> /F```
+```
+netstat -ano | findstr :8888
+```
+```
+taskkill /PID <enter pid here> /F
+```
 
-	* Mac
+* Mac
 
-	```lsof -i :8888```
-	```kill -9 <enter pid here>```
+```
+lsof -i :8888
+```
+```
+kill -9 <enter pid here>
+```
 
 ## Progress
 * 7/28
@@ -27,7 +47,7 @@
 * 7/30
 	結果の出力もフレームワーク導入で何とかなるが、とりあえずはcsvに書き出すようにした。
 * 7/31
-	
+	Result、ResultPairクラスを作成。
 
 ## Memo
 * グラフ描画フレームワーク：JgraphTが一番有名らしい。Jungというのがあるらしい
@@ -38,11 +58,14 @@
 * グラフ描画用のコードも載ってる。
 
 ## ToDo
-* 行列計算をutilとして実装しておく。
+* ~~行列計算をutilとして実装しておく。~~
 	→逆行列だけは面倒い。フレームワークもだるい。pythonかませるか？
 	フレームワークかな（7/30）
-* 結果を格納するrdの型が違いそう。本家では、２個目のインデックスでdisaggとplsを区別できている。
+* ~~結果を格納するrdの型が違いそう。本家では、２個目のインデックスでdisaggとplsを区別できている。~~
 	最適化の部分と、逆行列の計算でJavaフレームワークが必要そう。
+* Javaフレームワークを実装するかどうか。
+* とりあえず、実行ができるようにmain.javaも実装してみて、エラー処理していく。
+* 別でcsvファイルからグラフを描画するファイルがあってもいいかも。→グラフ描画コードを参考にして。
 
 ### Finished 
 参考にして
