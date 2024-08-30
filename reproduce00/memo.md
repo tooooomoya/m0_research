@@ -1,24 +1,3 @@
-## Remind
-* 普通にipynbファイルはVSCodeで見れました。
-* 俺のDockerのromantic_formetイメージにipynbファイルをアップロードした。
-  →立ち上げ方：	
-
-	```docker login```
-	```docker run -it -p 8888:8888 kikagaku/pytorch-topgear```
-	
-	8888 port で kikagaku と入力
-
-* portが占有されている場合は、まずPIDを確認
-	* windows
-
-	```netstat -ano | findstr :8888```
-	```taskkill /PID <enter pid here> /F```
-
-	* Mac
-
-	```lsof -i :8888```
-	```kill -9 <enter pid here>```
-
 ## Progress
 * 7/28
 	ln[268]の"load NW and Opinion"まで終了
@@ -27,22 +6,28 @@
 * 7/30
 	結果の出力もフレームワーク導入で何とかなるが、とりあえずはcsvに書き出すようにした。
 * 7/31
+* 8/30
+	多分machinesの内容は適当に作ってあるだけだから修正が必要
+	LoadNW.java, Runsimulate.java(中身のAdminGame.javaも), PlotResults.javaを修正、とりあえず完了
+	次は、AdminGame.javaで使用しているmachinesの整備（おそらくフレームワークを導入する）
+	フレームワークを導入すれば逆行列も計算できるはず。utils.matrix_utilに逆行列計算は未実装。まだ使ってないということかな、、？
 	
 
 ## Memo
+* Shift+option+Fで整形
 * グラフ描画フレームワーク：JgraphTが一番有名らしい。Jungというのがあるらしい
 	->例のMavenを使わなきゃいけない。自分で作れんのか？
 * なぜ、sの作り方があれなのか。初期値を反映しているのかあれで。
 * 環境変数にしたいもの
 	ノード数nSNS、Regularized指標
 * グラフ描画用のコードも載ってる。
+* 結果の描画に関してはcsvファイルができてるから、Pythonでやればいいだけの話
 
 ## ToDo
-* 行列計算をutilとして実装しておく。
-	→逆行列だけは面倒い。フレームワークもだるい。pythonかませるか？
-	フレームワークかな（7/30）
+* 逆行列の計算と、最適化の部分でJavaフレームワークを導入する。
 * 結果を格納するrdの型が違いそう。本家では、２個目のインデックスでdisaggとplsを区別できている。
-	最適化の部分と、逆行列の計算でJavaフレームワークが必要そう。
+* machinesの内容を完成させる。
+* フレームワーク導入できたら、あとは一通り確認して、実行してみるだけ。
 
 ### Finished 
 参考にして
@@ -90,3 +75,24 @@
     ├── 
     └── matrix_util.java	行列計算
 </pre>
+
+## Remind
+* 普通にipynbファイルはVSCodeで見れました。
+* 俺のDockerのromantic_formetイメージにipynbファイルをアップロードした。
+  →立ち上げ方：	
+
+	```docker login```
+	```docker run -it -p 8888:8888 kikagaku/pytorch-topgear```
+	
+	8888 port で kikagaku と入力
+
+* portが占有されている場合は、まずPIDを確認
+	* windows
+
+	```netstat -ano | findstr :8888```
+	```taskkill /PID <enter pid here> /F```
+
+	* Mac
+
+	```lsof -i :8888```
+	```kill -9 <enter pid here>```

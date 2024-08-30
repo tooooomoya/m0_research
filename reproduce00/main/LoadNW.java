@@ -2,7 +2,7 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
-import utils.matrix_util;
+import main.utils.matrix_util;
 
 public class LoadNW {
     public static void main(String[] args){
@@ -25,13 +25,8 @@ public class LoadNW {
             String edgesFilePath = directory + "/edges_" + name +".txt";
             String opinionFilePath = directory + "/" + name + "_opinion.txt";
 
+            // create Ajacensy matrix "A"
             double[][] A = new double[nSNS][nSNS];
-            //Map Structure(contains opinon value z): key -> int, value -> list of double
-            Map<Integer, List<Double>> zDict = new HashMap<>();
-            for(int i=0; i < nSNS; i++){
-                //put `nSNS` vacant entries to zDict (initialization)
-                zDict.put(i, new ArrayList<>());
-            }
 
             try (BufferedReader br = new BufferedReader(new FileReader(edgesFilePath))) {
                 String line;
@@ -39,11 +34,11 @@ public class LoadNW {
                     String[] parts = line.split("\t"); // split the data by tabs
                     if (parts.length >= 2) { // confirm that the split data contains more than 2 elements
                         try {
-                            //-1 means the index is ZERO based
+                            //-1 because the index is ZERO based
                             int u = Integer.parseInt(parts[0].trim()) - 1;
                             int v = Integer.parseInt(parts[1].trim()) - 1;
                             if (u >= 0 && u < nSNS && v >= 0 && v < nSNS) {
-                                //2 sets of edges in the file mean connected
+                                //2 sets of nodes indexes in the "edges_SNS.txt" file mean they're connected
                                 A[u][v] += 1;
                                 A[v][u] += 1;
                             }
@@ -56,20 +51,27 @@ public class LoadNW {
                 e.printStackTrace();
             }
             
+            // create "zDict"
+            // Use "Map" Structure(contains opinon value z): key -> int, value -> list of double
+            Map<Integer, List<Double>> zDict = new HashMap<>();
+            for(int i=0; i < nSNS; i++){
+                //put `nSNS` vacant entries to zDict (initialization)
+                zDict.put(i, new ArrayList<>());
+            }
 
             try(BufferedReader br = new BufferedReader(new FileReader(opinionFilePath))){
                 String line;
                 while((line = br.readLine())!=null){
                     String[] parts = line.split("\t");
-                    int u = Integer.parseInt(parts[0]) -1;
-                    double w = Double.parseDouble((parts[2]));
+                    int u = Integer.parseInt(parts[0]) -1; // draw node index
+                    double w = Double.parseDouble((parts[2]));// draw the node's opinion 
                     zDict.get(u).add(w);
                 }
             }catch(IOException e){
                 e.printStackTrace();
             }
 
-            // remove nodes not connected in the graph
+            // create "notConnected Matrix" in which we can know which node not being connected with any other nodes.
             Set<Integer> notConnected = new HashSet<>();
             for(int i=0; i < nSNS; i++){
                 boolean connected = false;
@@ -96,10 +98,10 @@ public class LoadNW {
                 z[i] = sum / opinions.size();
             }
 
-
             double[][] L = matrix_util.createL(A, nSNS);
             double[][] I = matrix_util.createIdentityMatrix(nSNS);
             double[][] LPlusI = matrix_util.add(L, I);
+            // "s" is intrinsic opinion(個人に潜在的で本質的な不変のopinion value)
             double[] s = matrix_util.multiplyMatrixVector(LPlusI, z);
             // clipping to the scale of max 1, min 0
             for(int i=0; i < s.length; i++){

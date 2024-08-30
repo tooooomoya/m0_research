@@ -2,8 +2,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-import utils.matrix_util;
+import java.util.ArrayList;
+import main.utils.matrix_util;
 
 public class PlotResults {
     public void exportPls(ResultPair resultPair, String filename){
@@ -42,17 +42,17 @@ public class PlotResults {
         HashMap<Double, Result> rd = resultPair.getRd();
         HashMap<Double, Result> rdFix = resultPair.getRdFix();
 
-        int[] lamvals = {0.1, 0.2, 0.3, 0.4, 0.5};
+        double[] lamvals = {0.1, 0.2, 0.3, 0.4, 0.5};
         //int[] lamvals = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-        //plsAfterList = matrix_util.createZeroMatrix(lamvals.length, lamvals.length);
+        //disaggAfterList = matrix_util.createZeroMatrix(lamvals.length, lamvals.length);
         double[] disaggRatioList = new double[lamvals.length];
-        //plsRatioList = matrix_util.createZeroMatrix(lamvals.length, lamvals.length);
+        //disaggRatioList = matrix_util.createZeroMatrix(lamvals.length, lamvals.length);
         
         for(int i = 0; i < lamvals.length; i++){
             ArrayList<Double> disaggs = rd.get(lamvals[i]).getDisaggs();
-            double initialPls = disaggs.get(0);
-            double finalPls = disaggs.get(pls.size() - 1);
-            disaggRatioList[i] = finalPls / initialPls;
+            double initialDisagg = disaggs.get(0);
+            double finalDisagg = disaggs.get(disaggs.size() - 1);
+            disaggRatioList[i] = finalDisagg / initialDisagg;
         }
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(("disagg"+filename+".csv")))){

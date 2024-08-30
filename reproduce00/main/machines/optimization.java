@@ -1,4 +1,4 @@
-package machines;
+package main.machines;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -12,7 +12,7 @@ import org.apache.commons.math3.optimization.RealObjectiveFunction;
 import org.apache.commons.math3.optimization.RealPointValuePair;
 import org.apache.commons.math3.optimization.direct.CMAESOptimizer;
 
-import utils.matrix_util;
+import main.utils.matrix_util;
 
 public class optimization {
     public static double[] minZ(double[][] W, double[] s){

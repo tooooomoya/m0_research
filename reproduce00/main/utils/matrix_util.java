@@ -1,4 +1,4 @@
-package utils;
+package main.utils;
 import java.util.Arrays;
 
 public class matrix_util {
