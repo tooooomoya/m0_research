@@ -21,6 +21,7 @@ public class optimization {
         double[][] LPlusI = matrix_util.add(W, L);
 
         // z = (LPlusI)^-1 * s : calculateLE solves this linear equation
+        // ここを実装
         z = calculateLE();
         return z;
     }

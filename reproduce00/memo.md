@@ -1,3 +1,32 @@
+#### ローカルリポジトリを最新の状態に保つ
+```
+git fetch origin main
+```
+```
+git merge origin/main
+```
+
+## Remind
+* 普通にipynbファイルはVSCodeで見れました。
+* 俺のDockerのromantic_formetイメージにipynbファイルをアップロードした。
+  →立ち上げ方：	
+
+	```docker login```
+	```docker run -it -p 8888:8888 kikagaku/pytorch-topgear```
+	
+	8888 port で kikagaku と入力
+
+* portが占有されている場合は、まずPIDを確認
+	* windows
+
+	```netstat -ano | findstr :8888```
+	```taskkill /PID <enter pid here> /F```
+
+	* Mac
+
+	```lsof -i :8888```
+	```kill -9 <enter pid here>```
+
 ## Progress
 * 7/28
 	ln[268]の"load NW and Opinion"まで終了
@@ -21,7 +50,6 @@
 * 環境変数にしたいもの
 	ノード数nSNS、Regularized指標
 * グラフ描画用のコードも載ってる。
-* 結果の描画に関してはcsvファイルができてるから、Pythonでやればいいだけの話
 
 ## ToDo
 * 逆行列の計算と、最適化の部分でJavaフレームワークを導入する。
@@ -65,7 +93,7 @@
 │   ├── Edge.java
 │   ├── Network.java
 │   └── 	
-├── Data			結果データの格納
+├── Data			結果データ等の格納　ここのcsvをpythonで読み取って描画させよう。python使って描画させたいグラフ構造とかもココに吐き出させる。
 │   ├── 
 │   ├── 
 │   ├── 

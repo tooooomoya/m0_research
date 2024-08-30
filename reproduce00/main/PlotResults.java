@@ -24,7 +24,7 @@ public class PlotResults {
         }
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(("pls"+filename+".csv")))){
-            writer.write("Lambda, Percent change in pls");
+            writer.write("Lambda, val");
             writer.newLine();
 
             for(int i = 0; i < lamvals.length; i++){
@@ -56,7 +56,7 @@ public class PlotResults {
         }
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(("disagg"+filename+".csv")))){
-            writer.write("Lambda, Percent change in pls");
+            writer.write("Lambda, val");
             writer.newLine();
 
             for(int i = 0; i < lamvals.length; i++){
