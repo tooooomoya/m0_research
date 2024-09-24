@@ -24,6 +24,7 @@ public class RunSimulate{
             System.out.println(("no fix"));
             System.out.println("lam:" + lamList[i]);
             Result resultNoFix = AdminGame.am(A, s, lamList[i], false, 0, maxIter, false);
+            // no fix -> gamma = 0
             
             System.out.println("with fix");
             System.out.println("lam:" + lamList[i]);

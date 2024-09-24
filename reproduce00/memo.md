@@ -27,6 +27,24 @@ git merge origin/main
 	```lsof -i :8888```
 	```kill -9 <enter pid here>```
 
+* gurobi関連
+	ライセンス	98@bWcTTzd2x$j2
+	
+	パス	
+
+```
+tomoyatakeda@takedatomoonarinoMacBook-Pro / % readlink `which gurobi.sh`
+```
+```
+//Library/gurobi1103/macos_universal2/bin/gurobi.sh`
+```
+* 
+	libgurobi110.dylibの場所を変更したら動いた。
+	import文を```import com.gurobi.gurobi.*;```に変更した
+	ライセンスファイルのパスを環境変数に設定した。
+	Referenced Librariesにjarファイルのパスを追加した。→Java、外部ライブラリ、VScodeで検索
+	などなど
+
 ## Progress
 * 7/28
 	ln[268]の"load NW and Opinion"まで終了
@@ -39,13 +57,22 @@ git merge origin/main
 	多分machinesの内容は適当に作ってあるだけだから修正が必要
 	LoadNW.java, Runsimulate.java(中身のAdminGame.javaも), PlotResults.javaを修正、とりあえず完了
 	次は、AdminGame.javaで使用しているmachinesの整備（おそらくフレームワークを導入する）
-	フレームワークを導入すれば逆行列も計算できるはず。utils.matrix_utilに逆行列計算は未実装。まだ使ってないということかな、、？
+	フレームワークを導入すれば逆行列も計算できるはず。utils.matrix_utilに逆行列計算は未実装。逆行列をまだ使ってないということかな、、？
+* 9/24
+	minZは逆行列が計算できればいける。
+	existingはすでに重みがあるところのみ変化させる。ただ、全部Falseになっている、、？
+	逆行列は別にApacheCommonMathを外部ぶらりぶらりとしてインストールしちゃおう。（gurobiでも間接的に最適化問題として解けるけど）
+	gurobiの設定を完了。動作も確認済み。
+	残りは、optimization.javaを完成させる（逆行列と、gurobiの使い方とか）
+	あとは他のコードの動作確認
+
 	
 
 ## Memo
 * Shift+option+Fで整形
 * グラフ描画フレームワーク：JgraphTが一番有名らしい。Jungというのがあるらしい
-	->例のMavenを使わなきゃいけない。自分で作れんのか？
+	→例のMavenを使わなきゃいけない。自分で作れんのか？
+	→VSCodeで外部ライブラリを追加できる方法があった。
 * なぜ、sの作り方があれなのか。初期値を反映しているのかあれで。
 * 環境変数にしたいもの
 	ノード数nSNS、Regularized指標
@@ -53,17 +80,37 @@ git merge origin/main
 
 ## ToDo
 * 逆行列の計算と、最適化の部分でJavaフレームワークを導入する。
-* 結果を格納するrdの型が違いそう。本家では、２個目のインデックスでdisaggとplsを区別できている。
-* machinesの内容を完成させる。
+~~ * 結果を格納するrdの型が違いそう。本家では、２個目のインデックスでdisaggとplsを区別できている。 ~~
+~~ * machinesの内容を完成させる。~~
 * フレームワーク導入できたら、あとは一通り確認して、実行してみるだけ。
+* 結果を描画するにおいて、pythonでグラフを書いて、GIF作ったりして、グラフの描画は何かのライブラリ使ったらできるのでは？
 
 ### Finished 
 参考にして
+
+#### コンパイルと実行
+* LoadNW.java
+	実行時に0でReddit、1でTwitterネットワークを選択
+```
+tomoyatakeda@takedatomoonarinoMacBook-Pro reproduce00 % cd main
+tomoyatakeda@takedatomoonarinoMacBook-Pro main % javac -d bin utils/matrix_util.java LoadNW.java 
+tomoyatakeda@takedatomoonarinoMacBook-Pro main % java -cp bin LoadNW 0       
+```
+
+* RunSimulate.java
+```
+tomoyatakeda@takedatomoonarinoMacBook-Pro main % javac -d out utils/matrix_util.java utils/optimization.java RunSimulate.java
+```
 
 * ディレクトリ構造を作る。以下参考
 <pre>
 .
 ├── README.md
+├── LoadNW.java	NWのデータセットを読み込んで隣接行列A, intrinsic行列sを作成
+├── RunSimulate.java	AdminGame.javaをマシーンとして使用して結果を返す
+├── PlotResults.java	結果のデータを整理して、Resultsフォルダにcsvとして吐き出す
+├── ResultPair.java		修正前後の結果をペアとして格納するコンストラクタ用
+├── Result.java			シミュレーション一回の結果を格納するコンストラクタ用
 ├── config
 │   ├── 
 │   ├── 

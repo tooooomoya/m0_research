@@ -1,12 +1,12 @@
 import java.util.ArrayList;
 import main.utils.matrix_util;
-import main.machines.*;
+import main.utils.optimization;
 
 public class AdminGame {
 
-    public static Result am(double[][] A, double[] s, double lam, boolean reducePls, double gam, int maxIter,
-            boolean existing) {
+    public static Result am(double[][] A, double[] s, double lam, boolean reducePls, double gam, int maxIter, boolean existing) {
         double[][] W = matrix_util.copyMatrix(A);
+        // First, each user change its opinion according to the FJ model
         double[] z = optimization.minZ(W, s);
 
         ArrayList<Double> pls = new ArrayList<>();
@@ -22,9 +22,12 @@ public class AdminGame {
         while (flag) {
             System.out.println("Iteration:" + i);
 
+            // Admin changes weight matrix
             double[][] Wnew = optimization.minW(z, lam, A, reducePls, gam, existing);
+            // After Admin action, each user change its opinion according to the FJ model
             double[] znew = optimization.minZ(Wnew, s);
 
+            // Terminal Criterion(both z and W can be considered to be converged, or maxIter criterion)
             if (Math.max(norm(z, znew), matrixNorm(W, Wnew)) < 0.5 || i > maxIter - 1) {
                 flag = false;
             }
@@ -40,6 +43,7 @@ public class AdminGame {
         return new Result(pls, disaggs, z, W);
     }
 
+    // caluculate norm (ノルム：距離)
     private static double norm(double[] a, double[] b) {
         double sum = 0.0;
         for (int i = 0; i < a.length; i++) {

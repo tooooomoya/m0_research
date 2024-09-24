@@ -3,5 +3,9 @@
         "test_for_javaenv",
         "reproduce00",
         "hello-world/src/main/java/org/tkr/app"
+    ],
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/Library/gurobi1103/macos_universal2/lib/gurobi.jar"
     ]
 }
