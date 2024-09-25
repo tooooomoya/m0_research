@@ -27,13 +27,13 @@ git merge origin/main
 	```lsof -i :8888```
 	```kill -9 <enter pid here>```
 
-* gurobi関連
+#### gurobi関連
 	ライセンス	98@bWcTTzd2x$j2
 	
 	パス	
 
 ```
-tomoyatakeda@takedatomoonarinoMacBook-Pro / % readlink `which gurobi.sh`
+readlink `which gurobi.sh`
 ```
 ```
 //Library/gurobi1103/macos_universal2/bin/gurobi.sh`
@@ -44,6 +44,16 @@ tomoyatakeda@takedatomoonarinoMacBook-Pro / % readlink `which gurobi.sh`
 	ライセンスファイルのパスを環境変数に設定した。
 	Referenced Librariesにjarファイルのパスを追加した。→Java、外部ライブラリ、VScodeで検索
 	などなど
+
+#### ApacheCommonsMath
+* jarファイルは 
+	```/Library/ApacheCommonsMath/commons-math3-3.6.1.jar```
+	にある。
+* コンパイル方法は、上のjarファイルのパスと、自分のカラントディレクトリを含めて(":"で区切る)以下の通り
+```
+javac -cp ".:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" MatrixInversionExample.java
+java -cp ".:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" MatrixInversionExample
+```
 
 ## Progress
 * 7/28
@@ -65,6 +75,11 @@ tomoyatakeda@takedatomoonarinoMacBook-Pro / % readlink `which gurobi.sh`
 	gurobiの設定を完了。動作も確認済み。
 	残りは、optimization.javaを完成させる（逆行列と、gurobiの使い方とか）
 	あとは他のコードの動作確認
+* 9/25
+	とりあえずApacheCommonsMathが終わりました。
+	optimizationもエラーが消えたので、あとは全部コードを一覧してチェックして
+	試しにコンパイルしてみる。
+	それぞれ逐次的にやってみて、（ダミーの結果を用意するなどして）pythonとか使って結果を可視化する箇所もやってみてはいかが。
 
 	
 

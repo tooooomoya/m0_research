@@ -6,6 +6,7 @@
     ],
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
-        "/Library/gurobi1103/macos_universal2/lib/gurobi.jar"
+        "/Library/gurobi1103/macos_universal2/lib/gurobi.jar",
+        "/Library/ApacheCommonsMath/commons-math3-3.6.1.jar"
     ]
 }
