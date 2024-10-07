@@ -80,6 +80,8 @@ java -cp ".:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" MatrixInversionE
 	optimizationもエラーが消えたので、あとは全部コードを一覧してチェックして
 	試しにコンパイルしてみる。
 	それぞれ逐次的にやってみて、（ダミーの結果を用意するなどして）pythonとか使って結果を可視化する箇所もやってみてはいかが。
+* 10/4
+	
 
 	
 
@@ -116,6 +118,21 @@ tomoyatakeda@takedatomoonarinoMacBook-Pro main % java -cp bin LoadNW 0
 ```
 tomoyatakeda@takedatomoonarinoMacBook-Pro main % javac -d out utils/matrix_util.java utils/optimization.java RunSimulate.java
 ```
+
+これでうまくいかないときは以下
+
+```
+javac -cp "/Library/gurobi1103/macos_universal2/lib/gurobi.jar:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" -d out utils/matrix_util.java utils/optimization.java RunSimulate.java
+```
+
+以下でMainが実行できます。
+
+```
+tomoyatakeda@takedatomoonarinoMacBook-Pro main % javac -cp "/Library/gurobi1103/macos_universal2/lib/gurobi.jar:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" -d out utils/matrix_util.java utils/optimization.java *.java
+tomoyatakeda@takedatomoonarinoMacBook-Pro main % java -cp "out:/Library/gurobi1103/macos_universal2/lib/gurobi.jar:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" Main
+```
+
+
 
 * ディレクトリ構造を作る。以下参考
 <pre>

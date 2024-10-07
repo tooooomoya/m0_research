@@ -1,4 +1,7 @@
 import java.util.ArrayList;
+
+import com.gurobi.gurobi.GRBException;
+
 import main.utils.matrix_util;
 import main.utils.optimization;
 
@@ -19,15 +22,24 @@ public class AdminGame {
 
         int i = 0;
         boolean flag = true;
+        double[][] Wnew = null;
+
         while (flag) {
             System.out.println("Iteration:" + i);
 
-            // Admin changes weight matrix
-            double[][] Wnew = optimization.minW(z, lam, A, reducePls, gam, existing);
+            try {
+                // Admin changes weight matrix
+                Wnew = optimization.minWGurobi(z, lam, W, reducePls, gam, existing);
+                // ここのWがAだと最初の重み状態からの変化で、あんま意味ない気がする。
+            } catch (GRBException e) {
+                System.out.println("Gurobi optimization error: " + e.getMessage());
+                e.printStackTrace();
+            }
             // After Admin action, each user change its opinion according to the FJ model
             double[] znew = optimization.minZ(Wnew, s);
 
-            // Terminal Criterion(both z and W can be considered to be converged, or maxIter criterion)
+            // Terminal Criterion(both z and W can be considered to be converged, or maxIter
+            // criterion)
             if (Math.max(norm(z, znew), matrixNorm(W, Wnew)) < 0.5 || i > maxIter - 1) {
                 flag = false;
             }

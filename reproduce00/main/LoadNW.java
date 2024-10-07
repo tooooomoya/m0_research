@@ -5,8 +5,10 @@ import java.util.*;
 import main.utils.matrix_util;
 
 public class LoadNW {
-    public static void main(String[] args) {
-        int whichSNS = Integer.parseInt(args[0].trim());
+    private double[][] A;
+    private double[] s;
+
+    public LoadNW(int whichSNS) {
         // whichSNS = 0 -> Reddit
         // whichSNS = 1 -> Twitter
         int nSNS = 0;
@@ -26,7 +28,7 @@ public class LoadNW {
         String opinionFilePath = directory + "/" + name + "_opinion.txt";
 
         // create Ajacensy matrix "A"
-        double[][] A = new double[nSNS][nSNS];
+        A = new double[nSNS][nSNS];
 
         try (BufferedReader br = new BufferedReader(new FileReader(edgesFilePath))) {
             String line;
@@ -103,7 +105,7 @@ public class LoadNW {
         double[][] I = matrix_util.createIdentityMatrix(nSNS);
         double[][] LPlusI = matrix_util.add(L, I);
         // "s" is intrinsic opinion(個人に潜在的で本質的な不変のopinion value)
-        double[] s = matrix_util.multiplyMatrixVector(LPlusI, z);
+        s = matrix_util.multiplyMatrixVector(LPlusI, z);
         // clipping to the scale of max 1, min 0
         for (int i = 0; i < s.length; i++) {
             s[i] = Math.min(Math.max(s[i], 0), 1);
@@ -127,4 +129,16 @@ public class LoadNW {
         System.out.printf("0.75 ~ 1.0: %d\n", d);
 
     }
+    public double[][] getAdjacencyMatrix(){
+        return A;
+    }
+    public double[] getIntrinsicOpinions(){
+        return s;
+    }
+    public static void main(String[] args) {
+        int whichSNS = Integer.parseInt(args[0].trim());
+        LoadNW loadNW = new LoadNW(whichSNS);
+        // mainメソッド内では値を返さない
+    }
+
 }
