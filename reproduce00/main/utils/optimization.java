@@ -47,9 +47,8 @@ public class optimization {
         GRBVar[][] x = new GRBVar[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (i > j) {
-                    x[i][j] = model.addVar(0.0, GRB.INFINITY, 0.0, GRB.CONTINUOUS, "x_" + i + "_" + j);
-                }
+                x[i][j] = model.addVar(0.0, GRB.INFINITY, 0.0, GRB.CONTINUOUS, "x_" + i + "_" + j);
+                x[j][i] = x[i][j]; // 対称行列を作る
             }
         }
         // x_1_2みたいなguroubi用の変数ができる。
@@ -91,8 +90,12 @@ public class optimization {
         }
 
         model.setObjective(objExp, GRB.MINIMIZE);
+        System.out.println("Set the objective!");
 
-        // Add constraints sum_j x[i,j] = di
+        // Add constraints sum_j x[i,j] = di : the degree of each vertex should not
+        // change
+
+        // calculate d[i]
         double[] d = new double[n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -100,6 +103,7 @@ public class optimization {
             }
         }
 
+        // Add constraint
         for (int i = 0; i < n; i++) {
             GRBLinExpr expr = new GRBLinExpr();
 
@@ -118,10 +122,14 @@ public class optimization {
             } else {
                 // 制約をすべてのエッジに対して追加
                 for (int j = i + 1; j < n; j++) {
+                    if(x[i][j]!=null){
                     expr.addTerm(1.0, x[i][j]);
+                    }
                 }
                 for (int j = 0; j < i; j++) {
+                    if(x[i][j]!=null){
                     expr.addTerm(1.0, x[j][i]);
+                    }
                 }
             }
 
@@ -134,9 +142,11 @@ public class optimization {
         // Add the constraint ∑(wij - w0ij) < lam * ||w0||^2
         // This part would need adjustment based on the actual implementation context
         // The right-hand side would be defined according to your original logic
+        
 
         // Optimize the model
         model.optimize();
+        System.out.println("optimization finished!");
 
         if (model.get(GRB.IntAttr.Status) != GRB.Status.OPTIMAL) {
             throw new GRBException("Optimization was not successful. Status: " + model.get(GRB.IntAttr.Status));
