@@ -122,13 +122,13 @@ public class optimization {
             } else {
                 // 制約をすべてのエッジに対して追加
                 for (int j = i + 1; j < n; j++) {
-                    if(x[i][j]!=null){
-                    expr.addTerm(1.0, x[i][j]);
+                    if (x[i][j] != null) {
+                        expr.addTerm(1.0, x[i][j]);
                     }
                 }
                 for (int j = 0; j < i; j++) {
-                    if(x[i][j]!=null){
-                    expr.addTerm(1.0, x[j][i]);
+                    if (x[i][j] != null) {
+                        expr.addTerm(1.0, x[j][i]);
                     }
                 }
             }
@@ -142,7 +142,29 @@ public class optimization {
         // Add the constraint ∑(wij - w0ij) < lam * ||w0||^2
         // This part would need adjustment based on the actual implementation context
         // The right-hand side would be defined according to your original logic
-        
+
+        // Calculate Frobenius norm of W0 (||W0||^2 : 二乗和)
+        double normW0Squared = 0.0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                normW0Squared += W0[i][j] * W0[i][j];
+            }
+        }
+        double rhs = lam * normW0Squared;
+
+        // Create the expression for the constraint: ∑(wij - w0ij)
+        GRBLinExpr expr = new GRBLinExpr();
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (x[i][j] != null) {
+                    expr.addTerm(1.0, x[i][j]); // Add wij term
+                    expr.addConstant(-W0[i][j]); // Subtract w0ij constant term
+                }
+            }
+        }
+
+        // Add the constraint: ∑(wij - w0ij) <= lam * ||W0||^2
+        model.addConstr(expr, GRB.LESS_EQUAL, rhs, "constraint_wij_diff");
 
         // Optimize the model
         model.optimize();

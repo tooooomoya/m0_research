@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 def plot_csv_data(csv_filename, output_filename):
     
     result = pd.read_csv(csv_filename)
+    result.columns = result.columns.str.strip()  # 列名の前後の空白を削除
     val_name = csv_filename[:-4]
 
     lam = result['Lambda']

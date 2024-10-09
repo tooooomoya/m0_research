@@ -23,7 +23,7 @@ public class PlotResults {
             plsRatioList[i] = finalPls / initialPls;
         }
 
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(("pls"+filename+".csv")))){
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(("results/pls"+filename+".csv")))){
             writer.write("Lambda, val");
             writer.newLine();
 
@@ -55,7 +55,7 @@ public class PlotResults {
             disaggRatioList[i] = finalDisagg / initialDisagg;
         }
 
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(("disagg"+filename+".csv")))){
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(("results/disagg"+filename+".csv")))){
             writer.write("Lambda, val");
             writer.newLine();
 

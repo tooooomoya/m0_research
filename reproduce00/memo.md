@@ -84,6 +84,8 @@ java -cp ".:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" MatrixInversionE
 	1つ目の制約のエラーは解消された。
 	次は二つ目の制約を作る。
 	結果が怪しいことになってるから、それを確認しよう。
+* 10/9
+	二つ目の制約も完成→結果を確認するために結果を描画させるpythonコードを書く。
 	
 
 	
