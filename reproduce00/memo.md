@@ -86,7 +86,9 @@ java -cp ".:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" MatrixInversionE
 	結果が怪しいことになってるから、それを確認しよう。
 * 10/9
 	二つ目の制約も完成→結果を確認するために結果を描画させるpythonコードを書く。
-	
+	SNS_opinion.csvの２個目の要素は特に関係ない、、？時間とか？
+	多分、一個目の要素がエージェントのID、３個目が投稿のopinion
+	→sの値は、zの初期値ではないのか？zがすでにFJモデルに従って周りから影響を受けているとみて、sを逆算するのか。
 
 	
 
@@ -99,6 +101,9 @@ java -cp ".:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" MatrixInversionE
 * 環境変数にしたいもの
 	ノード数nSNS、Regularized指標
 * グラフ描画用のコードも載ってる。
+* opinionの平均(zの初期値)がほとんど0.5付近、たしかに元のデータを見ても、極端な意見の投稿はあまりない。
+	→でも計算した後のsは全体的にばらけている。
+* グラフ描画も早めにできるようになりたい。
 
 ## ToDo
 * 逆行列の計算と、最適化の部分でJavaフレームワークを導入する。

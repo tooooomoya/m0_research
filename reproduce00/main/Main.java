@@ -8,7 +8,7 @@ public class Main {
         int whichSNS = scanner.nextInt();
 
         LoadNW loadNW = new LoadNW(whichSNS);
-        double[][] A = loadNW.getAdjacencyMatrix(); // インスタンスメソッドの呼び出し
+        double[][] A = loadNW.getAdjacencyMatrix(); // Aは隣接重み行列
         double[] s = loadNW.getIntrinsicOpinions(); // インスタンスメソッドの呼び出し
         System.out.println("Load NW finished");
 

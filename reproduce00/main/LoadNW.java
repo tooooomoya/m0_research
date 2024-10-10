@@ -40,7 +40,7 @@ public class LoadNW {
                         int u = Integer.parseInt(parts[0].trim()) - 1;
                         int v = Integer.parseInt(parts[1].trim()) - 1;
                         if (u >= 0 && u < nSNS && v >= 0 && v < nSNS) {
-                            // 2 sets of nodes indexes in the "edges_SNS.txt" file mean they're connected
+                            // 2 sets of nodes indexes in the "edges_SNS.txt" file mean interaction between them
                             A[u][v] += 1;
                             A[v][u] += 1;
                         }
@@ -98,7 +98,11 @@ public class LoadNW {
             for (Double opinion : opinions) {
                 sum += opinion;
             }
+            //投稿のopinion値の平均を取ってZ行列に入れる。
             z[i] = sum / opinions.size();
+            if (i % 10 == 0) {
+                System.out.printf("%d opinion: %.2f\n", i, z[i]); // %.2f は小数点以下2桁まで表示するフォーマット
+            }
         }
 
         double[][] L = matrix_util.createL(A, nSNS);
