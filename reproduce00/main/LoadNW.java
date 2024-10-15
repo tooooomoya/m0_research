@@ -1,5 +1,7 @@
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.*;
 import main.utils.matrix_util;
@@ -49,6 +51,20 @@ public class LoadNW {
                     }
                 }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 隣接行列 A をCSVファイルに保存
+        String outputCsvPath = "results/adjacency_matrix.csv";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputCsvPath))) {
+            for (int i = 0; i < nSNS; i++) {
+                for (int j = 0; j < nSNS; j++) {
+                    writer.write(A[i][j] + ((j < nSNS - 1) ? "," : ""));  // カンマで区切る
+                }
+                writer.newLine();  // 行の終わりに改行を追加
+            }
+            System.out.println("Adjacency matrix saved to " + outputCsvPath);
         } catch (IOException e) {
             e.printStackTrace();
         }

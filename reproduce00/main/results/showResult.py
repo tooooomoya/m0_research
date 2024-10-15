@@ -24,7 +24,7 @@ def plot_csv_data(csv_filename, output_filename):
     plt.savefig(output_filename)
 
 
-plot_csv_data('plsReddit.csv', 'plsReddit.pdf')
-plot_csv_data('disaggReddit.csv', 'disaggReddit.pdf')
-plot_csv_data('plsTwitter.csv', 'plsTwitter.pdf')
-plot_csv_data('disaggTwitter.csv', 'disaggTwitter.pdf')
+plot_csv_data('plsReddit.csv', 'plsReddit.jpg')
+plot_csv_data('disaggReddit.csv', 'disaggReddit.jpg')
+plot_csv_data('plsTwitter.csv', 'plsTwitter.jpg')
+plot_csv_data('disaggTwitter.csv', 'disaggTwitter.jpg')

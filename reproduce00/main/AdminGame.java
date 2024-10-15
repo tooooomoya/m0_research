@@ -25,11 +25,12 @@ public class AdminGame {
         double[][] Wnew = null;
 
         while (flag) {
+            System.out.println("--------------------------");
             System.out.println("Iteration:" + i);
 
             try {
                 // Admin changes weight matrix
-                Wnew = optimization.minWGurobi(z, lam, W, reducePls, gam, existing);
+                Wnew = optimization.minWGurobi(z, lam, A, reducePls, gam, existing);
                 // ここのWがAだと最初の重み状態からの変化で、あんま意味ない気がする。
             } catch (GRBException e) {
                 System.out.println("Gurobi optimization error: " + e.getMessage());
@@ -40,7 +41,8 @@ public class AdminGame {
 
             // Terminal Criterion(both z and W can be considered to be converged, or maxIter
             // criterion)
-            if (Math.max(norm(z, znew), matrixNorm(W, Wnew)) < 0.5 || i > maxIter - 1) {
+            if (Math.max(norm(z, znew), matrixNorm(W, Wnew)) < 5e-1 || i > maxIter - 1) {
+                System.out.println("Terminal Criterion!!!!!!!");
                 flag = false;
             }
 

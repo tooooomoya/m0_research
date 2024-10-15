@@ -89,8 +89,14 @@ java -cp ".:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" MatrixInversionE
 	SNS_opinion.csvの２個目の要素は特に関係ない、、？時間とか？
 	多分、一個目の要素がエージェントのID、３個目が投稿のopinion
 	→sの値は、zの初期値ではないのか？zがすでにFJモデルに従って周りから影響を受けているとみて、sを逆算するのか。
+* 10/15
+	どうやらAdmingameでterminal criterionに全部最初で引っかかっているっぽい
+	Wは最初、Aから始まっている？→0か1の値しかない隣接行列。重み行列ではない。
+	w_ijは０以上の実数です。
 
-	
+## 謎
+* 個々のノードがもつエッジの重みの合計値は保存されるはずだが、それで変化は起きるのか？まあ起きるのか、、
+
 
 ## Memo
 * Shift+option+Fで整形
@@ -104,6 +110,7 @@ java -cp ".:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" MatrixInversionE
 * opinionの平均(zの初期値)がほとんど0.5付近、たしかに元のデータを見ても、極端な意見の投稿はあまりない。
 	→でも計算した後のsは全体的にばらけている。
 * グラフ描画も早めにできるようになりたい。
+* constsフォルダを作成して、constファイルを置いて、そこからの参照で定数を設定する。植木さんのnetwork.javaに書いてある。
 
 ## ToDo
 * 逆行列の計算と、最適化の部分でJavaフレームワークを導入する。
