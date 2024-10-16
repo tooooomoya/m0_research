@@ -21,6 +21,8 @@ public class RunSimulate{
         double gam = 0.2; // L2 regularization coefficient 
 
         for(int i = 0; i<lamList.length; i++){
+            System.out.println("---------------Start the Experiment with lambda:" + lamList[i]);
+
             System.out.println(("no fix"));
             System.out.println("lam:" + lamList[i]);
             Result resultNoFix = AdminGame.am(A, s, lamList[i], false, 0, maxIter, false);

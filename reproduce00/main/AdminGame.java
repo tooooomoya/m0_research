@@ -9,6 +9,8 @@ public class AdminGame {
 
     public static Result am(double[][] A, double[] s, double lam, boolean reducePls, double gam, int maxIter, boolean existing) {
         double[][] W = matrix_util.copyMatrix(A);
+        System.out.println("the first W matrix");
+        matrix_util.printMatrix(W);
         // First, each user change its opinion according to the FJ model
         double[] z = optimization.minZ(W, s);
 
@@ -31,6 +33,8 @@ public class AdminGame {
             try {
                 // Admin changes weight matrix
                 Wnew = optimization.minWGurobi(z, lam, A, reducePls, gam, existing);
+                System.out.println("new W matrix");
+                matrix_util.printMatrix(Wnew);
                 // ここのWがAだと最初の重み状態からの変化で、あんま意味ない気がする。
             } catch (GRBException e) {
                 System.out.println("Gurobi optimization error: " + e.getMessage());
@@ -38,6 +42,8 @@ public class AdminGame {
             }
             // After Admin action, each user change its opinion according to the FJ model
             double[] znew = optimization.minZ(Wnew, s);
+            System.out.println("New Z: ");
+            matrix_util.printVector(znew);
 
             // Terminal Criterion(both z and W can be considered to be converged, or maxIter
             // criterion)

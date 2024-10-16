@@ -4,13 +4,24 @@ public class Main {
     public static void main(String[] args) {
         // Step 1: Load Network
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter the social network type (0 for Reddit, 1 for Twitter): ");
+        System.out.println("Enter the social network type (0 for Reddit, 1 for Twitter, 2 for Test): ");
         int whichSNS = scanner.nextInt();
 
+        double[][] A=null;
+        double[] s=null;
+
+        if(whichSNS != 2){
         LoadNW loadNW = new LoadNW(whichSNS);
-        double[][] A = loadNW.getAdjacencyMatrix(); // Aは隣接重み行列
-        double[] s = loadNW.getIntrinsicOpinions(); // インスタンスメソッドの呼び出し
+        A = loadNW.getAdjacencyMatrix(); // Aは隣接重み行列
+        s = loadNW.getIntrinsicOpinions(); // インスタンスメソッドの呼び出し
         System.out.println("Load NW finished");
+        }
+        else{
+            System.out.println("You chose Test Matrix.");
+            TestLoad loadTest = new TestLoad(whichSNS);
+            A = loadTest.getAdjacencyMatrix();
+            s = loadTest.getIntrinsicOpinions();
+        }
 
         RunSimulate runSimulate = new RunSimulate(A, s);
         ResultPair resultPair = runSimulate.runDynamics();

@@ -163,16 +163,20 @@ public class matrix_util {
     // print matrix
     public static void printMatrix(double[][] matrix) {
         for (double[] row : matrix) {
-            System.out.println(Arrays.toString(row));
+            for (double val : row) {
+                System.out.printf("%.2f ", val);  // 少数第2位まで表示
+            }
+            System.out.println();  // 行の最後に改行
         }
     }
 
     //print vector
     public static void printVector(double[] vector) {
-        for (double row : vector) {
-            System.out.println(row);
+        for (double val : vector) {
+            System.out.printf("%.2f, ", val);  // 小数第2位まで表示
         }
     }
+    
 
 
     // use main to check

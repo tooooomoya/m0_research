@@ -6,23 +6,24 @@ import java.io.IOException;
 import java.util.*;
 import main.utils.matrix_util;
 
-public class LoadNW {
+public class TestLoad{
     private double[][] A;
     private double[] s;
 
-    public LoadNW(int whichSNS) {
-        // whichSNS = 0 -> Reddit
-        // whichSNS = 1 -> Twitter
+    public TestLoad(int whichSNS) {
+        // whichSNSによってグラフ構造選べるようにとかするか。
+
         int nSNS = 0;
         String directory = "";
         String name = "";
-        if (whichSNS == 0) {
-            nSNS = 556;
-            directory = "Reddit";
-            name = "reddit";
-        } else if (whichSNS == 1) {
-            nSNS = 548;
-            directory = "Twitter";
+        if (whichSNS == 2) {
+            // choose Random Graph
+            nSNS = 15;
+            directory = "Random"; 
+            name = "random";
+        } else if (whichSNS == 3) {
+            nSNS = 100;
+            directory = "Twitter";//何かのグラフを作るときはここから
             name = "twitter";
         }
 
