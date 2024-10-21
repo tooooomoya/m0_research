@@ -9,18 +9,25 @@ public class AdminGame {
 
     public static Result am(double[][] A, double[] s, double lam, boolean reducePls, double gam, int maxIter, boolean existing) {
         double[][] W = matrix_util.copyMatrix(A);
-        System.out.println("the first W matrix");
-        matrix_util.printMatrix(W);
+        //System.out.println("the first W matrix");
+        //matrix_util.printMatrix(W);
+
         // First, each user change its opinion according to the FJ model
+        System.out.println("the first z: ");
+        matrix_util.printVector(s);
         double[] z = optimization.minZ(W, s);
+        System.out.println("the first z: ");
+        matrix_util.printVector(z);
 
         ArrayList<Double> pls = new ArrayList<>();
         pls.add(optimization.computePls(z));
+        System.out.println("pls before iteration: "+ optimization.computePls(z));
 
         double[][] L = matrix_util.createL(W, W.length);
 
         ArrayList<Double> disaggs = new ArrayList<>();
         disaggs.add(computeDisagreement(z, L));
+        System.out.println("disagg before iteration: "+computeDisagreement(z, L));
 
         int i = 0;
         boolean flag = true;
@@ -55,9 +62,12 @@ public class AdminGame {
             z = znew;
             W = Wnew;
             i++;
-            pls.add(optimization.computePls(z));
+            double PLS = optimization.computePls(z); 
+            System.out.println("pls: "+ PLS);
+            pls.add(PLS);
             L = matrix_util.createL(W, W.length);
             double disagg = computeDisagreement(z, L);
+            System.out.println("disagg: "+disagg);
             disaggs.add(disagg);
         }
         return new Result(pls, disaggs, z, W);

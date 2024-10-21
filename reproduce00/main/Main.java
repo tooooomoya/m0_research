@@ -32,10 +32,13 @@ public class Main {
         if (whichSNS == 0) {
             plotResults.exportPls(resultPair, "Reddit");
             plotResults.exportDisagg(resultPair, "Reddit");
-        } else {
+        } else if(whichSNS == 1) {
             plotResults.exportPls(resultPair, "Twitter");
             plotResults.exportDisagg(resultPair, "Twitter");
-        }
+        } else if(whichSNS == 2) {
+            plotResults.exportPls(resultPair, "Test");
+            plotResults.exportDisagg(resultPair, "Test");
+        } 
 
         scanner.close();
     }

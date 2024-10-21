@@ -51,7 +51,10 @@ public class PlotResults {
         for(int i = 0; i < lamvals.length; i++){
             ArrayList<Double> disaggs = rd.get(lamvals[i]).getDisaggs();
             double initialDisagg = disaggs.get(0);
+            System.out.println("initialDisagg: "+ initialDisagg);
             double finalDisagg = disaggs.get(disaggs.size() - 1);
+            System.out.println("finalDisagg: "+ finalDisagg);
+
             disaggRatioList[i] = finalDisagg / initialDisagg;
         }
 

@@ -27,13 +27,12 @@ public class RunSimulate{
             System.out.println("lam:" + lamList[i]);
             Result resultNoFix = AdminGame.am(A, s, lamList[i], false, 0, maxIter, false);
             // no fix -> gamma = 0
-            
-            System.out.println("with fix");
-            System.out.println("lam:" + lamList[i]);
-            Result resultFix = AdminGame.am(A, s, lamList[i], true, gam, maxIter, false);
-
             rd.put(lamList[i], resultNoFix);
-            rdFix.put(lamList[i], resultFix);
+            
+            //System.out.println("with fix");
+            //System.out.println("lam:" + lamList[i]);
+            //Result resultFix = AdminGame.am(A, s, lamList[i], true, gam, maxIter, false);
+            //rdFix.put(lamList[i], resultFix);
         }
 
         ResultPair resultPair = new ResultPair(rd, rdFix);
