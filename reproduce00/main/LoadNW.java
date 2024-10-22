@@ -127,11 +127,11 @@ public class LoadNW {
         double[][] I = matrix_util.createIdentityMatrix(nSNS);
         double[][] LPlusI = matrix_util.add(L, I);
         // "s" is intrinsic opinion(個人に潜在的で本質的な不変のopinion value)
-        System.out.println("\nthe innate z: ");
-        matrix_util.printVector(z);
+        //System.out.println("\nthe innate z: ");
+        //matrix_util.printVector(z);
         s = matrix_util.multiplyMatrixVector(LPlusI, z);
-        System.out.println("\nthe intrinsic z: ");
-        matrix_util.printVector(s);
+        //System.out.println("\nthe intrinsic z: ");
+        //matrix_util.printVector(s);
 
         // clipping to the scale of max 1, min 0
         for (int i = 0; i < s.length; i++) {

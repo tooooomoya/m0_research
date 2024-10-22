@@ -223,6 +223,6 @@ public class optimization {
             double difference = value - ZMean;
             sumSquareDifferences += difference * difference;
         }
-        return sumSquareDifferences / z.length;
+        return sumSquareDifferences;
     }
 }

@@ -13,21 +13,21 @@ public class AdminGame {
         //matrix_util.printMatrix(W);
 
         // First, each user change its opinion according to the FJ model
-        System.out.println("\nthe first z: ");
-        matrix_util.printVector(s);
+        //System.out.println("\nthe first z: ");
+        //matrix_util.printVector(s);
         double[] z = optimization.minZ(W, s);
-        System.out.println("\nz after the FJ effect: ");
-        matrix_util.printVector(z);
+        //System.out.println("\nz after the FJ effect: ");
+        //matrix_util.printVector(z);
 
         ArrayList<Double> pls = new ArrayList<>();
         pls.add(optimization.computePls(z));
-        System.out.println("\npls before iteration: "+ optimization.computePls(z));
+        //System.out.println("\npls before iteration: "+ optimization.computePls(z));
 
         double[][] L = matrix_util.createL(W, W.length);
 
         ArrayList<Double> disaggs = new ArrayList<>();
         disaggs.add(computeDisagreement(z, L));
-        System.out.println("\ndisagg before iteration: "+computeDisagreement(z, L));
+        //System.out.println("\ndisagg before iteration: "+computeDisagreement(z, L));
 
         int i = 0;
         boolean flag = true;
@@ -40,19 +40,19 @@ public class AdminGame {
             try {
                 // Admin changes weight matrix
                 Wnew = optimization.minWGurobi(z, lam, A, reducePls, gam, existing);
-                System.out.println("\nnew W matrix");
-                matrix_util.printMatrix(Wnew);
+                //System.out.println("\nnew W matrix");
+                //matrix_util.printMatrix(Wnew);
                 // ここのWがAだと最初の重み状態からの変化で、あんま意味ない気がする。
             } catch (GRBException e) {
                 System.out.println("Gurobi optimization error: " + e.getMessage());
                 e.printStackTrace();
             }
             // After Admin action, each user change its opinion according to the FJ model
-            System.out.println("\nz before this time Admin effect: ");
-            matrix_util.printVector(z);
+            //System.out.println("\nz before this time Admin effect: ");
+            //matrix_util.printVector(z);
             double[] znew = optimization.minZ(Wnew, s);
-            System.out.println("\nNew z after Admin effect: ");
-            matrix_util.printVector(znew);
+            //System.out.println("\nNew z after Admin effect: ");
+            //matrix_util.printVector(znew);
 
             // Terminal Criterion(both z and W can be considered to be converged, or maxIter
             // criterion)

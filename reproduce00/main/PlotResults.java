@@ -19,8 +19,10 @@ public class PlotResults {
         for(int i = 0; i < lamvals.length; i++){
             ArrayList<Double> pls = rd.get(lamvals[i]).getPls();
             double initialPls = pls.get(0);
+            System.out.println("initialPls: "+ initialPls);
             double finalPls = pls.get(pls.size() - 1);
-            plsRatioList[i] = finalPls / initialPls;
+            System.out.println("finalPls: "+ finalPls);
+            plsRatioList[i] = (finalPls / initialPls) - 1;
         }
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(("results/pls"+filename+".csv")))){
@@ -55,7 +57,7 @@ public class PlotResults {
             double finalDisagg = disaggs.get(disaggs.size() - 1);
             System.out.println("finalDisagg: "+ finalDisagg);
 
-            disaggRatioList[i] = finalDisagg / initialDisagg;
+            disaggRatioList[i] = 100 * ((finalDisagg / initialDisagg) - 1);
         }
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(("results/disagg"+filename+".csv")))){
