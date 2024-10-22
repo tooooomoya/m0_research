@@ -126,13 +126,19 @@ public class TestLoad{
         double[][] I = matrix_util.createIdentityMatrix(nSNS);
         double[][] LPlusI = matrix_util.add(L, I);
         // "s" is intrinsic opinion(個人に潜在的で本質的な不変のopinion value)
+        System.out.println("the innate z: ");
+        matrix_util.printVector(z);
         s = matrix_util.multiplyMatrixVector(LPlusI, z);
+        System.out.println("the intrinsic z before clip: ");
+        matrix_util.printVector(s);
         // clipping to the scale of max 1, min 0
         for (int i = 0; i < s.length; i++) {
             s[i] = Math.min(Math.max(s[i], 0), 1);
         }
+        System.out.println("the intrinsic z : ");
+        matrix_util.printVector(s);
 
-        int a = 0, b = 0, c = 0, d = 0;
+        /*int a = 0, b = 0, c = 0, d = 0;
         for (int i = 0; i < s.length; i++) {
             if (s[i] < 0.25) {
                 a++;
@@ -149,6 +155,7 @@ public class TestLoad{
         System.out.printf("0.25 ~ 0.5: %d\n", b);
         System.out.printf("0.5 ~ 0.75: %d\n", c);
         System.out.printf("0.75 ~ 1.0: %d\n", d);
+        */
 
     }
     public double[][] getAdjacencyMatrix(){

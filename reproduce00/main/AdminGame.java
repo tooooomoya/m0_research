@@ -48,6 +48,8 @@ public class AdminGame {
                 e.printStackTrace();
             }
             // After Admin action, each user change its opinion according to the FJ model
+            System.out.println("Z: ");
+            matrix_util.printVector(z);
             double[] znew = optimization.minZ(Wnew, s);
             System.out.println("New Z: ");
             matrix_util.printVector(znew);
