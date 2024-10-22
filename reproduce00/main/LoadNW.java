@@ -116,19 +116,21 @@ public class LoadNW {
             }
             //投稿のopinion値の平均を取ってZ行列に入れる。
             z[i] = sum / opinions.size();
+            
+            /*確認用
             if (i % 10 == 0) {
                 System.out.printf("%d opinion: %.2f\n", i, z[i]); // %.2f は小数点以下2桁まで表示するフォーマット
-            }
+            }*/
         }
 
         double[][] L = matrix_util.createL(A, nSNS);
         double[][] I = matrix_util.createIdentityMatrix(nSNS);
         double[][] LPlusI = matrix_util.add(L, I);
         // "s" is intrinsic opinion(個人に潜在的で本質的な不変のopinion value)
-        System.out.println("the innate z: ");
+        System.out.println("\nthe innate z: ");
         matrix_util.printVector(z);
         s = matrix_util.multiplyMatrixVector(LPlusI, z);
-        System.out.println("the intrinsic z: ");
+        System.out.println("\nthe intrinsic z: ");
         matrix_util.printVector(s);
 
         // clipping to the scale of max 1, min 0

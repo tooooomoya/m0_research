@@ -13,21 +13,21 @@ public class AdminGame {
         //matrix_util.printMatrix(W);
 
         // First, each user change its opinion according to the FJ model
-        System.out.println("the first z: ");
+        System.out.println("\nthe first z: ");
         matrix_util.printVector(s);
         double[] z = optimization.minZ(W, s);
-        System.out.println("the first z: ");
+        System.out.println("\nz after the FJ effect: ");
         matrix_util.printVector(z);
 
         ArrayList<Double> pls = new ArrayList<>();
         pls.add(optimization.computePls(z));
-        System.out.println("pls before iteration: "+ optimization.computePls(z));
+        System.out.println("\npls before iteration: "+ optimization.computePls(z));
 
         double[][] L = matrix_util.createL(W, W.length);
 
         ArrayList<Double> disaggs = new ArrayList<>();
         disaggs.add(computeDisagreement(z, L));
-        System.out.println("disagg before iteration: "+computeDisagreement(z, L));
+        System.out.println("\ndisagg before iteration: "+computeDisagreement(z, L));
 
         int i = 0;
         boolean flag = true;
@@ -40,7 +40,7 @@ public class AdminGame {
             try {
                 // Admin changes weight matrix
                 Wnew = optimization.minWGurobi(z, lam, A, reducePls, gam, existing);
-                System.out.println("new W matrix");
+                System.out.println("\nnew W matrix");
                 matrix_util.printMatrix(Wnew);
                 // ここのWがAだと最初の重み状態からの変化で、あんま意味ない気がする。
             } catch (GRBException e) {
@@ -48,16 +48,16 @@ public class AdminGame {
                 e.printStackTrace();
             }
             // After Admin action, each user change its opinion according to the FJ model
-            System.out.println("Z: ");
+            System.out.println("\nz before this time Admin effect: ");
             matrix_util.printVector(z);
             double[] znew = optimization.minZ(Wnew, s);
-            System.out.println("New Z: ");
+            System.out.println("\nNew z after Admin effect: ");
             matrix_util.printVector(znew);
 
             // Terminal Criterion(both z and W can be considered to be converged, or maxIter
             // criterion)
             if (Math.max(norm(z, znew), matrixNorm(W, Wnew)) < 5e-1 || i > maxIter - 1) {
-                System.out.println("Terminal Criterion!!!!!!!");
+                System.out.println("\nTerminal Criterion!!!!!!!");
                 flag = false;
             }
 
@@ -65,11 +65,11 @@ public class AdminGame {
             W = Wnew;
             i++;
             double PLS = optimization.computePls(z); 
-            System.out.println("pls: "+ PLS);
+            System.out.println("\npls: "+ PLS);
             pls.add(PLS);
             L = matrix_util.createL(W, W.length);
             double disagg = computeDisagreement(z, L);
-            System.out.println("disagg: "+disagg);
+            System.out.println("\ndisagg: "+disagg);
             disaggs.add(disagg);
         }
         return new Result(pls, disaggs, z, W);

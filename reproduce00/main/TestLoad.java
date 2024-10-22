@@ -117,9 +117,10 @@ public class TestLoad{
             }
             //投稿のopinion値の平均を取ってZ行列に入れる。
             z[i] = sum / opinions.size();
-            if (i % 10 == 0) {
+            
+            /*if (i % 10 == 0) {
                 System.out.printf("%d opinion: %.2f\n", i, z[i]); // %.2f は小数点以下2桁まで表示するフォーマット
-            }
+            }*/
         }
 
         double[][] L = matrix_util.createL(A, nSNS);
@@ -135,7 +136,7 @@ public class TestLoad{
         for (int i = 0; i < s.length; i++) {
             s[i] = Math.min(Math.max(s[i], 0), 1);
         }
-        System.out.println("the intrinsic z : ");
+        System.out.println("\nthe intrinsic z after clip: ");
         matrix_util.printVector(s);
 
         /*int a = 0, b = 0, c = 0, d = 0;
