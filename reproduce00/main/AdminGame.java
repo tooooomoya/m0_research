@@ -40,8 +40,8 @@ public class AdminGame {
             try {
                 // Admin changes weight matrix
                 Wnew = optimization.minWGurobi(z, lam, A, reducePls, gam, existing);
-                //System.out.println("\nnew W matrix");
-                //matrix_util.printMatrix(Wnew);
+                System.out.println("\nnew W matrix");
+                matrix_util.printMatrix(Wnew);
                 // ここのWがAだと最初の重み状態からの変化で、あんま意味ない気がする。
             } catch (GRBException e) {
                 System.out.println("Gurobi optimization error: " + e.getMessage());
@@ -51,8 +51,8 @@ public class AdminGame {
             //System.out.println("\nz before this time Admin effect: ");
             //matrix_util.printVector(z);
             double[] znew = optimization.minZ(Wnew, s);
-            //System.out.println("\nNew z after Admin effect: ");
-            //matrix_util.printVector(znew);
+            System.out.println("\nNew z after Admin effect: ");
+            matrix_util.printVector(znew);
 
             // Terminal Criterion(both z and W can be considered to be converged, or maxIter
             // criterion)

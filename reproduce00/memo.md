@@ -131,6 +131,12 @@ java -cp ".:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" MatrixInversionE
 
 	ipynbを用いたバグ検査の結果、disagg, plsの計算方法は間違っていない(同じzで同じinitialの値になっている。)が、やはりFJモデル(minZ)かAdmin(min_W)かで計算違いが起こっていて、最終的な結果、finalの方は違っている。このどちらかを確認してください。
 
+* 10/23
+	Wの計算結果が違う。
+	min_Z関数は合っていた。やはりmin_w関数が何か違う。
+
+	直せました。あとは、pythonの方ではWが0,1だけの行列が一度デバッグされるんだけど、Javaではない。なんか回数が違うとかカモ。でも、計算は小数まであってます！！！
+
 ## 謎
 * 個々のノードがもつエッジの重みの合計値は保存されるはずだが、それで変化は起きるのか？まあ起きるのか、、
 
@@ -150,6 +156,7 @@ java -cp ".:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" MatrixInversionE
 	→でも計算した後のsは全体的にばらけている。
 * グラフ描画も早めにできるようになりたい。
 * constsフォルダを作成して、constファイルを置いて、そこからの参照で定数を設定する。植木さんのnetwork.javaに書いてある。
+* existingの方についてはどうせ使わないから、チェックしてません。
 
 ## ToDo
 * 逆行列の計算と、最適化の部分でJavaフレームワークを導入する。

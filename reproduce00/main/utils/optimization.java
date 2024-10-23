@@ -47,6 +47,7 @@ public class optimization {
     public static double[][] minWGurobi(double[] z, double lam, double[][] W0, boolean reducePls, double gam,
             boolean existing) throws GRBException {
         int n = z.length;
+        System.out.println("the number of n: "+ n);
 
         System.out.println("---------- guroubi information ----------");
         GRBEnv env = new GRBEnv("minW.log");
@@ -58,17 +59,31 @@ public class optimization {
         GRBVar[][] x = new GRBVar[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
+                if(i > j){
                 x[i][j] = model.addVar(0.0, GRB.INFINITY, 0.0, GRB.CONTINUOUS, "x_" + i + "_" + j);
-                x[j][i] = x[i][j]; // 対称行列を作る →いるか？
+                //x[j][i] = x[i][j]; // 対称行列を作る →いるか？
+                }
             }
         }
         // x_1_2みたいなguroubi用の変数ができる。
 
         // check
-        // System.out.println("Number of variables created: " + x.length);
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i > j && x[i][j] != null) {
+                    count++;
+                }
+            }
+        }
+        
+        // Print the count of non-null variables
+        System.out.println("Number of non-null x variables: " + count);
+
 
         // Objective: minimize ∑_ij w_ij (zi - zj)^2
         GRBQuadExpr objExp = new GRBQuadExpr();
+        //objExpは最小化する目的関数となる。
         if (existing) {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
@@ -84,6 +99,7 @@ public class optimization {
                     if (i > j) {
                         double wij = (z[i] - z[j]) * (z[i] - z[j]);
                         objExp.addTerm(wij, x[i][j]);
+                        //wij(coefficient)*x[i][j]という項(Term)をAddする、という意味
                     }
                 }
             }
@@ -133,13 +149,13 @@ public class optimization {
             } else {
                 // 制約をすべてのエッジに対して追加
                 for (int j = i + 1; j < n; j++) {
-                    if (x[i][j] != null) {
-                        expr.addTerm(1.0, x[i][j]);
+                    if (x[j][i] != null) {
+                        expr.addTerm(1.0, x[j][i]);
                     }
                 }
                 for (int j = 0; j < i; j++) {
                     if (x[i][j] != null) {
-                        expr.addTerm(1.0, x[j][i]);
+                        expr.addTerm(1.0, x[i][j]);
                     }
                 }
             }
@@ -163,29 +179,27 @@ public class optimization {
         }
         double rhs = lam * lam * normW0Squared;
 
+        GRBQuadExpr expr1 = new GRBQuadExpr();
         // Create the expression for the constraint: ∑(wij - w0ij)
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (i > j) { // Only consider pairs where i > j
-                    // Create a quadratic expression for the constraint
-                    GRBQuadExpr expr = new GRBQuadExpr();
-
+                    
                     // Add the terms to the quadratic expression
                     if (existing && W0[i][j] > 0) {
-                        expr.addTerm(1.0, x[i][j], x[i][j]); // x[i,j]^2
-                        expr.addTerm(-2.0 * W0[i][j], x[i][j]); // -2 * W0[i,j] * x[i,j]
-                        expr.addConstant(W0[i][j] * W0[i][j]); // W0[i,j]^2 as a constant
+                        expr1.addTerm(1.0, x[i][j], x[i][j]); // x[i,j]^2
+                        expr1.addTerm(-2.0 * W0[i][j], x[i][j]); // -2 * W0[i,j] * x[i,j]
+                        expr1.addConstant(W0[i][j] * W0[i][j]); // W0[i,j]^2 as a constant
                     } else if (!existing) {
-                        expr.addTerm(1.0, x[i][j], x[i][j]); // x[i,j]^2
-                        expr.addTerm(-2.0 * W0[i][j], x[i][j]); // -2 * W0[i,j] * x[i,j]
-                        expr.addConstant(W0[i][j] * W0[i][j]); // W0[i,j]^2 as a constant
+                        expr1.addTerm(1.0, x[i][j], x[i][j]); // x[i,j]^2
+                        expr1.addTerm(-2.0 * W0[i][j], x[i][j]); // -2 * W0[i,j] * x[i,j]
+                        expr1.addConstant(W0[i][j] * W0[i][j]); // W0[i,j]^2 as a constant
                     }
-
-                    // Add the quadratic constraint: expr <= rhs
-                    model.addQConstr(expr, GRB.LESS_EQUAL, rhs, "q_constraint_" + i + "_" + j);
                 }
             }
         }
+        // Add the quadratic constraint: expr <= rhs
+        model.addQConstr(expr1, GRB.LESS_EQUAL, rhs, "q_constraint");
 
         // Optimize the model
         model.optimize();
