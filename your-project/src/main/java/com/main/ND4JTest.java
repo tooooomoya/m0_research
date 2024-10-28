@@ -1,8 +1,7 @@
-package com.myresearch;
+package com.main;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
-
 
 public class ND4JTest {
     public static void main(String[] args) {
