@@ -10,8 +10,8 @@ public class PlotResults {
         HashMap<Double, Result> rd = resultPair.getRd();
         HashMap<Double, Result> rdFix = resultPair.getRdFix();
 
-        double[] lamvals = {0.1, 0.2, 0.3, 0.4, 0.5};
-        //int[] lamvals = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+        //double[] lamvals = {0.1, 0.2, 0.3, 0.4, 0.5};
+        double[] lamvals = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
         //plsAfterList = matrix_util.createZeroMatrix(lamvals.length, lamvals.length);
         double[] plsRatioList = new double[lamvals.length];
         //plsRatioList = matrix_util.createZeroMatrix(lamvals.length, lamvals.length);
@@ -37,15 +37,14 @@ public class PlotResults {
         }catch(IOException e){
             e.printStackTrace();
         }
-
     }
 
     public void exportDisagg(ResultPair resultPair, String filename){
         HashMap<Double, Result> rd = resultPair.getRd();
         HashMap<Double, Result> rdFix = resultPair.getRdFix();
 
-        double[] lamvals = {0.1, 0.2, 0.3, 0.4, 0.5};
-        //int[] lamvals = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+        //double[] lamvals = {0.1, 0.2, 0.3, 0.4, 0.5};
+        double[] lamvals = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
         //disaggAfterList = matrix_util.createZeroMatrix(lamvals.length, lamvals.length);
         double[] disaggRatioList = new double[lamvals.length];
         //disaggRatioList = matrix_util.createZeroMatrix(lamvals.length, lamvals.length);
@@ -73,5 +72,4 @@ public class PlotResults {
             e.printStackTrace();
         }
     }
-    
 }
