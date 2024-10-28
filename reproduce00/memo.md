@@ -56,6 +56,11 @@ javac -cp ".:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" MatrixInversion
 java -cp ".:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" MatrixInversionExample
 ```
 
+### ND4J
+```
+javac -cp ".:/Library/Java/Extensions/nd4j-native-0.9.1.jar" -d out ND4JTest.java
+```
+
 ## Progress
 * 7/28
 	ln[268]の"load NW and Opinion"まで終了
