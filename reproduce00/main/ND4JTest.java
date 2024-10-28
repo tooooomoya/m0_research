@@ -3,7 +3,7 @@ import org.nd4j.linalg.factory.Nd4j;
 
 public class ND4JTest {
     public static void main(String[] args) {
-        // Create two matrices
+        // Create two matrices using Nd4j.create()
         INDArray matrixA = Nd4j.create(new double[][]{
             {1, 2, 3},
             {4, 5, 6},

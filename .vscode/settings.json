@@ -2,12 +2,10 @@
     "java.project.sourcePaths": [
         "test_for_javaenv",
         "reproduce00",
-        "hello-world/src/main/java/org/tkr/app"
     ],
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
         "/Library/gurobi1103/macos_universal2/lib/gurobi.jar",
-        "/Library/ApacheCommonsMath/commons-math3-3.6.1.jar",
-        "/Library/Java/Extensions/nd4j-native-0.9.1.jar"
+        "/Library/ApacheCommonsMath/commons-math3-3.6.1.jar"
     ]
 }
