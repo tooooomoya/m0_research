@@ -22,6 +22,7 @@ public class Main {
             A = loadTest.getAdjacencyMatrix();
             s = loadTest.getIntrinsicOpinions();
         }
+        
 
         RunSimulate runSimulate = new RunSimulate(A, s);
         ResultPair resultPair = runSimulate.runDynamics();

@@ -43,8 +43,8 @@ public class LoadNW {
                         int v = Integer.parseInt(parts[1].trim()) - 1;
                         if (u >= 0 && u < nSNS && v >= 0 && v < nSNS) {
                             // 2 sets of nodes indexes in the "edges_SNS.txt" file mean interaction between them
-                            A[u][v] += 1;
-                            A[v][u] += 1;
+                            A[u][v] = 1;
+                            A[v][u] = 1;
                         }
                     } catch (NumberFormatException e) {
                         System.err.println("Number format exception: " + e.getMessage());
@@ -103,6 +103,8 @@ public class LoadNW {
             }
             if (!connected) {
                 notConnected.add(i);
+                A = removeRowAndColumn(A, i);
+                nSNS -= 1;
             }
         }
 
@@ -127,16 +129,16 @@ public class LoadNW {
         double[][] I = matrix_util.createIdentityMatrix(nSNS);
         double[][] LPlusI = matrix_util.add(L, I);
         // "s" is intrinsic opinion(個人に潜在的で本質的な不変のopinion value)
-        //System.out.println("\nthe innate z: ");
-        //matrix_util.printVector(z);
+        System.out.println("\nthe innate z: ");
+        matrix_util.printVector(z);
         s = matrix_util.multiplyMatrixVector(LPlusI, z);
-        //System.out.println("\nthe intrinsic z: ");
-        //matrix_util.printVector(s);
 
         // clipping to the scale of max 1, min 0
         for (int i = 0; i < s.length; i++) {
             s[i] = Math.min(Math.max(s[i], 0), 1);
         }
+        System.out.println("\nthe intrinsic s: ");
+        matrix_util.printVector(s);
 
         /*int a = 0, b = 0, c = 0, d = 0;
         for (int i = 0; i < s.length; i++) {
@@ -165,6 +167,30 @@ public class LoadNW {
     }
     public double[] getIntrinsicOpinions(){
         return s;
+    }
+    public static double[][] removeRowAndColumn(double[][] matrix, int i) {
+        int n = matrix.length;
+        
+        // Check for valid index and square matrix
+        if (i < 0 || i >= n || matrix[0].length != n) {
+            throw new IllegalArgumentException("Invalid index or non-square matrix.");
+        }
+
+        double[][] newMatrix = new double[n - 1][n - 1];
+        
+        for (int row = 0, newRow = 0; row < n; row++) {
+            if (row == i) continue;  // Skip the specified row
+            
+            for (int col = 0, newCol = 0; col < n; col++) {
+                if (col == i) continue;  // Skip the specified column
+                
+                newMatrix[newRow][newCol] = matrix[row][col];
+                newCol++;
+            }
+            newRow++;
+        }
+
+        return newMatrix;
     }
     public static void main(String[] args) {
         int whichSNS = Integer.parseInt(args[0].trim());
