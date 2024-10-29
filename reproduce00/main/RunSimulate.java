@@ -25,18 +25,20 @@ public class RunSimulate{
         for(int i = 0; i<lamList.length; i++){
             System.out.println("\n---------------Start the Experiment with lambda:" + lamList[i]);
 
-            /* 
+            
             System.out.println(("\nno fix"));
             //System.out.println("lam:" + lamList[i]);
             Result resultNoFix = AdminGame.am(A, s, lamList[i], false, 0, maxIter, false);
             // no fix -> gamma = 0
             rd.put(lamList[i], resultNoFix);
-            */
             
+            
+            /* 
             System.out.println("with fix");
             System.out.println("lam:" + lamList[i]);
             Result resultFix = AdminGame.am(A, s, lamList[i], true, gam, maxIter, false);
             rdFix.put(lamList[i], resultFix);
+            */
         }
 
         ResultPair resultPair = new ResultPair(rd, rdFix);

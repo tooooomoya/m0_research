@@ -37,6 +37,7 @@ public class AdminGame {
             System.out.println("--------------------------");
             System.out.println("Iteration:" + i);
 
+            
             try {
                 // Admin changes weight matrix
                 Wnew = optimization.minWGurobi(z, lam, A, reducePls, gam, existing);
@@ -47,6 +48,9 @@ public class AdminGame {
                 System.out.println("Gurobi optimization error: " + e.getMessage());
                 e.printStackTrace();
             }
+            
+            //Wnew = W;
+
             // After Admin action, each user change its opinion according to the FJ model
             //System.out.println("\nz before this time Admin effect: ");
             //matrix_util.printVector(z);

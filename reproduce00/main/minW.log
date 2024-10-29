@@ -25353,3 +25353,314 @@ Iter       Primal          Dual         Primal    Dual     Compl     Time
 Barrier performed 48 iterations in 18.14 seconds (11.09 work units)
 Sub-optimal termination - objective 1.49224471e+02
 
+
+Gurobi 11.0.3 (mac64[arm], Java) logging started 水 10/30 00:14:48 2024
+
+Set parameter Username
+Academic license - for non-commercial use only - expires 2025-09-24
+Gurobi Optimizer version 11.0.3 build v11.0.3rc0 (mac64[arm] - Darwin 23.4.0 23E224)
+
+CPU model: Apple M1 Pro
+Thread count: 10 physical cores, 10 logical processors, using up to 10 threads
+
+Optimize a model with 553 rows, 152628 columns and 305256 nonzeros
+Model fingerprint: 0x7b6ad57b
+Model has 1 quadratic constraint
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  QMatrix range    [1e+00, 1e+00]
+  QLMatrix range   [2e+00, 2e+00]
+  Objective range  [6e-15, 2e-03]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 7e+01]
+  QRHS range       [9e+03, 9e+03]
+Presolve time: 0.12s
+Presolved: 153183 rows, 152630 columns, 466855 nonzeros
+Presolved model has 1 second-order cone constraint
+Ordering time: 0.06s
+
+Barrier statistics:
+ Dense cols : 1
+ AA' NZ     : 6.206e+05
+ Factor NZ  : 7.738e+05 (roughly 130 MB of memory)
+ Factor Ops : 5.966e+07 (less than 1 second per iteration)
+ Threads    : 10
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0   6.71199898e-01  6.71199897e-01  1.20e+02 1.93e+01  9.65e+02     0s
+   1   3.10341968e-01 -2.61025177e+02  5.61e+02 2.88e+00  1.94e+02     0s
+   2   6.05804393e-01 -3.06273520e+02  1.62e+02 3.17e-06  4.02e+01     1s
+   3   7.58827169e-01 -2.93113997e+02  4.79e+00 1.15e-06  1.63e+00     1s
+   4   6.58723002e-01 -1.64883813e+02  1.16e+00 3.14e-09  3.68e-01     1s
+   5   6.73568736e-01 -1.53512481e+01  2.37e-02 1.56e-08  2.76e-02     1s
+   6   6.68430373e-01 -3.32337341e-01  6.45e-03 8.15e-08  1.68e-03     1s
+   7   6.26563483e-01  1.08397995e-01  8.94e-06 4.28e-08  8.69e-04     2s
+   8   5.76009597e-01  3.43761011e-01  2.66e-09 1.70e-08  3.90e-04     2s
+   9   5.51631458e-01  4.67724992e-01  1.14e-09 3.06e-08  1.41e-04     2s
+  10   5.38348845e-01  5.09694100e-01  3.11e-10 4.95e-08  4.81e-05     3s
+  11   5.38325197e-01  5.09865025e-01  4.47e-03 4.49e-04  4.77e-05     3s
+  12   5.36363607e-01  5.20523387e-01  1.53e-03 2.47e-04  2.66e-05     3s
+  13   5.34188244e-01  5.26523520e-01  1.03e-05 1.19e-04  1.29e-05     4s
+  14   5.32502185e-01  5.29363562e-01  3.80e-06 4.17e-05  5.26e-06     4s
+  15   5.32048661e-01  5.31325840e-01  2.49e-06 8.81e-06  1.21e-06     4s
+  16   5.32051123e-01  5.31420194e-01  6.58e-03 3.71e-05  1.05e-06     4s
+  17   5.31954563e-01  5.31795177e-01  1.36e-05 1.19e-05  2.67e-07     5s
+  18   5.31932234e-01  5.31900411e-01  6.58e-08 1.96e-06  5.34e-08     5s
+  19   5.31927863e-01  5.31923315e-01  1.03e-07 1.65e-07  7.63e-09     5s
+  20   5.31926667e-01  5.31925996e-01  1.74e-07 6.47e-08  1.13e-09     6s
+  21   5.31926491e-01  5.31926448e-01  6.39e-06 7.96e-05  7.11e-11     6s
+
+Barrier solved model in 21 iterations and 6.23 seconds (2.62 work units)
+Optimal objective 5.31926491e-01
+
+
+Gurobi 11.0.3 (mac64[arm], Java) logging started 水 10/30 00:14:54 2024
+
+Set parameter Username
+Academic license - for non-commercial use only - expires 2025-09-24
+Gurobi Optimizer version 11.0.3 build v11.0.3rc0 (mac64[arm] - Darwin 23.4.0 23E224)
+
+CPU model: Apple M1 Pro
+Thread count: 10 physical cores, 10 logical processors, using up to 10 threads
+
+Optimize a model with 553 rows, 152628 columns and 305256 nonzeros
+Model fingerprint: 0x9e403578
+Model has 1 quadratic constraint
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  QMatrix range    [1e+00, 1e+00]
+  QLMatrix range   [2e+00, 2e+00]
+  Objective range  [6e-15, 4e-03]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 7e+01]
+  QRHS range       [9e+03, 9e+03]
+Presolve time: 0.11s
+Presolved: 153183 rows, 152630 columns, 466855 nonzeros
+Presolved model has 1 second-order cone constraint
+Ordering time: 0.06s
+
+Barrier statistics:
+ Dense cols : 1
+ AA' NZ     : 6.206e+05
+ Factor NZ  : 7.738e+05 (roughly 130 MB of memory)
+ Factor Ops : 5.966e+07 (less than 1 second per iteration)
+ Threads    : 10
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0   1.07006220e+00  1.07006220e+00  1.20e+02 3.17e+01  1.59e+03     0s
+   1   4.07458573e-01 -4.41132953e+02  3.36e+02 3.97e+00  2.51e+02     0s
+   2   8.06376902e-01 -5.00973803e+02  3.68e+02 4.37e-06  9.61e+01     1s
+   3   6.89350418e-01 -4.85548990e+02  3.83e+01 1.30e-06  1.07e+01     1s
+   4   1.11404095e+00 -2.62577396e+02  5.49e+00 1.93e-10  1.75e+00     1s
+   5   1.03875373e+00 -1.09016780e+02  1.67e+00 5.98e-09  5.25e-01     1s
+   6   1.05137711e+00 -3.70390891e+01  9.00e-01 2.26e-06  1.88e-01     1s
+   7   1.06878844e+00 -1.98377318e+01  4.46e-03 1.99e-04  3.55e-02     1s
+   8   1.06429966e+00 -3.09145643e-02  2.01e-03 8.89e-06  1.84e-03     1s
+   9   9.77213694e-01  4.28530456e-01  1.22e-05 3.89e-06  9.20e-04     2s
+  10   9.29847143e-01  7.57321652e-01  8.16e-07 1.31e-06  2.89e-04     2s
+  11   9.04211372e-01  8.09826756e-01  5.86e-09 2.29e-07  1.58e-04     3s
+  12   8.83747635e-01  7.98050228e-01  6.12e-09 2.90e-07  1.44e-04     3s
+  13   8.74740290e-01  8.26568553e-01  5.45e-09 1.09e-07  8.08e-05     3s
+  14   8.66603308e-01  8.24891711e-01  1.10e-08 6.67e-09  7.00e-05     4s
+  15   8.55291112e-01  8.36958697e-01  6.81e-09 8.41e-09  3.07e-05     4s
+  16   8.45848906e-01  8.37842928e-01  9.52e-09 4.78e-09  1.34e-05     4s
+  17   8.42115194e-01  8.38870364e-01  5.48e-09 1.69e-08  5.44e-06     5s
+  18   8.40027154e-01  8.39293099e-01  1.87e-09 1.96e-09  1.23e-06     5s
+  19   8.39904137e-01  8.39615929e-01  7.91e-08 1.71e-07  4.83e-07     6s
+  20   8.39880052e-01  8.39769737e-01  5.83e-08 1.47e-07  1.85e-07     6s
+  21   8.39872492e-01  8.39837136e-01  2.88e-07 3.36e-06  5.93e-08     6s
+  22   8.39867618e-01  8.39856626e-01  1.59e-07 1.23e-06  1.84e-08     7s
+  23   8.39865281e-01  8.39862197e-01  1.60e-07 2.90e-07  5.17e-09     7s
+  24   8.39864167e-01  8.39863429e-01  1.77e-07 2.19e-08  1.24e-09     7s
+  25   8.39863707e-01  8.39863586e-01  9.24e-07 6.49e-07  2.03e-10     8s
+
+Barrier solved model in 25 iterations and 7.92 seconds (3.32 work units)
+Optimal objective 8.39863707e-01
+
+
+Gurobi 11.0.3 (mac64[arm], Java) logging started 水 10/30 00:15:03 2024
+
+Set parameter Username
+Academic license - for non-commercial use only - expires 2025-09-24
+Gurobi Optimizer version 11.0.3 build v11.0.3rc0 (mac64[arm] - Darwin 23.4.0 23E224)
+
+CPU model: Apple M1 Pro
+Thread count: 10 physical cores, 10 logical processors, using up to 10 threads
+
+Optimize a model with 553 rows, 152628 columns and 305256 nonzeros
+Model fingerprint: 0xf99683c3
+Model has 1 quadratic constraint
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  QMatrix range    [1e+00, 1e+00]
+  QLMatrix range   [2e+00, 2e+00]
+  Objective range  [7e-15, 5e-03]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 7e+01]
+  QRHS range       [9e+03, 9e+03]
+Presolve time: 0.12s
+Presolved: 153183 rows, 152630 columns, 466855 nonzeros
+Presolved model has 1 second-order cone constraint
+Ordering time: 0.07s
+
+Barrier statistics:
+ Dense cols : 1
+ AA' NZ     : 6.206e+05
+ Factor NZ  : 7.738e+05 (roughly 130 MB of memory)
+ Factor Ops : 5.966e+07 (less than 1 second per iteration)
+ Threads    : 10
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0   1.07636295e+00  1.07636295e+00  1.20e+02 3.26e+01  1.63e+03     0s
+   1   4.43856567e-01 -4.69618633e+02  6.67e+02 3.05e+00  1.98e+02     0s
+   2   1.05936695e+00 -4.83203324e+02  2.63e+02 2.01e+00  7.93e+01     1s
+   3   1.04167101e+00 -4.88845236e+02  1.66e+02 2.21e-06  5.08e+01     1s
+   4   1.01354773e+00 -4.78125118e+02  4.74e+01 1.67e-06  1.48e+01     1s
+   5   1.11864305e+00 -3.71581824e+02  6.83e+00 3.89e-10  1.15e+00     1s
+   6   1.11049538e+00 -1.23983650e+02  5.13e+00 3.32e-09  4.31e-01     1s
+   7   1.07985568e+00 -2.81555001e+01  6.32e-01 9.03e-07  5.38e-02     1s
+   8   1.06355480e+00 -3.76726008e-01  6.06e-02 1.23e-07  2.42e-03     1s
+   9   9.76786856e-01  7.97013590e-02  5.26e-03 1.14e-07  1.50e-03     2s
+  10   9.31693843e-01  5.70382153e-01  3.88e-04 7.57e-08  6.06e-04     2s
+  11   8.89055052e-01  7.78992440e-01  2.49e-06 3.95e-09  1.85e-04     2s
+  12   8.77098543e-01  8.19507174e-01  1.41e-06 5.52e-08  9.66e-05     3s
+  13   8.63037219e-01  8.29547999e-01  7.07e-07 3.09e-08  5.62e-05     3s
+  14   8.54309606e-01  8.34459755e-01  4.09e-07 3.61e-08  3.33e-05     3s
+  15   8.45683338e-01  8.39475641e-01  1.32e-07 7.87e-09  1.04e-05     3s
+  16   8.41992287e-01  8.40809065e-01  1.59e-08 9.60e-08  1.98e-06     4s
+  17   8.41991095e-01  8.40847545e-01  5.52e-03 3.13e-04  1.91e-06     4s
+  18   8.41577407e-01  8.41268802e-01  9.15e-05 1.17e-04  5.17e-07     4s
+  19   8.41524863e-01  8.41418230e-01  1.83e-06 4.70e-05  1.79e-07     4s
+  20   8.41519800e-01  8.41490944e-01  5.34e-07 1.99e-05  4.84e-08     5s
+  21   8.41517718e-01  8.41512356e-01  4.98e-07 2.28e-06  8.99e-09     5s
+  22   8.41516650e-01  8.41515382e-01  9.33e-08 3.86e-07  2.13e-09     5s
+  23   8.41516156e-01  8.41515958e-01  7.60e-08 1.05e-06  3.33e-10     6s
+
+Barrier solved model in 23 iterations and 5.54 seconds (2.40 work units)
+Optimal objective 8.41516156e-01
+
+
+Gurobi 11.0.3 (mac64[arm], Java) logging started 水 10/30 00:15:09 2024
+
+Set parameter Username
+Academic license - for non-commercial use only - expires 2025-09-24
+Gurobi Optimizer version 11.0.3 build v11.0.3rc0 (mac64[arm] - Darwin 23.4.0 23E224)
+
+CPU model: Apple M1 Pro
+Thread count: 10 physical cores, 10 logical processors, using up to 10 threads
+
+Optimize a model with 553 rows, 152628 columns and 305256 nonzeros
+Model fingerprint: 0x21e8d890
+Model has 1 quadratic constraint
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  QMatrix range    [1e+00, 1e+00]
+  QLMatrix range   [2e+00, 2e+00]
+  Objective range  [4e-15, 5e-03]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 7e+01]
+  QRHS range       [9e+03, 9e+03]
+Presolve time: 0.12s
+Presolved: 153183 rows, 152630 columns, 466855 nonzeros
+Presolved model has 1 second-order cone constraint
+Ordering time: 0.07s
+
+Barrier statistics:
+ Dense cols : 1
+ AA' NZ     : 6.206e+05
+ Factor NZ  : 7.738e+05 (roughly 130 MB of memory)
+ Factor Ops : 5.966e+07 (less than 1 second per iteration)
+ Threads    : 10
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0   1.07841394e+00  1.07841394e+00  1.20e+02 3.31e+01  1.66e+03     0s
+   1   4.45665069e-01 -4.66322433e+02  3.36e+01 3.75e+00  2.50e+02     0s
+   2   9.93181577e-01 -4.88899167e+02  1.20e+01 2.24e+00  8.84e+01     1s
+   3   8.86810837e-01 -5.00925606e+02  5.42e+00 2.46e-06  3.96e+01     1s
+   4   8.52826179e-01 -4.52350298e+02  2.49e+00 2.04e-07  4.67e+00     1s
+   5   9.79409797e-01 -2.73793091e+02  1.38e+00 1.79e-10  2.29e+00     1s
+   6   1.13368708e+00 -1.08903594e+02  3.47e+00 2.22e-07  6.95e-01     1s
+   7   1.09483909e+00 -4.99210137e+01  5.32e-01 2.34e-06  1.40e-01     1s
+   8   1.08518093e+00 -1.58848403e+01  2.15e-01 9.30e-07  2.85e-02     1s
+   9   1.08105789e+00 -2.77952774e-01  8.24e-05 1.70e-07  2.28e-03     2s
+  10   1.02325939e+00 -7.76422228e-03  2.15e-06 1.29e-07  1.73e-03     2s
+  11   9.74284033e-01  5.81181008e-01  9.83e-08 3.94e-08  6.59e-04     2s
+  12   9.63200835e-01  7.49398693e-01  7.72e-08 8.69e-08  3.59e-04     3s
+  13   9.20916068e-01  7.95698720e-01  2.33e-09 4.78e-08  2.10e-04     3s
+  14   9.00089900e-01  7.98771137e-01  1.61e-09 2.55e-08  1.70e-04     3s
+  15   8.89268854e-01  8.16591975e-01  3.78e-09 6.22e-08  1.22e-04     4s
+  16   8.72397303e-01  8.28228317e-01  3.79e-09 1.29e-08  7.41e-05     4s
+  17   8.59458392e-01  8.35643192e-01  4.12e-09 1.04e-08  3.99e-05     4s
+  18   8.49913282e-01  8.38594645e-01  2.92e-09 2.65e-10  1.90e-05     5s
+  19   8.41849276e-01  8.40297600e-01  1.46e-08 3.67e-08  2.60e-06     5s
+  20   8.41612122e-01  8.41147903e-01  2.02e-08 2.68e-08  7.79e-07     6s
+  21   8.41576808e-01  8.41436993e-01  3.04e-08 1.28e-04  2.35e-07     6s
+  22   8.41564912e-01  8.41539748e-01  2.45e-08 2.23e-05  4.22e-08     6s
+  23   8.41561024e-01  8.41554785e-01  6.87e-08 4.83e-06  1.05e-08     6s
+  24   8.41558965e-01  8.41556342e-01  1.06e-07 1.29e-06  4.40e-09     7s
+  25   8.41557933e-01  8.41557084e-01  6.17e-08 1.36e-07  1.43e-09     7s
+  26   8.41557249e-01  8.41557107e-01  1.20e-05 1.58e-04  2.33e-10     7s
+
+Barrier solved model in 26 iterations and 7.49 seconds (3.18 work units)
+Optimal objective 8.41557249e-01
+
+
+Gurobi 11.0.3 (mac64[arm], Java) logging started 水 10/30 00:15:17 2024
+
+Set parameter Username
+Academic license - for non-commercial use only - expires 2025-09-24
+Gurobi Optimizer version 11.0.3 build v11.0.3rc0 (mac64[arm] - Darwin 23.4.0 23E224)
+
+CPU model: Apple M1 Pro
+Thread count: 10 physical cores, 10 logical processors, using up to 10 threads
+
+Optimize a model with 553 rows, 152628 columns and 305256 nonzeros
+Model fingerprint: 0xcc325f50
+Model has 1 quadratic constraint
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  QMatrix range    [1e+00, 1e+00]
+  QLMatrix range   [2e+00, 2e+00]
+  Objective range  [6e-15, 2e-03]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 7e+01]
+  QRHS range       [8e+03, 8e+03]
+Presolve time: 0.14s
+Presolved: 153183 rows, 152630 columns, 466855 nonzeros
+Presolved model has 1 second-order cone constraint
+Ordering time: 0.06s
+
+Barrier statistics:
+ Dense cols : 1
+ AA' NZ     : 6.206e+05
+ Factor NZ  : 7.738e+05 (roughly 130 MB of memory)
+ Factor Ops : 5.966e+07 (less than 1 second per iteration)
+ Threads    : 10
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0   6.73725819e-01  6.73725819e-01  1.14e+02 2.07e+01  9.85e+02     0s
+   1   3.45763009e-01 -3.02341375e+02  9.77e+02 1.72e+00  1.05e+02     0s
+   2   3.80583576e-01 -3.08998263e+02  3.79e+02 1.19e+00  4.14e+01     1s
+   3   5.10761867e-01 -3.09817341e+02  2.49e+02 1.30e-06  2.66e+01     1s
+   4   6.81399988e-01 -3.00159848e+02  5.05e+01 8.87e-07  5.28e+00     1s
+   5   6.52264286e-01 -2.13727688e+02  5.43e+00 3.27e-09  5.98e-01     1s
+   6   6.57020849e-01 -4.92523082e+01  3.00e+00 5.68e-09  1.41e-01     1s
+   7   6.63192013e-01 -1.11893064e+01  5.74e-01 2.40e-06  1.99e-02     1s
+   8   6.21997672e-01 -7.85236906e-01  6.02e-03 3.90e-07  2.36e-03     1s
+   9   6.10351829e-01 -2.57066807e-01  4.92e-05 2.38e-07  1.45e-03     2s
+  10   5.26847207e-01  1.03747062e-01  7.61e-06 9.64e-08  7.10e-04     2s
+  11   4.94099417e-01  2.41783886e-01  4.31e-06 4.38e-08  4.23e-04     2s
+  12   4.75964867e-01  3.50018786e-01  3.10e-06 3.63e-08  2.11e-04     3s
+  13   4.56022939e-01  3.62717303e-01  2.36e-06 9.35e-09  1.56e-04     3s
+  14   4.36890915e-01  3.81828309e-01  1.67e-06 1.09e-08  9.24e-05     3s
+  15   4.19956211e-01  3.87804700e-01  1.05e-06 3.38e-09  5.39e-05     4s
+  16   4.06372070e-01  3.90290721e-01  4.75e-07 1.49e-09  2.70e-05     4s
+  17   3.96893097e-01  3.91401627e-01  1.50e-07 1.07e-09  9.21e-06     4s
+  18   3.93230666e-01  3.91936563e-01  2.17e-08 7.68e-10  2.17e-06     4s
+  19   3.92700950e-01  3.92223720e-01  2.74e-09 1.39e-09  8.00e-07     5s
+  20   3.92620800e-01  3.92428715e-01  1.23e-09 1.10e-09  3.22e-07     5s
