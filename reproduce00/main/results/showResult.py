@@ -16,7 +16,7 @@ def plot_csv_data(csv_filename, output_filename):
     
     plt.xlabel('lambda')
     plt.ylabel('percent change in ' + val_name + ' / 100')
-    plt.title('Polarization with NW admin in ' + val_name)
+    plt.title('Polarization/Disagreement with NW admin in ' + val_name)
     plt.legend()
     
     plt.show()

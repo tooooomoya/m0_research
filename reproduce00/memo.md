@@ -161,6 +161,13 @@ javac -cp ".:/Library/Java/Extensions/nd4j-native-0.9.1.jar" -d out ND4JTest.jav
 	notConnectedも一応直した。
 
 	若干disaggの結果が違うが、、Testの方ではほとんどdisaggの値も一致しているので、誤差とみるのがいいかな。
+		→ただ誤差はdisaggもpltも同じぐらいIterationによる差があるとも思えない。
+	
+	元の論文の提案手法じゃない方は再現できた。（ほぼ）
+
+	ただ、提案手法の方は、regularizedしてる方は、sub-optimal statusということで最適解が存在しない？みたいな感じ。
+
+	まあ、reduceplsがtrueの方のコードがどこか間違っている可能性もあるので、それを検証しつつ、自分のやつもやってみればいいのでは？
 
 ## 謎
 * 個々のノードがもつエッジの重みの合計値は保存されるはずだが、それで変化は起きるのか？まあ起きるのか、、
