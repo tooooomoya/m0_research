@@ -26,13 +26,10 @@ public class optimization {
         // calculate (LPlusI)'s inverse matrix
         RealMatrix matrixLPlusI = MatrixUtils.createRealMatrix(LPlusI);
         // 微小な値を加えて正則化
-        /*
-         * double regularizationValue = 0.00000001;
-         * for (int i = 0; i < matrixLPlusI.getRowDimension(); i++) {
-         * matrixLPlusI.setEntry(i, i, matrixLPlusI.getEntry(i, i) +
-         * regularizationValue);
-         * }
-         */
+        /*double regularizationValue = 0.00000001;
+        for (int i = 0; i < matrixLPlusI.getRowDimension(); i++) {
+            matrixLPlusI.setEntry(i, i, matrixLPlusI.getEntry(i, i) + regularizationValue);
+        }*/
 
         LUDecomposition luDecomposition = new LUDecomposition(matrixLPlusI);
         RealMatrix inverseMatrix = luDecomposition.getSolver().getInverse();
@@ -50,27 +47,21 @@ public class optimization {
     public static double[][] minWGurobi(double[] z, double lam, double[][] W0, boolean reducePls, double gam,
             boolean existing) throws GRBException {
         int n = z.length;
-        System.out.println("the number of n: " + n);
+        System.out.println("the number of n: "+ n);
 
         System.out.println("---------- guroubi information ----------");
         GRBEnv env = new GRBEnv("minW.log");
-        env.set(GRB.IntParam.OutputFlag, 0); // Disable output for 0
+        env.set(GRB.IntParam.OutputFlag, 0); // Disable output
         GRBModel model = new GRBModel(env);
-        //model.set("BarHomogeneous", "1.0");
-        //model.set(GRB.IntParam.Method, 2); // Use Barrier method for QCP
-        //model.set(GRB.DoubleParam.BarConvTol, 1e-9); // Set tighter convergence tolerance
-        //model.set(GRB.DoubleParam.FeasibilityTol, 1e-6); // Adjust feasibility tolerance for numerical stability
-        //model.set(GRB.IntParam.BarIterLimit, 200); // Increase iteration limit to allow more iterations if needed
-
         System.out.println("---------- end information ----------");
 
         // Create variables x for the edges in the graph
         GRBVar[][] x = new GRBVar[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (i > j) {
-                    x[i][j] = model.addVar(0.0, GRB.INFINITY, 0.0, GRB.CONTINUOUS, "x_" + i + "_" + j);
-                    // x[j][i] = x[i][j]; // 対称行列を作る →いるか？
+                if(i > j){
+                x[i][j] = model.addVar(0.0, GRB.INFINITY, 0.0, GRB.CONTINUOUS, "x_" + i + "_" + j);
+                //x[j][i] = x[i][j]; // 対称行列を作る →いるか？
                 }
             }
         }
@@ -85,13 +76,14 @@ public class optimization {
                 }
             }
         }
-
+        
         // Print the count of non-null variables
         System.out.println("Number of non-null x variables: " + count);
 
+
         // Objective: minimize ∑_ij w_ij (zi - zj)^2
         GRBQuadExpr objExp = new GRBQuadExpr();
-        // objExpは最小化する目的関数となる。
+        //objExpは最小化する目的関数となる。
         if (existing) {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
@@ -107,7 +99,7 @@ public class optimization {
                     if (i > j) {
                         double wij = (z[i] - z[j]) * (z[i] - z[j]);
                         objExp.addTerm(wij, x[i][j]);
-                        // wij(coefficient)*x[i][j]という項(Term)をAddする、という意味
+                        //wij(coefficient)*x[i][j]という項(Term)をAddする、という意味
                     }
                 }
             }
@@ -123,7 +115,6 @@ public class optimization {
                 }
             }
         }
-
 
         model.setObjective(objExp, GRB.MINIMIZE);
         // System.out.println("Set the objective!");
@@ -193,7 +184,7 @@ public class optimization {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (i > j) { // Only consider pairs where i > j
-
+                    
                     // Add the terms to the quadratic expression
                     if (existing && W0[i][j] > 0) {
                         expr1.addTerm(1.0, x[i][j], x[i][j]); // x[i,j]^2
