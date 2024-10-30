@@ -40,7 +40,7 @@ public class AdminGame {
 
             try {
                 // Admin changes weight matrix
-                Wnew = optimization.minWGurobi(z, lam, A, reducePls, gam, existing);
+                Wnew = optimization.minWGurobi(z, lam, W, reducePls, gam, existing);
                 // System.out.println("\nnew W matrix");
                 // matrix_util.printMatrix(Wnew);
                 // ここのWがAだと最初の重み状態からの変化で、あんま意味ない気がする。
@@ -70,9 +70,9 @@ public class AdminGame {
             z = znew;
             W = Wnew;
             i++;
-            //double PLS = optimization.computePls(z);
+            double PLS = optimization.computePls(z);
 
-            double PLS = calculateDiversity(znew, Wnew);
+            //double PLS = calculateDiversity(znew, Wnew);
 
             System.out.println("\npls: " + PLS);
             pls.add(PLS);
