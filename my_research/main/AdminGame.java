@@ -70,18 +70,18 @@ public class AdminGame {
             } catch (GRBException e) {
                 System.out.println("Gurobi optimization error: " + e.getMessage());
                 e.printStackTrace();
-            }  
+            }   
 
             /// confirm the maximum weight
             double max_w = 0.0;
-            for(int i=0; i<z.length;i++){
+            for(int ii=0; ii<z.length;ii++){
                 for(int j=0; j<z.length; j++){
                     if(W[i][j] > max_w){
-                        max_w = W[i][j];
+                        max_w = W[ii][j];
                     }
                 }
             }
-            System.out.println("Maximum Weight of W matrix : " + max_w);
+            System.out.println("\nMaximum Weight of W matrix : " + max_w);
 
             // Wnew = W;
 
@@ -140,48 +140,51 @@ public class AdminGame {
     private static double norm(double[] a, double[] b) {
         double sum = 0.0;
         for (int i = 0; i < a.length; i++) {
-            sum += Math.pow(a[i] -  b[i], 2);
-        } 
+            sum += Math.pow(a[i] - b[i], 2);
+        }
         return Math.sqrt(sum);
     }
 
-                      
+    // Calculate the Frobenius norm of a matrix
+    private static double matrixNorm(double[][] matrix1, double[][] matrix2) {
+        if (matrix1.length != matrix2.length || matrix1[0].length != matrix2[0].length) {
+            throw new IllegalArgumentException("Matrices must be of the same dimensions.");
+        }
 
-                        
-                            legalArgumentExc
-                            
-                         
-                            u
-                    
+        double sumSquaredDifferences = 0.0;
+
         // Calculate the sum of squared differences of corresponding elements
         for (int i = 0; i < matrix1.length; i++) {
+            for (int j = 0; j < matrix1[i].length; j++) {
+                double difference = matrix1[i][j] - matrix2[i][j];
+                sumSquaredDifferences += difference * difference;
+            }
+        }
 
-                      
+        // Return the square root of the sum of squared differences
+        return Math.sqrt(sumSquaredDifferences);
+    }
 
-                        
-                            
-                                    
-                         
-                            a
-                    
+    // calculate z^T * L * z: Global disagreement is scalar
+    private static double computeDisagreement(double[] z, double[][] L) {
+        double[] temp = new double[z.length];
+        double disagreement = 0.0;
 
-    // calculate z^T * L * z: Global disagreement is 
- 
-                    p  = new double[ z
-
-                             
-                               L * z 
-                                i < z.length; i++) {
-                           
-         
+        // calculate L * z
+        for (int i = 0; i < z.length; i++) {
+            for (int j = 0; j < z.length; j++) {
+                temp[i] += L[i][j] * z[j];
+            }
+        }
 
         // then calculate z^T * temp
         for (int i = 0; i < z.length; i++) {
             disagreement += z[i] * temp[i];
-        }     
-  
-        return d is agreement;
+        }
+
+        return disagreement;
     }
+}
 
 
         
