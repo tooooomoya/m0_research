@@ -11,23 +11,22 @@ public class Main {
         System.out.println("Wanna apply random method? (true, false) : ");
         boolean random = scanner.nextBoolean();
 
-        double[][] A=null;
-        double[] s=null;
+        double[][] A = null;
+        double[] s = null;
 
-        if(whichSNS != 2){
-        LoadNW loadNW = new LoadNW(whichSNS);
-        A = loadNW.getAdjacencyMatrix(); // Aは隣接重み行列
-        s = loadNW.getIntrinsicOpinions(); // インスタンスメソッドの呼び出し
-        System.out.println("Load NW finished");
-        }
-        else{
+        if (whichSNS != 2) {
+            LoadNW loadNW = new LoadNW(whichSNS);
+            A = loadNW.getAdjacencyMatrix(); // Aは隣接重み行列
+            s = loadNW.getIntrinsicOpinions(); // インスタンスメソッドの呼び出し
+            System.out.println("Load NW finished");
+        } else {
             System.out.println("You chose Test Matrix.");
             TestLoad loadTest = new TestLoad(whichSNS);
             A = loadTest.getAdjacencyMatrix();
             s = loadTest.getIntrinsicOpinions();
         }
-        
-        double[] lamvals = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+
+        double[] lamvals = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 };
 
         RunSimulate runSimulate = new RunSimulate(A, s);
         ResultPair resultPair = runSimulate.runDynamics(lamvals, random);
@@ -41,19 +40,19 @@ public class Main {
             plotResults.exportGppls(resultPair, "Reddit", lamvals);
             plotResults.exportStfs(resultPair, "Reddit", lamvals);
             plotResults.exportDvs(resultPair, "Reddit", lamvals);
-        } else if(whichSNS == 1) {
+        } else if (whichSNS == 1) {
             plotResults.exportPls(resultPair, "Twitter", lamvals);
             plotResults.exportDisagg(resultPair, "Twitter", lamvals);
             plotResults.exportGppls(resultPair, "Twitter", lamvals);
             plotResults.exportStfs(resultPair, "Twitter", lamvals);
             plotResults.exportDvs(resultPair, "Twitter", lamvals);
-        } else if(whichSNS == 2) {
+        } else if (whichSNS == 2) {
             plotResults.exportPls(resultPair, "Test", lamvals);
             plotResults.exportDisagg(resultPair, "Test", lamvals);
             plotResults.exportGppls(resultPair, "Test", lamvals);
             plotResults.exportStfs(resultPair, "Test", lamvals);
             plotResults.exportDvs(resultPair, "Test", lamvals);
-        } 
+        }
 
         scanner.close();
     }

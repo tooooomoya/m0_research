@@ -151,15 +151,17 @@ public class calculater {
 
     /// Algorithm of Randomy Change of W
     public static List<int[]> selectPairs_v1(double[][] W, double[] z) {
-        int numPairs = (int) z.length / 2;
+        int numPairs = (int) z.length / 2 ;
         List<int[]> Pairs = new ArrayList<>();
 
         // W行列から値が0の(i, j)ペアを見つけてリストに格納
         for (int i = 0; i < W.length; i++) {
-            for (int j = 0; i < j || j < W[i].length; j++) {
+            for (int j = 0; j < W[i].length; j++) {
                 Pairs.add(new int[] { i, j });
             }
         }
+
+        numPairs = Math.min(numPairs, Pairs.size());
 
         // ランダムにnumPairs個のペアを選択
         List<int[]> selectedPairs = new ArrayList<>();

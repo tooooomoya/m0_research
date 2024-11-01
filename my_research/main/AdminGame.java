@@ -65,8 +65,8 @@ public class AdminGame {
                 finderror = optResult.getOpt();
                 Wnew = optResult.getW();
 
-                // System.out.println("\nnew W matrix");
-                // matrix_util.printMatrix(Wnew);
+                //System.out.println("\nnew W matrix");
+                //matrix_util.printMatrix(Wnew);
                 // ここのWがAだと最初の重み状態からの変化で、あんま意味ない気がする。
             } catch (GRBException e) {
                 System.out.println("Gurobi optimization error: " + e.getMessage());
@@ -76,9 +76,9 @@ public class AdminGame {
             if(random){
             /// My Method : randomly add weight
             List<int[]> selectedPairs = new ArrayList<>();
-            selectedPairs = calculater.selectPairs_v1(W,z);
+            selectedPairs = calculater.selectPairs_v1(Wnew,z);
             for (int[] pair : selectedPairs){
-                W[pair[0]][pair[1]] += 1;
+                Wnew[pair[0]][pair[1]] += 1;
             }
         }
 
@@ -86,8 +86,8 @@ public class AdminGame {
             double max_w = 0.0;
             for(int ii=0; ii<z.length;ii++){
                 for(int j=0; j<z.length; j++){
-                    if(W[i][j] > max_w){
-                        max_w = W[ii][j];
+                    if(Wnew[i][j] > max_w){
+                        max_w = Wnew[ii][j];
                     }
                 }
             }
@@ -136,6 +136,26 @@ public class AdminGame {
             double DVS = calculater.computeDvs(z, W);
             dvs.add(DVS);
             System.out.println("\ndvs: "+DVS);
+
+            int a = 0, b = 0, c = 0, d = 0;
+            for (int t = 0; t < z.length; t++) {
+                if (z[t] < 0.25) {
+                    a++;
+                } else if (z[t] < 0.5) {
+                    b++;
+                } else if (z[t] < 0.75) {
+                    c++;
+                } else {
+                    d++;
+                }
+            }
+
+            System.out.println("Confirm the distribution of intinsic opinions ↓↓↓");
+            System.out.printf("0 ~ 0.25: %d\n", a);
+            System.out.printf("0.25 ~ 0.5: %d\n", b);
+            System.out.printf("0.5 ~ 0.75: %d\n", c);
+            System.out.printf("0.75 ~ 1.0: %d\n", d);
+
         }
         return new Result(pls, disaggs, gppls, stfs, dvs, z, W, finderror);
     }

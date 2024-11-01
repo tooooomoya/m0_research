@@ -42,7 +42,8 @@ public class LoadNW {
                         int u = Integer.parseInt(parts[0].trim()) - 1;
                         int v = Integer.parseInt(parts[1].trim()) - 1;
                         if (u >= 0 && u < nSNS && v >= 0 && v < nSNS) {
-                            // 2 sets of nodes indexes in the "edges_SNS.txt" file mean interaction between them
+                            // 2 sets of nodes indexes in the "edges_SNS.txt" file mean interaction between
+                            // them
                             A[u][v] = 1;
                             A[v][u] = 1;
                         }
@@ -60,9 +61,9 @@ public class LoadNW {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputCsvPath))) {
             for (int i = 0; i < nSNS; i++) {
                 for (int j = 0; j < nSNS; j++) {
-                    writer.write(A[i][j] + ((j < nSNS - 1) ? "," : ""));  // カンマで区切る
+                    writer.write(A[i][j] + ((j < nSNS - 1) ? "," : "")); // カンマで区切る
                 }
-                writer.newLine();  // 行の終わりに改行を追加
+                writer.newLine(); // 行の終わりに改行を追加
             }
             System.out.println("Adjacency matrix saved to " + outputCsvPath);
         } catch (IOException e) {
@@ -116,13 +117,16 @@ public class LoadNW {
             for (Double opinion : opinions) {
                 sum += opinion;
             }
-            //投稿のopinion値の平均を取ってZ行列に入れる。
+            // 投稿のopinion値の平均を取ってZ行列に入れる。
             z[i] = sum / opinions.size();
-            
-            /*確認用
-            if (i % 10 == 0) {
-                System.out.printf("%d opinion: %.2f\n", i, z[i]); // %.2f は小数点以下2桁まで表示するフォーマット
-            }*/
+
+            /*
+             * 確認用
+             * if (i % 10 == 0) {
+             * System.out.printf("%d opinion: %.2f\n", i, z[i]); // %.2f
+             * は小数点以下2桁まで表示するフォーマット
+             * }
+             */
         }
 
         double[][] L = matrix_util.createL(A, nSNS);
@@ -140,50 +144,54 @@ public class LoadNW {
         System.out.println("\nthe intrinsic s: ");
         matrix_util.printVector(s);
 
-        /*int a = 0, b = 0, c = 0, d = 0;
-        for (int i = 0; i < s.length; i++) {
-            if (s[i] < 0.25) {
-                a++;
-            } else if (s[i] < 0.5) {
-                b++;
-            } else if (s[i] < 0.75) {
-                c++;
-            } else {
-                d++;
-            }
-        }
-        System.out.println("Confirm the distribution of intinsic opinions ↓↓↓");
-        System.out.printf("0 ~ 0.25: %d\n", a);
-        System.out.printf("0.25 ~ 0.5: %d\n", b);
-        System.out.printf("0.5 ~ 0.75: %d\n", c);
-        System.out.printf("0.75 ~ 1.0: %d\n", d);
-        */
-                
-                
+        /*
+         * int a = 0, b = 0, c = 0, d = 0;
+         * for (int i = 0; i < s.length; i++) {
+         * if (s[i] < 0.25) {
+         * a++;
+         * } else if (s[i] < 0.5) {
+         * b++;
+         * } else if (s[i] < 0.75) {
+         * c++;
+         * } else {
+         * d++;
+         * }
+         * }
+         * System.out.println("Confirm the distribution of intinsic opinions ↓↓↓");
+         * System.out.printf("0 ~ 0.25: %d\n", a);
+         * System.out.printf("0.25 ~ 0.5: %d\n", b);
+         * System.out.printf("0.5 ~ 0.75: %d\n", c);
+         * System.out.printf("0.75 ~ 1.0: %d\n", d);
+         */
 
     }
-    public double[][] getAdjacencyMatrix(){
+
+    public double[][] getAdjacencyMatrix() {
         return A;
     }
-    public double[] getIntrinsicOpinions(){
+
+    public double[] getIntrinsicOpinions() {
         return s;
     }
+
     public static double[][] removeRowAndColumn(double[][] matrix, int i) {
         int n = matrix.length;
-        
+
         // Check for valid index and square matrix
         if (i < 0 || i >= n || matrix[0].length != n) {
             throw new IllegalArgumentException("Invalid index or non-square matrix.");
         }
 
         double[][] newMatrix = new double[n - 1][n - 1];
-        
+
         for (int row = 0, newRow = 0; row < n; row++) {
-            if (row == i) continue;  // Skip the specified row
-            
+            if (row == i)
+                continue; // Skip the specified row
+
             for (int col = 0, newCol = 0; col < n; col++) {
-                if (col == i) continue;  // Skip the specified column
-                
+                if (col == i)
+                    continue; // Skip the specified column
+
                 newMatrix[newRow][newCol] = matrix[row][col];
                 newCol++;
             }
@@ -192,6 +200,7 @@ public class LoadNW {
 
         return newMatrix;
     }
+
     public static void main(String[] args) {
         int whichSNS = Integer.parseInt(args[0].trim());
         LoadNW loadNW = new LoadNW(whichSNS);
