@@ -60,9 +60,13 @@ public class optimization {
         GRBModel model = new GRBModel(env);
         //model.set("BarHomogeneous", "1.0");
         //model.set(GRB.IntParam.Method, 2); // Use Barrier method for QCP
-        //model.set(GRB.DoubleParam.BarConvTol, 1e-9); // Set tighter convergence tolerance
+        //model.set(GRB.DoubleParam.BarConvTol, 1e-4); // Set tighter convergence tolerance
         //model.set(GRB.DoubleParam.FeasibilityTol, 1e-6); // Adjust feasibility tolerance for numerical stability
         //model.set(GRB.IntParam.BarIterLimit, 200); // Increase iteration limit to allow more iterations if needed
+        //model.set(GRB.DoubleParam.MIPGap, 0.01); // 例: 0.01
+        //model.set(GRB.IntParam.BarIterLimit, 50);
+        
+
 
         System.out.println("---------- end information ----------");
 
