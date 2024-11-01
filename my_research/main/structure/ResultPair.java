@@ -1,3 +1,5 @@
+package main.structure;
+
 import java.util.HashMap;
 
 public class ResultPair {

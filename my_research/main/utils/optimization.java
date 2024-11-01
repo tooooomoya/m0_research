@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.math3.linear.*;
 
+import main.structure.OptResult;
+
 public class optimization {
 
     // minZ : the STEP where users change their opinion according to the FJ model
@@ -47,7 +49,7 @@ public class optimization {
     // minW : the STEP where Admin changes(minimizes) W matrix under some
     // constraints
     // find weight matrix W that minimizes z^T L z
-    public static double[][] minWGurobi(double[] z, double lam, double[][] W0, boolean reducePls, double gam,
+    public static OptResult minWGurobi(double[] z, double lam, double[][] W0, boolean reducePls, double gam,
             boolean existing) throws GRBException {
         int n = z.length;
         System.out.println("the number of n: " + n);
@@ -214,7 +216,10 @@ public class optimization {
         model.optimize();
         // System.out.println("optimization finished!");
 
+        boolean Opt = false;
+
         if (model.get(GRB.IntAttr.Status) != GRB.Status.OPTIMAL) {
+            Opt = true;
             throw new GRBException("Optimization was not successful. Status: " + model.get(GRB.IntAttr.Status));
         }
 
@@ -231,7 +236,7 @@ public class optimization {
 
         model.dispose();
         env.dispose();
-        return W;
+        return new OptResult(Opt, W);
     }
 
     public static double computePls(double[] z) {

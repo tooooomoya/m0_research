@@ -25,6 +25,8 @@
 
 	次回することリスト①エラーが発生した箇所を最後に報告するように変更。②集団極性化指標を導入する③ランダム性④Fixの方のメンテ
 
+* 12/1
+	
 
 ## 謎
 * 個々のノードがもつエッジの重みの合計値は保存されるはずだが、それで変化は起きるのか？まあ起きるのか、、
@@ -78,8 +80,11 @@ javac -cp "/Library/gurobi1103/macos_universal2/lib/gurobi.jar:/Library/ApacheCo
 以下でMainが実行できます。
 
 ```
-tomoyatakeda@takedatomoonarinoMacBook-Pro main % javac -cp "/Library/gurobi1103/macos_universal2/lib/gurobi.jar:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" -d out utils/matrix_util.java utils/optimization.java *.java
-tomoyatakeda@takedatomoonarinoMacBook-Pro main % java -cp "out:/Library/gurobi1103/macos_universal2/lib/gurobi.jar:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" Main
+javac -cp "/Library/gurobi1103/macos_universal2/lib/gurobi.jar:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" -d out utils/*.java structure/*.java *.java
+```
+
+```
+java -cp "out:/Library/gurobi1103/macos_universal2/lib/gurobi.jar:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" Main
 ```
 
 #### ローカルリポジトリを最新の状態に保つ

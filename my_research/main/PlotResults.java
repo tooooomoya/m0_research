@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.ArrayList;
 import main.utils.matrix_util;
+import main.structure.*;
 
 public class PlotResults {
     public void exportPls(ResultPair resultPair, String filename, double[] lamvals ){

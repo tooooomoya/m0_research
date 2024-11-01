@@ -2,8 +2,8 @@ import java.util.ArrayList;
 
 import com.gurobi.gurobi.GRBException;
 
-import main.utils.matrix_util;
-import main.utils.optimization;
+import main.utils.*;
+import main.structure.*;
 
 public class AdminGame {
 
@@ -40,7 +40,10 @@ public class AdminGame {
 
             try {
                 // Admin changes weight matrix
-                Wnew = optimization.minWGurobi(z, lam, W, reducePls, gam, existing);
+                OptResult optResult = optimization.minWGurobi(z, lam, W, reducePls, gam, existing);
+                
+                Wnew = optResult.getW();
+
                 // System.out.println("\nnew W matrix");
                 // matrix_util.printMatrix(Wnew);
                 // ここのWがAだと最初の重み状態からの変化で、あんま意味ない気がする。

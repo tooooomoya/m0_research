@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.Map;
+import main.structure.*;
 
 public class RunSimulate{
     private double[][] A;
