@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import main.structure.*;
@@ -22,6 +23,7 @@ public class RunSimulate{
 
         int maxIter = 7;
         double gam = 0.2; // L2 regularization coefficient 
+        ArrayList<Double> ErrorLambda = new ArrayList<>();
 
         for(int i = 0; i<lamList.length; i++){
             System.out.println("\n---------------Start the Experiment with lambda:" + lamList[i]);
@@ -33,14 +35,26 @@ public class RunSimulate{
             // no fix -> gamma = 0
             rd.put(lamList[i], resultNoFix);
             
+            if(resultNoFix.getFindError()){
+                ErrorLambda.add(lamList[i]);
+            }
             
             /* 
             System.out.println("with fix");
             System.out.println("lam:" + lamList[i]);
             Result resultFix = AdminGame.am(A, s, lamList[i], true, gam, maxIter, false);
             rdFix.put(lamList[i], resultFix);
+            if(resultFix.getFindError()){
+                ErrorLambda.add(lamList[i]);
+            }
             */
         }
+
+        System.out.println("\nGurobi Error Report\n");
+        for(double lambda : ErrorLambda){
+            System.out.println("error reported lambda : " + lambda);
+        }
+        
 
         ResultPair resultPair = new ResultPair(rd, rdFix);
 

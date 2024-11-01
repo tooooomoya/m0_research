@@ -2,6 +2,11 @@ import java.util.ArrayList;
 
 import com.gurobi.gurobi.GRBException;
 
+import main.utils.calculater;
+import main.utils.calculater;
+import main.utils.calculater;
+import main.utils.calculater;
+import main.utils.calculater;
 import main.utils.*;
 import main.structure.*;
 
@@ -20,19 +25,34 @@ public class AdminGame {
         // System.out.println("\nz after the FJ effect: ");
         // matrix_util.printVector(z);
 
+        ///// Set pls
         ArrayList<Double> pls = new ArrayList<>();
         pls.add(optimization.computePls(z));
         // System.out.println("\npls before iteration: "+ optimization.computePls(z));
 
-        double[][] L = matrix_util.createL(W, W.length);
 
+        ///// Set disaggs
+        double[][] L = matrix_util.createL(W, W.length);
         ArrayList<Double> disaggs = new ArrayList<>();
         disaggs.add(computeDisagreement(z, L));
         // System.out.println("\ndisagg before iteration: "+computeDisagreement(z, L));
 
+        ///// Set gppls
+        ArrayList<Double> gppls = new ArrayList<>();
+        gppls.add(calculater.computeGpPls(z));
+
+        ///// Set stfs
+        ArrayList<Double> stfs = new ArrayList<>();
+        stfs.add(calculater.computeStf(z, W));
+
+        ///// Set dvs
+        ArrayList<Double> dvs = new ArrayList<>();
+        dvs.add(calculater.computeDvs(z, W));
+        
         int i = 0;
         boolean flag = true;
         double[][] Wnew = null;
+        boolean finderror = false;
 
         while (flag) {
             System.out.println("--------------------------");
@@ -41,7 +61,7 @@ public class AdminGame {
             try {
                 // Admin changes weight matrix
                 OptResult optResult = optimization.minWGurobi(z, lam, W, reducePls, gam, existing);
-                
+                finderror = optResult.getOpt();
                 Wnew = optResult.getW();
 
                 // System.out.println("\nnew W matrix");
@@ -50,7 +70,18 @@ public class AdminGame {
             } catch (GRBException e) {
                 System.out.println("Gurobi optimization error: " + e.getMessage());
                 e.printStackTrace();
+            }  
+
+            /// confirm the maximum weight
+            double max_w = 0.0;
+            for(int i=0; i<z.length;i++){
+                for(int j=0; j<z.length; j++){
+                    if(W[i][j] > max_w){
+                        max_w = W[i][j];
+                    }
+                }
             }
+            System.out.println("Maximum Weight of W matrix : " + max_w);
 
             // Wnew = W;
 
@@ -73,112 +104,84 @@ public class AdminGame {
             z = znew;
             W = Wnew;
             i++;
-            double PLS = optimization.computePls(z);
+            
 
             //double PLS = calculateDiversity(znew, Wnew);
 
-            System.out.println("\npls: " + PLS);
+            double PLS = optimization.computePls(z);
             pls.add(PLS);
+            System.out.println("\npls: " + PLS);
+
             L = matrix_util.createL(W, W.length);
             double disagg = computeDisagreement(z, L);
-            System.out.println("\ndisagg: " + disagg);
             disaggs.add(disagg);
+            System.out.println("\ndisagg: " + disagg);
+
+            double GPPLS = calculater.computeGpPls(z);
+            gppls.add(GPPLS);
+            System.out.println("\ngppls: " + GPPLS);
+
+            double stf = calculater.computeStf(z, W);
+            stfs.add(stf);
+            System.out.println("\nstf: " + stf);
+
+            double DVS = calculater.computeDvs(z, W);
+            dvs.add(DVS);
+            System.out.println("\ndvs: "+DVS);
         }
-        return new Result(pls, disaggs, z, W);
+        return new Result(pls, disaggs, gppls, stfs, dvs, z, W, finderror);
     }
+
+
+
+    /// Helper Functions
 
     // caluculate norm (ノルム：距離)
     private static double norm(double[] a, double[] b) {
         double sum = 0.0;
         for (int i = 0; i < a.length; i++) {
-            sum += Math.pow(a[i] - b[i], 2);
-        }
+            sum += Math.pow(a[i] -  b[i], 2);
+        } 
         return Math.sqrt(sum);
     }
 
-    // Calculate the Frobenius norm of a matrix
-    private static double matrixNorm(double[][] matrix1, double[][] matrix2) {
-        if (matrix1.length != matrix2.length || matrix1[0].length != matrix2[0].length) {
-            throw new IllegalArgumentException("Matrices must be of the same dimensions.");
-        }
+                      
 
-        double sumSquaredDifferences = 0.0;
-
+                        
+                            legalArgumentExc
+                            
+                         
+                            u
+                    
         // Calculate the sum of squared differences of corresponding elements
         for (int i = 0; i < matrix1.length; i++) {
-            for (int j = 0; j < matrix1[i].length; j++) {
-                double difference = matrix1[i][j] - matrix2[i][j];
-                sumSquaredDifferences += difference * difference;
-            }
-        }
 
-        // Return the square root of the sum of squared differences
-        return Math.sqrt(sumSquaredDifferences);
-    }
+                      
 
-    // calculate z^T * L * z: Global disagreement is scalar
-    private static double computeDisagreement(double[] z, double[][] L) {
-        double[] temp = new double[z.length];
-        double disagreement = 0.0;
+                        
+                            
+                                    
+                         
+                            a
+                    
 
-        // calculate L * z
-        for (int i = 0; i < z.length; i++) {
-            for (int j = 0; j < z.length; j++) {
-                temp[i] += L[i][j] * z[j];
-            }
-        }
+    // calculate z^T * L * z: Global disagreement is 
+ 
+                    p  = new double[ z
+
+                             
+                               L * z 
+                                i < z.length; i++) {
+                           
+         
 
         // then calculate z^T * temp
         for (int i = 0; i < z.length; i++) {
             disagreement += z[i] * temp[i];
-        }
-
-        return disagreement;
+        }     
+  
+        return d is agreement;
     }
 
-    private static double calculateDiversity(double[] z, double[][] W) {
-        double[] z_diversity = new double[z.length];
 
-        for (int i = 0; i < z.length; i++) {
-            double my_opinion = 0;
-            my_opinion = z[i] - 0.5;
-            double adjacency_opinion_sum = 0;
-            double adjacency_sum =0;
-
-            if (my_opinion > 0.5) {
-                for (int j = 0; j < z.length; j++) {
-                    
-                    if(W[i][j] > 0){
-                        
-                        adjacency_sum += W[i][j];
-                    if (W[i][j] < 0.5) {
-                        adjacency_opinion_sum += 1;
-                    }
-                }
-                }
-            } else if (my_opinion < 0.5) {
-                for (int j = 0; j < z.length; j++) {
         
-                    if(W[i][j] > 0){
-                        
-                        adjacency_sum += W[i][j];
-                    if (W[i][j] > 0.5) {
-                        adjacency_opinion_sum += 1;
-                    }
-                }
-                }
-            }
-            z_diversity[i] = adjacency_opinion_sum /adjacency_sum;
-        }
-
-        double diversity = 0;
-        for(int i=0; i< z.length; i++){
-            double temp=0;
-            temp+=z_diversity[i];
-            diversity = temp / z_diversity.length;
-        }
-
-
-        return diversity;
-    }
-}

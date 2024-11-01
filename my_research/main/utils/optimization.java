@@ -220,7 +220,7 @@ public class optimization {
 
         if (model.get(GRB.IntAttr.Status) != GRB.Status.OPTIMAL) {
             Opt = true;
-            throw new GRBException("Optimization was not successful. Status: " + model.get(GRB.IntAttr.Status));
+            throw new GRBException("-------------- Optimization was not successful. Status: " + model.get(GRB.IntAttr.Status));
         }
 
         // Retrieve the updated weight matrix W

@@ -27,7 +27,7 @@ def plot_csv_data(csv_filename, output_filename, i):
         plt.legend()
     if(i==3):
         plt.xlabel('lambda')
-        plt.ylabel('final extremist ratio in  ' + val_name + ' : gppls[-1]')
+        plt.ylabel('final extremist ratio in ' + val_name + ' : gppls[-1]')
         plt.title('GroupPolarization with NW admin in ' + val_name)
         plt.legend()
     if(i==4):
@@ -47,13 +47,8 @@ def plot_csv_data(csv_filename, output_filename, i):
 
 
 
-plot_csv_data('plsReddit.csv', 'plsReddit.jpg', 1)
-plot_csv_data('disaggReddit.csv', 'disaggReddit.jpg', 2)
-plot_csv_data('gpplsReddit.csv', 'gpplsReddit.jpg', 3)
-plot_csv_data('stfsReddit.csv', 'stfsReddit.jpg', 4)
-plot_csv_data('dvsReddit.csv', 'dvsReddit.jpg', 5)
-plot_csv_data('plsTwitter.csv', 'plsTwitter.jpg', 1)
-plot_csv_data('disaggTwitter.csv', 'disaggTwitter.jpg', 2)
-plot_csv_data('gpplsTwitter.csv', 'gpplsTwitter.jpg', 3)
-plot_csv_data('stfsTwitter.csv', 'stfsTwitter.jpg', 4)
-plot_csv_data('dvsTwitter.csv', 'dvsTwitter.jpg', 5)
+plot_csv_data('plsTest.csv', 'plsTest.jpg', 1)
+plot_csv_data('disaggTest.csv', 'disaggTest.jpg', 2)
+plot_csv_data('gpplsTest.csv', 'gpplsTest.jpg', 3)
+plot_csv_data('stfsTest.csv', 'stfsTest.jpg', 4)
+plot_csv_data('dvsTest.csv', 'dvsTest.jpg', 5)

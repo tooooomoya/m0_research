@@ -24,7 +24,7 @@ public class Main {
             s = loadTest.getIntrinsicOpinions();
         }
         
-        double[] lamvals = {0.2};
+        double[] lamvals = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
 
         RunSimulate runSimulate = new RunSimulate(A, s);
         ResultPair resultPair = runSimulate.runDynamics(lamvals);
@@ -35,12 +35,21 @@ public class Main {
         if (whichSNS == 0) {
             plotResults.exportPls(resultPair, "Reddit", lamvals);
             plotResults.exportDisagg(resultPair, "Reddit", lamvals);
+            plotResults.exportGppls(resultPair, "Reddit", lamvals);
+            plotResults.exportStfs(resultPair, "Reddit", lamvals);
+            plotResults.exportDvs(resultPair, "Reddit", lamvals);
         } else if(whichSNS == 1) {
             plotResults.exportPls(resultPair, "Twitter", lamvals);
             plotResults.exportDisagg(resultPair, "Twitter", lamvals);
+            plotResults.exportGppls(resultPair, "Twitter", lamvals);
+            plotResults.exportStfs(resultPair, "Twitter", lamvals);
+            plotResults.exportDvs(resultPair, "Twitter", lamvals);
         } else if(whichSNS == 2) {
             plotResults.exportPls(resultPair, "Test", lamvals);
             plotResults.exportDisagg(resultPair, "Test", lamvals);
+            plotResults.exportGppls(resultPair, "Test", lamvals);
+            plotResults.exportStfs(resultPair, "Test", lamvals);
+            plotResults.exportDvs(resultPair, "Test", lamvals);
         } 
 
         scanner.close();
