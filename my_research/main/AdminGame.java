@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 import com.gurobi.gurobi.GRBException;
 
@@ -13,7 +14,7 @@ import main.structure.*;
 public class AdminGame {
 
     public static Result am(double[][] A, double[] s, double lam, boolean reducePls, double gam, int maxIter,
-            boolean existing) {
+            boolean existing, boolean random) {
         double[][] W = matrix_util.copyMatrix(A);
         // System.out.println("the first W matrix");
         // matrix_util.printMatrix(W);
@@ -70,7 +71,16 @@ public class AdminGame {
             } catch (GRBException e) {
                 System.out.println("Gurobi optimization error: " + e.getMessage());
                 e.printStackTrace();
-            }   
+            }
+
+            if(random){
+            /// My Method : randomly add weight
+            List<int[]> selectedPairs = new ArrayList<>();
+            selectedPairs = calculater.selectPairs_v1(W,z);
+            for (int[] pair : selectedPairs){
+                W[pair[0]][pair[1]] += 1;
+            }
+        }
 
             /// confirm the maximum weight
             double max_w = 0.0;
@@ -82,8 +92,6 @@ public class AdminGame {
                 }
             }
             System.out.println("\nMaximum Weight of W matrix : " + max_w);
-
-            // Wnew = W;
 
             // After Admin action, each user change its opinion according to the FJ model
             // System.out.println("\nz before this time Admin effect: ");

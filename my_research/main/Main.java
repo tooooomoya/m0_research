@@ -8,6 +8,9 @@ public class Main {
         System.out.println("Enter the social network type (0 for Reddit, 1 for Twitter, 2 for Test): ");
         int whichSNS = scanner.nextInt();
 
+        System.out.println("Wanna apply random method? (true, false) : ");
+        boolean random = scanner.nextBoolean();
+
         double[][] A=null;
         double[] s=null;
 
@@ -27,7 +30,7 @@ public class Main {
         double[] lamvals = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
 
         RunSimulate runSimulate = new RunSimulate(A, s);
-        ResultPair resultPair = runSimulate.runDynamics(lamvals);
+        ResultPair resultPair = runSimulate.runDynamics(lamvals, random);
         System.out.println("RunSimulate finished");
 
         // Step 3: Plot Results

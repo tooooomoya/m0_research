@@ -12,7 +12,7 @@ public class RunSimulate{
         this.s = s;
     }
 
-    public ResultPair runDynamics(double[] lamList){
+    public ResultPair runDynamics(double[] lamList, boolean random){
         // because of time issues, we run the NA dynamics separately 
         //double[] lamList = {0.1, 0.2, 0.3, 0.4, 0.5};
         //double[] lamList = {0.6, 0.7, 0.8, 0.9, 1.0};
@@ -31,7 +31,7 @@ public class RunSimulate{
             
             System.out.println(("\nno fix"));
             //System.out.println("lam:" + lamList[i]);
-            Result resultNoFix = AdminGame.am(A, s, lamList[i], false, 0, maxIter, false);
+            Result resultNoFix = AdminGame.am(A, s, lamList[i], false, 0, maxIter, false, random);
             // no fix -> gamma = 0
             rd.put(lamList[i], resultNoFix);
             
