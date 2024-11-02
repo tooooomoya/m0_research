@@ -126,7 +126,7 @@ public class calculater {
 
         // W行列から値が0の(i, j)ペアを見つけてリストに格納
         for (int i = 0; i < W.length; i++) {
-            for (int j = 0; i < j || j < W[i].length; j++) {
+            for (int j = 0; j < W[i].length; j++) {
                 if (W[i][j] == 0) {
                     zeroPairs.add(new int[] { i, j });
                 }
