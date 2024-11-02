@@ -121,7 +121,7 @@ public class calculater {
 
     /// Algorithm of Randomy Change of W
     public static List<int[]> selectPairs_v0(double[][] W, double[] z) {
-        int numPairs = (int) z.length / 2;
+        int numPairs = (int) z.length * 10;
         List<int[]> zeroPairs = new ArrayList<>();
 
         // W行列から値が0の(i, j)ペアを見つけてリストに格納
@@ -151,7 +151,7 @@ public class calculater {
 
     /// Algorithm of Randomy Change of W
     public static List<int[]> selectPairs_v1(double[][] W, double[] z) {
-        int numPairs = (int) z.length / 2 ;
+        int numPairs = (int) z.length * 10 ;
         List<int[]> Pairs = new ArrayList<>();
 
         // W行列から値が0の(i, j)ペアを見つけてリストに格納

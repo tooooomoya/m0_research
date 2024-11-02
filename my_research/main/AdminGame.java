@@ -76,7 +76,7 @@ public class AdminGame {
             if(random){
             /// My Method : randomly add weight
             List<int[]> selectedPairs = new ArrayList<>();
-            selectedPairs = calculater.selectPairs_v1(Wnew,z);
+            selectedPairs = calculater.selectPairs_v0(Wnew,z);
             for (int[] pair : selectedPairs){
                 Wnew[pair[0]][pair[1]] += 1;
             }
