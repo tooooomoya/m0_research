@@ -1,7 +1,7 @@
 import pandas as pd
 import random
 
-number = 15
+number = 50
 
 # 1列目: 1から100までの整数
 col1 = list(range(1, number + 1))

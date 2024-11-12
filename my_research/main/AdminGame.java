@@ -23,20 +23,20 @@ public class AdminGame {
         // System.out.println("\nthe first z: ");
         // matrix_util.printVector(s);
         double[] z = optimization.minZ(W, s);
-        // System.out.println("\nz after the FJ effect: ");
-        // matrix_util.printVector(z);
+        //System.out.println("\nz after the FJ effect: ");
+        //matrix_util.printVector(z);
 
         ///// Set pls
         ArrayList<Double> pls = new ArrayList<>();
-        pls.add(optimization.computePls(z));
-        // System.out.println("\npls before iteration: "+ optimization.computePls(z));
+        //pls.add(optimization.computePls(z));
+        //System.out.println("\npls before iteration: "+ optimization.computePls(z));
 
 
         ///// Set disaggs
         double[][] L = matrix_util.createL(W, W.length);
         ArrayList<Double> disaggs = new ArrayList<>();
-        disaggs.add(computeDisagreement(z, L));
-        // System.out.println("\ndisagg before iteration: "+computeDisagreement(z, L));
+        //disaggs.add(computeDisagreement(z, L));
+        //System.out.println("\ndisagg before iteration: "+computeDisagreement(z, L));
 
         ///// Set gppls
         ArrayList<Double> gppls = new ArrayList<>();
@@ -54,6 +54,7 @@ public class AdminGame {
         boolean flag = true;
         double[][] Wnew = null;
         boolean finderror = false;
+        double weight_added = 0;
 
         while (flag) {
             System.out.println("--------------------------");
@@ -73,14 +74,18 @@ public class AdminGame {
                 e.printStackTrace();
             }
 
+            double w_num = 0.0;
             if(random){
             /// My Method : randomly add weight
             List<int[]> selectedPairs = new ArrayList<>();
             selectedPairs = calculater.selectPairs_v0(Wnew,z);
             for (int[] pair : selectedPairs){
-                Wnew[pair[0]][pair[1]] += 1;
+                Wnew[pair[0]][pair[1]] += 0.5;
+                w_num += 1;
             }
         }
+        System.out.println("The sum of w added by my method: "+w_num);
+        weight_added += w_num;
 
             /// confirm the maximum weight
             double max_w = 0.0;
@@ -157,6 +162,8 @@ public class AdminGame {
             System.out.printf("0.75 ~ 1.0: %d\n", d);
 
         }
+
+        System.out.println("The final sum of w added by my method: " + weight_added);
         return new Result(pls, disaggs, gppls, stfs, dvs, z, W, finderror);
     }
 

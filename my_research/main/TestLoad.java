@@ -18,7 +18,7 @@ public class TestLoad{
         String name = "";
         if (whichSNS == 2) {
             // choose Random Graph
-            nSNS = 15;
+            nSNS = 50;
             directory = "Random"; 
             name = "random";
         } else if (whichSNS == 3) {
@@ -44,8 +44,8 @@ public class TestLoad{
                         int v = Integer.parseInt(parts[1].trim()) - 1;
                         if (u >= 0 && u < nSNS && v >= 0 && v < nSNS) {
                             // 2 sets of nodes indexes in the "edges_SNS.txt" file mean interaction between them
-                            A[u][v] += 1;
-                            A[v][u] += 1;
+                            A[u][v] = 1;
+                            A[v][u] = 1;
                         }
                     } catch (NumberFormatException e) {
                         System.err.println("Number format exception: " + e.getMessage());

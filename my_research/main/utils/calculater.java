@@ -53,7 +53,8 @@ public class calculater {
             double my_connect = 0.0;
             for (int j = 0; j < z.length; j++) {
                 if (W[i][j] > connect_threshold) {
-                    my_connect += W[i][j];
+                    //my_connect += W[i][j];
+                    my_connect +=1 ;
                 }
             }
             connect += my_connect;
@@ -121,7 +122,7 @@ public class calculater {
 
     /// Algorithm of Randomy Change of W
     public static List<int[]> selectPairs_v0(double[][] W, double[] z) {
-        int numPairs = (int) z.length * 10;
+        int numPairs = (int) z.length / 2;
         List<int[]> zeroPairs = new ArrayList<>();
 
         // W行列から値が0の(i, j)ペアを見つけてリストに格納
@@ -151,7 +152,7 @@ public class calculater {
 
     /// Algorithm of Randomy Change of W
     public static List<int[]> selectPairs_v1(double[][] W, double[] z) {
-        int numPairs = (int) z.length * 10 ;
+        int numPairs = (int) z.length / 2 ;
         List<int[]> Pairs = new ArrayList<>();
 
         // W行列から値が0の(i, j)ペアを見つけてリストに格納
