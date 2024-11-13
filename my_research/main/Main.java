@@ -27,6 +27,7 @@ public class Main {
         }
 
         double[] lamvals = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 };
+        //double[] lamvals = { 0.1, 0.2, 0.3, 0.4, 0.5 };
 
         RunSimulate runSimulate = new RunSimulate(A, s);
         ResultPair resultPair = runSimulate.runDynamics(lamvals, random);

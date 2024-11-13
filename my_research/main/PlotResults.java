@@ -21,9 +21,9 @@ public class PlotResults {
         for(int i = 0; i < lamvals.length; i++){
             ArrayList<Double> pls = rd.get(lamvals[i]).getPls();
             double initialPls = pls.get(0);
-            System.out.println("initialPls: "+ initialPls);
+            //System.out.println("initialPls: "+ initialPls);
             double finalPls = pls.get(pls.size() - 1);
-            System.out.println("finalPls: "+ finalPls);
+            //System.out.println("finalPls: "+ finalPls);
             plsRatioList[i] = (finalPls / initialPls) - 1;
         }
 
@@ -35,7 +35,7 @@ public class PlotResults {
                 writer.write(lamvals[i] + "," + plsRatioList[i]);
                 writer.newLine();
             }
-            System.out.println("data has been written to the csv file");
+            //System.out.println("data has been written to the csv file");
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -55,9 +55,9 @@ public class PlotResults {
         for(int i = 0; i < lamvals.length; i++){
             ArrayList<Double> disaggs = rd.get(lamvals[i]).getDisaggs();
             double initialDisagg = disaggs.get(0);
-            System.out.println("initialDisagg: "+ initialDisagg);
+            //System.out.println("initialDisagg: "+ initialDisagg);
             double finalDisagg = disaggs.get(disaggs.size() - 1);
-            System.out.println("finalDisagg: "+ finalDisagg);
+            //System.out.println("finalDisagg: "+ finalDisagg);
 
             disaggRatioList[i] = 100 * ((finalDisagg / initialDisagg) - 1);
         }
@@ -70,7 +70,7 @@ public class PlotResults {
                 writer.write(lamvals[i] + "," + disaggRatioList[i]);
                 writer.newLine();
             }
-            System.out.println("data has been written to the csv file");
+            //System.out.println("data has been written to the csv file");
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -90,11 +90,11 @@ public class PlotResults {
         for(int i = 0; i < lamvals.length; i++){
             ArrayList<Double> gppls = rd.get(lamvals[i]).getGppls();
             double initialGppls = gppls.get(0);
-            System.out.println("initialGppls: "+ initialGppls);
+            //System.out.println("initialGppls: "+ initialGppls);
             double finalGppls = gppls.get(gppls.size() - 1);
-            System.out.println("finalGppls: "+ finalGppls);
+            //System.out.println("finalGppls: "+ finalGppls);
 
-            gpplsRatioList[i] = finalGppls;
+            gpplsRatioList[i] = finalGppls / initialGppls;
         }
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(("results/gppls"+filename+".csv")))){
@@ -105,7 +105,7 @@ public class PlotResults {
                 writer.write(lamvals[i] + "," + gpplsRatioList[i]);
                 writer.newLine();
             }
-            System.out.println("data has been written to the csv file");
+            //System.out.println("data has been written to the csv file");
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -125,9 +125,9 @@ public class PlotResults {
         for(int i = 0; i < lamvals.length; i++){
             ArrayList<Double> stfs = rd.get(lamvals[i]).getStfs();
             double initialStfs = stfs.get(0);
-            System.out.println("initialStfs: "+ initialStfs);
+            //System.out.println("initialStfs: "+ initialStfs);
             double finalStfs = stfs.get(stfs.size() - 1);
-            System.out.println("finalStfs: "+ finalStfs);
+            //System.out.println("finalStfs: "+ finalStfs);
 
             stfsRatioList[i] = finalStfs;
         }
@@ -140,7 +140,7 @@ public class PlotResults {
                 writer.write(lamvals[i] + "," + stfsRatioList[i]);
                 writer.newLine();
             }
-            System.out.println("data has been written to the csv file");
+            //System.out.println("data has been written to the csv file");
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -160,9 +160,9 @@ public class PlotResults {
         for(int i = 0; i < lamvals.length; i++){
             ArrayList<Double> dvs = rd.get(lamvals[i]).getDvs();
             double initialDvs = dvs.get(0);
-            System.out.println("initialDvs: "+ initialDvs);
+            //System.out.println("initialDvs: "+ initialDvs);
             double finalDvs = dvs.get(dvs.size() - 1);
-            System.out.println("finalDvs: "+ finalDvs);
+            //System.out.println("finalDvs: "+ finalDvs);
 
             dvsRatioList[i] = finalDvs;
         }
@@ -175,7 +175,7 @@ public class PlotResults {
                 writer.write(lamvals[i] + "," + dvsRatioList[i]);
                 writer.newLine();
             }
-            System.out.println("data has been written to the csv file");
+            //System.out.println("data has been written to the csv file");
         }catch(IOException e){
             e.printStackTrace();
         }

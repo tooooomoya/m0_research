@@ -3,11 +3,6 @@ import java.util.List;
 
 import com.gurobi.gurobi.GRBException;
 
-import main.utils.calculater;
-import main.utils.calculater;
-import main.utils.calculater;
-import main.utils.calculater;
-import main.utils.calculater;
 import main.utils.*;
 import main.structure.*;
 
@@ -23,8 +18,8 @@ public class AdminGame {
         // System.out.println("\nthe first z: ");
         // matrix_util.printVector(s);
         double[] z = optimization.minZ(W, s);
-        //System.out.println("\nz after the FJ effect: ");
-        //matrix_util.printVector(z);
+        System.out.println("\nz after the FJ effect: ");
+        matrix_util.printVector(z);
 
         ///// Set pls
         ArrayList<Double> pls = new ArrayList<>();
@@ -48,7 +43,7 @@ public class AdminGame {
 
         ///// Set dvs
         ArrayList<Double> dvs = new ArrayList<>();
-        dvs.add(calculater.computeDvs(z, W));
+        dvs.add(calculater.computeUdv(z, W));
         
         int i = 0;
         boolean flag = true;
@@ -60,10 +55,10 @@ public class AdminGame {
             System.out.println("--------------------------");
             System.out.println("Iteration:" + i);
 
+            
             try {
                 // Admin changes weight matrix
                 OptResult optResult = optimization.minWGurobi(z, lam, W, reducePls, gam, existing);
-                finderror = optResult.getOpt();
                 Wnew = optResult.getW();
 
                 //System.out.println("\nnew W matrix");
@@ -71,8 +66,10 @@ public class AdminGame {
                 // ここのWがAだと最初の重み状態からの変化で、あんま意味ない気がする。
             } catch (GRBException e) {
                 System.out.println("Gurobi optimization error: " + e.getMessage());
+                finderror = true;
                 e.printStackTrace();
             }
+            //Wnew = W;
 
             double w_num = 0.0;
             if(random){
@@ -138,7 +135,7 @@ public class AdminGame {
             stfs.add(stf);
             System.out.println("\nstf: " + stf);
 
-            double DVS = calculater.computeDvs(z, W);
+            double DVS = calculater.computeUdv(z, W);
             dvs.add(DVS);
             System.out.println("\ndvs: "+DVS);
 
@@ -164,7 +161,7 @@ public class AdminGame {
         }
 
         System.out.println("The final sum of w added by my method: " + weight_added);
-        return new Result(pls, disaggs, gppls, stfs, dvs, z, W, finderror);
+        return new Result(pls, disaggs, gppls, stfs, dvs, z, W, finderror, weight_added);
     }
 
 

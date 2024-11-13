@@ -223,7 +223,8 @@ public class optimization {
         boolean Opt = false;
 
         if (model.get(GRB.IntAttr.Status) != GRB.Status.OPTIMAL) {
-            Opt = true;
+            //Opt = true;
+            //下の分でthrowしてるから、return文まで実行されない。だからOptは意味ない
             throw new GRBException("-------------- Optimization was not successful. Status: " + model.get(GRB.IntAttr.Status));
         }
 

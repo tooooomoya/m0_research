@@ -16,7 +16,7 @@ public class calculater {
     public static double computeGpPls(double[] z) {
         int extreme = 0;
         for (int i = 0; i < z.length; i++) {
-            if (z[i] <= 0.2 || z[i] >= 0.8) {
+            if (z[i] <= 0.1 || z[i] >= 0.9) {
                 extreme++;
             }
         }
@@ -31,7 +31,7 @@ public class calculater {
             int links = 0;
             int similar = 0;
             for (int j = 0; j < z.length; j++) {
-                if (W[i][j] > 0) {
+                if (W[i][j] > 0.5) {
                     links++;
                     if (z[j] >= z[i] - 0.2 || z[j] <= z[i] + 0.2) {
                         similar++;
@@ -48,7 +48,7 @@ public class calculater {
 
         /// connection effect
         double connect = 0.0;
-        double connect_threshold = 0.2;
+        double connect_threshold = 0.1;
         for (int i = 0; i < z.length; i++) {
             double my_connect = 0.0;
             for (int j = 0; j < z.length; j++) {
@@ -69,7 +69,7 @@ public class calculater {
         return satisfaction;
     }
 
-    public static double computeDvs(double[] z, double[][] W) {
+    public static double computeUdv(double[] z, double[][] W) {
         double[] z_diversity = new double[z.length];
 
         for (int i = 0; i < z.length; i++) {

@@ -136,7 +136,7 @@ public class TestLoad{
         for (int i = 0; i < s.length; i++) {
             s[i] = Math.min(Math.max(s[i], 0), 1);
         }
-        System.out.println("\nthe intrinsic z after clip: ");
+        System.out.println("\nthe intrinsic s after clip: ");
         matrix_util.printVector(s);
 
         /*int a = 0, b = 0, c = 0, d = 0;

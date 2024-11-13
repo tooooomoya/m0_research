@@ -27,7 +27,7 @@ def plot_csv_data(csv_filename, output_filename, i):
         plt.legend()
     if(i==3):
         plt.xlabel('lambda')
-        plt.ylabel('final extremist ratio in ' + val_name + ' : gppls[-1]')
+        plt.ylabel('final extremist ratio in ' + val_name + ' : gppls[-1] / gppls[0]')
         plt.title('GroupPolarization with NW admin in ' + val_name)
         plt.legend()
     if(i==4):

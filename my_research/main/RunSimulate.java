@@ -24,6 +24,7 @@ public class RunSimulate{
         int maxIter = 7;
         double gam = 0.2; // L2 regularization coefficient 
         ArrayList<Double> ErrorLambda = new ArrayList<>();
+        double[] AddedWeight = new double[lamList.length];
 
         for(int i = 0; i<lamList.length; i++){
             System.out.println("\n---------------Start the Experiment with lambda:" + lamList[i]);
@@ -39,6 +40,8 @@ public class RunSimulate{
                 ErrorLambda.add(lamList[i]);
             }
             
+            AddedWeight[i] = resultNoFix.getWeightadded();
+            
             /* 
             System.out.println("with fix");
             System.out.println("lam:" + lamList[i]);
@@ -47,12 +50,17 @@ public class RunSimulate{
             if(resultFix.getFindError()){
                 ErrorLambda.add(lamList[i]);
             }
+            AddedWeight[i] = resultFix.getWeightadded;
             */
         }
 
         System.out.println("\nGurobi Error Report\n");
         for(double lambda : ErrorLambda){
             System.out.println("error reported lambda : " + lambda);
+        }
+        System.out.println("\nCost(total weight added to the graph)");
+        for(int a=0; a<AddedWeight.length;a++){
+            System.out.println("lambda : " + a + ", added weight : " + AddedWeight[a]);
         }
         
 

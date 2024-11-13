@@ -11,9 +11,10 @@ public class Result {
     private double[] z;
     private double[][] W;
     private boolean finderror;
+    private double weight_added;
 
     public Result(ArrayList<Double> pls, ArrayList<Double> disaggs, ArrayList<Double> gppls, ArrayList<Double> stfs, ArrayList<Double> dvs, double[] z, double[][] W,
-            boolean finderror) {
+            boolean finderror, double weight_added) {
         this.pls = pls;
         this.disaggs = disaggs;
         this.gppls = gppls;
@@ -22,6 +23,7 @@ public class Result {
         this.z = z;
         this.W = W;
         this.finderror = finderror;
+        this.weight_added = weight_added;
     }
 
     // getter and setter
@@ -87,5 +89,13 @@ public class Result {
 
     public void setFindError(boolean finderror) {
         this.finderror = finderror;
+    }
+
+    public double getWeightadded(){
+        return weight_added;
+    }
+
+    public void setWeightadded(double weight_added){
+        this.weight_added = weight_added;
     }
 }
