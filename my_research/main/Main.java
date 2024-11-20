@@ -28,9 +28,11 @@ public class Main {
 
         double[] lamvals = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 };
         //double[] lamvals = { 0.1, 0.2, 0.3, 0.4, 0.5 };
+        //double[] lamvals = { 0.6, 0.7, 0.8, 0.9, 1.0 };
+        //double[] lamvals = { 0.1, 0.2 };
 
         RunSimulate runSimulate = new RunSimulate(A, s);
-        ResultPair resultPair = runSimulate.runDynamics(lamvals, random);
+        ResultPair resultPair = runSimulate.runDynamics(lamvals, random, whichSNS);
         System.out.println("RunSimulate finished");
 
         // Step 3: Plot Results
@@ -40,19 +42,22 @@ public class Main {
             plotResults.exportDisagg(resultPair, "Reddit", lamvals);
             plotResults.exportGppls(resultPair, "Reddit", lamvals);
             plotResults.exportStfs(resultPair, "Reddit", lamvals);
-            plotResults.exportDvs(resultPair, "Reddit", lamvals);
+            plotResults.exportUdv(resultPair, "Reddit", lamvals);
+            plotResults.exportCdv(resultPair, "Reddit", lamvals);
         } else if (whichSNS == 1) {
             plotResults.exportPls(resultPair, "Twitter", lamvals);
             plotResults.exportDisagg(resultPair, "Twitter", lamvals);
             plotResults.exportGppls(resultPair, "Twitter", lamvals);
             plotResults.exportStfs(resultPair, "Twitter", lamvals);
-            plotResults.exportDvs(resultPair, "Twitter", lamvals);
+            plotResults.exportUdv(resultPair, "Twitter", lamvals);
+            plotResults.exportCdv(resultPair, "Twitter", lamvals);
         } else if (whichSNS == 2) {
             plotResults.exportPls(resultPair, "Test", lamvals);
             plotResults.exportDisagg(resultPair, "Test", lamvals);
             plotResults.exportGppls(resultPair, "Test", lamvals);
             plotResults.exportStfs(resultPair, "Test", lamvals);
-            plotResults.exportDvs(resultPair, "Test", lamvals);
+            plotResults.exportUdv(resultPair, "Test", lamvals);
+            plotResults.exportCdv(resultPair, "Test", lamvals);
         }
 
         scanner.close();

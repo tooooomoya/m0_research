@@ -24,29 +24,34 @@ def plot_csv_data(csv_filename, output_filename, plain_filename, i):
     
     if(i==1):
         plt.xlabel('lambda')
-        plt.ylabel('percent change in ' + val_name + ' / 100'+ ' : plt[-1]/plt[0] - 1')
+        plt.ylabel('percent change in ' + val_name + ' : plt[-1]/plt[0] ')
         plt.title('Polarization with NW admin in ' + val_name)
         plt.legend()
     
     if(i==2):
         plt.xlabel('lambda')
-        plt.ylabel('percent change in ' + val_name + ' : (dis[-1]/dis[0] - 1) * 100')
+        plt.ylabel('percent change in ' + val_name + ' : dis[-1]/dis[0] ')
         plt.title('Disagreement with NW admin in ' + val_name)
         plt.legend()
     if(i==3):
         plt.xlabel('lambda')
-        plt.ylabel('final extremist ratio in  ' + val_name + ' : gppls[-1] / gppls[0]')
+        plt.ylabel('final extremist ratio in  ' + val_name + ' : gppls[-1]/gppls[0]')
         plt.title('GroupPolarization with NW admin in ' + val_name)
         plt.legend()
     if(i==4):
         plt.xlabel('lambda')
-        plt.ylabel('final satisfaction in ' + val_name + ' : stfs[-1]')
+        plt.ylabel('final satisfaction in ' + val_name + ' : stfs[-1]/stfs[0]')
         plt.title('User Satisfaction with NW admin in ' + val_name)
         plt.legend()
     if(i==5):
         plt.xlabel('lambda')
-        plt.ylabel('final diversity in ' + val_name + ' : dvs[-1]')
-        plt.title('Diversity with NW admin in ' + val_name)
+        plt.ylabel('user diversity change in ' + val_name + ' : udv[-1]/udv[0]')
+        plt.title('User Diversity with NW admin in ' + val_name)
+        plt.legend()
+    if(i==6):
+        plt.xlabel('lambda')
+        plt.ylabel('community diversity change in ' + val_name + ' : cdv[-1]/cdv[0]')
+        plt.title('Community Diversity with NW admin in ' + val_name)
         plt.legend()
     
     plt.savefig(output_filename)
@@ -59,10 +64,13 @@ plot_csv_data('plsReddit.csv', 'plsReddit.jpg', 'plsReddit0.csv', 1)
 plot_csv_data('disaggReddit.csv', 'disaggReddit.jpg', 'disaggReddit0.csv', 2)
 plot_csv_data('gpplsReddit.csv', 'gpplsReddit.jpg', 'gpplsReddit0.csv', 3)
 plot_csv_data('stfsReddit.csv', 'stfsReddit.jpg', 'stfsReddit0.csv', 4)
-plot_csv_data('dvsReddit.csv', 'dvsReddit.jpg', 'dvsReddit0.csv', 5)
+plot_csv_data('udvReddit.csv', 'udvReddit.jpg', 'udvReddit0.csv', 5)
+plot_csv_data('cdvReddit.csv', 'cdvReddit.jpg', 'cdvReddit0.csv', 6)
+
 
 plot_csv_data('plsTwitter.csv', 'plsTwitter.jpg', 'plsTwitter0.csv', 1)
 plot_csv_data('disaggTwitter.csv', 'disaggTwitter.jpg', 'disaggTwitter0.csv', 2)
 plot_csv_data('gpplsTwitter.csv', 'gpplsTwitter.jpg', 'gpplsTwitter0.csv', 3)
 plot_csv_data('stfsTwitter.csv', 'stfsTwitter.jpg', 'stfsTwitter0.csv', 4)
-plot_csv_data('dvsTwitter.csv', 'dvsTwitter.jpg', 'dvsTwitter0.csv', 5)
+plot_csv_data('udvTwitter.csv', 'udvTwitter.jpg', 'udvTwitter0.csv', 5)
+plot_csv_data('cdvTwitter.csv', 'cdvTwitter.jpg', 'cdvTwitter0.csv', 6)

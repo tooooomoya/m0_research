@@ -11,7 +11,47 @@ import main.structure.OptResult;
 public class optimization {
 
     // minZ : the STEP where users change their opinion according to the FJ model
-    public static double[] minZ(double[][] W, double[] s) {
+    public static double[] minZ(double[][] W, double[] s, double[] z) {
+        int n = z.length;
+
+        // d の初期化
+        double[] d = new double[n];
+        for (int i = 0; i < n; i++) {
+            d[i] = 0.0;
+            for (int j = 0; j < n; j++) {
+                d[i] += W[i][j];
+            }
+        }
+
+        // new_z の初期化
+        double[] new_z = new double[n];
+        for (int i = 0; i < n; i++) {
+            double temp = 0.0;
+            for (int j = 0; j < n; j++) {
+                temp += W[i][j] * z[j];
+            }
+            new_z[i] = (s[i] + temp) / (d[i]+1);
+        }
+
+        double z_min = 0.0;
+        double z_max = 0.0;
+        for (int i = 0; i < z.length; i++) {
+            if (new_z[i] > z_max) {
+                z_max = new_z[i];
+            } else if (new_z[i] < z_min) {
+                z_min = new_z[i];
+            }
+        }
+
+        for (int i = 0; i < z.length; i++) {
+            new_z[i] = (new_z[i] - z_min) / (z_max - z_min);
+        }
+
+        return new_z;
+    }
+
+
+    /*public static double[] minZ(double[][] W, double[] s) {
         double[][] L = matrix_util.createL(W, W.length);
         int n = W.length;
 
@@ -34,17 +74,17 @@ public class optimization {
          * matrixLPlusI.setEntry(i, i, matrixLPlusI.getEntry(i, i) +
          * regularizationValue);
          * }
-         */
+     *//*
+    LUDecomposition luDecomposition = new LUDecomposition(matrixLPlusI);
+    RealMatrix inverseMatrix = luDecomposition.getSolver().getInverse();
 
-        LUDecomposition luDecomposition = new LUDecomposition(matrixLPlusI);
-        RealMatrix inverseMatrix = luDecomposition.getSolver().getInverse();
+    // z = (LPlusI)^-1 * s
+    RealVector vectorS = new ArrayRealVector(s);
+    RealVector vectorZ = inverseMatrix.operate(vectorS);
 
-        // z = (LPlusI)^-1 * s
-        RealVector vectorS = new ArrayRealVector(s);
-        RealVector vectorZ = inverseMatrix.operate(vectorS);
-
-        return vectorZ.toArray();
-    }
+    return vectorZ.toArray ();
+}
+*/
 
     // minW : the STEP where Admin changes(minimizes) W matrix under some
     // constraints
@@ -58,10 +98,10 @@ public class optimization {
         GRBEnv env = new GRBEnv("minW.log");
         env.set(GRB.IntParam.OutputFlag, 0); // Disable output for 0
         GRBModel model = new GRBModel(env);
-        //model.set("BarHomogeneous", "1.0");
+        //model.set("BarHomogeneous", "0");
         //model.set(GRB.IntParam.Method, 2); // Use Barrier method for QCP
         //model.set(GRB.DoubleParam.BarConvTol, 1e-4); // Set tighter convergence tolerance
-        //model.set(GRB.DoubleParam.FeasibilityTol, 1e-6); // Adjust feasibility tolerance for numerical stability
+        //model.set(GRB.DoubleParam.FeasibilityTol, 1e-5); // Adjust feasibility tolerance for numerical stability
         //model.set(GRB.IntParam.BarIterLimit, 200); // Increase iteration limit to allow more iterations if needed
         //model.set(GRB.DoubleParam.MIPGap, 0.01); // 例: 0.01
         //model.set(GRB.IntParam.BarIterLimit, 50);
@@ -134,6 +174,7 @@ public class optimization {
         model.setObjective(objExp, GRB.MINIMIZE);
         // System.out.println("Set the objective!");
 
+        
         // Add constraints sum_j x[i,j] = di : the degree of each vertex should not
         // change
 
@@ -180,6 +221,7 @@ public class optimization {
         }
 
         // System.out.println("added first constraint");
+        
 
         // Add the constraint ∑(wij - w0ij) < lam * ||w0||^2
         // This part would need adjustment based on the actual implementation context
@@ -204,11 +246,15 @@ public class optimization {
                     if (existing && W0[i][j] > 0) {
                         expr1.addTerm(1.0, x[i][j], x[i][j]); // x[i,j]^2
                         expr1.addTerm(-2.0 * W0[i][j], x[i][j]); // -2 * W0[i,j] * x[i,j]
+                        if(W0[i][j] != 0){
                         expr1.addConstant(W0[i][j] * W0[i][j]); // W0[i,j]^2 as a constant
+                        }
                     } else if (!existing) {
                         expr1.addTerm(1.0, x[i][j], x[i][j]); // x[i,j]^2
                         expr1.addTerm(-2.0 * W0[i][j], x[i][j]); // -2 * W0[i,j] * x[i,j]
+                        if(W0[i][j] != 0){
                         expr1.addConstant(W0[i][j] * W0[i][j]); // W0[i,j]^2 as a constant
+                        }
                     }
                 }
             }
@@ -256,6 +302,6 @@ public class optimization {
             double difference = value - ZMean;
             sumSquareDifferences += difference * difference;
         }
-        return sumSquareDifferences / z.length;
+        return sumSquareDifferences;
     }
 }

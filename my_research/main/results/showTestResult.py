@@ -40,6 +40,11 @@ def plot_csv_data(csv_filename, output_filename, i):
         plt.ylabel('final diversity in ' + val_name + ' : dvs[-1]')
         plt.title('Diversity with NW admin in ' + val_name)
         plt.legend()
+    if(i==6):
+        plt.xlabel('lambda')
+        plt.ylabel('community diversity change in ' + val_name + ' : cdv[-1]/cdv[0]')
+        plt.title('Community Diversity with NW admin in ' + val_name)
+        plt.legend()
     
     plt.savefig(output_filename)
     plt.close()
@@ -51,4 +56,5 @@ plot_csv_data('plsTest.csv', 'plsTest.jpg', 1)
 plot_csv_data('disaggTest.csv', 'disaggTest.jpg', 2)
 plot_csv_data('gpplsTest.csv', 'gpplsTest.jpg', 3)
 plot_csv_data('stfsTest.csv', 'stfsTest.jpg', 4)
-plot_csv_data('dvsTest.csv', 'dvsTest.jpg', 5)
+plot_csv_data('udvTest.csv', 'udvTest.jpg', 5)
+plot_csv_data('cdvTest.csv', 'cdvTest.jpg', 6)

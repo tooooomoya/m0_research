@@ -1,14 +1,9 @@
 package main.utils;
 
-import com.gurobi.gurobi.*;
-import main.utils.matrix_util;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-
-import org.apache.commons.math3.linear.*;
-
-import main.structure.OptResult;
 
 public class calculater {
 
@@ -24,7 +19,7 @@ public class calculater {
     }
 
     // calculate user's satisfaction
-    public static double computeStf(double[] z, double[][] W) {
+    public static double computeStf(double[] z, double[][] W, Map<Integer, List<Integer>> communities) {
         /// homogeneous effect
         double homogeneous = 0.0;
         for (int i = 0; i < z.length; i++) {
@@ -49,22 +44,29 @@ public class calculater {
         /// connection effect
         double connect = 0.0;
         double connect_threshold = 0.1;
+        double p = 0.05;
         for (int i = 0; i < z.length; i++) {
             double my_connect = 0.0;
             for (int j = 0; j < z.length; j++) {
                 if (W[i][j] > connect_threshold) {
                     //my_connect += W[i][j];
-                    my_connect +=1 ;
+                    my_connect += 1;
                 }
             }
-            connect += my_connect;
+            if (my_connect == 1) {
+                my_connect = 0;
+            } else {
+                my_connect = 1 - 1 / Math.pow(Math.log(my_connect), p);
+            }
+            connect += my_connect ;
         }
         connect = connect / z.length;
 
         /// calculate satisfaction
-        double satisfaction = 0.0;
-        double alpha = 0.5;
-        satisfaction = alpha * homogeneous + (1 - alpha) * connect;
+        double alpha = 0.8;
+        double beta = 0.2;
+        double gamma = 1.0 - (alpha + beta);
+        double satisfaction = alpha * homogeneous + beta * connect;
 
         return satisfaction;
     }
@@ -120,6 +122,48 @@ public class calculater {
         return diversity;
     }
 
+    /// compute Community Diversity
+    public static double computeCdv(double[] z, double[][] W, Map<Integer, List<Integer>> communities) {
+        double diversity = 0.0;
+        for (Map.Entry<Integer, List<Integer>> entry : communities.entrySet()) {
+            double my_diversity = 0.0;
+            int left = 0;
+            int middle = 0;
+            int right = 0;
+
+            List<Integer> agents = entry.getValue();
+            for (int agentIndex : agents) {
+                double opinion = z[agentIndex];
+                if (opinion < 0.3) {
+                    left++;
+                } else if (opinion <= 0.7) {
+                    middle++;
+                } else {
+                    right++;
+                }
+            }
+
+            int num = left + middle + right;
+            if (left > 0) {
+                double pLeft = (double) left / num;
+                my_diversity -= pLeft * Math.log(pLeft);
+            }
+            if (middle > 0) {
+                double pMiddle = (double) middle / num;
+                my_diversity -= pMiddle * Math.log(pMiddle);
+            }
+            if (right > 0) {
+                double pRight = (double) right / num;
+                my_diversity -= pRight * Math.log(pRight);
+            }
+
+            diversity += my_diversity;
+        }
+
+        diversity = diversity / communities.size();
+        return diversity;
+    }
+
     /// Algorithm of Randomy Change of W
     public static List<int[]> selectPairs_v0(double[][] W, double[] z) {
         int numPairs = (int) z.length / 2;
@@ -129,7 +173,7 @@ public class calculater {
         for (int i = 0; i < W.length; i++) {
             for (int j = 0; j < W[i].length; j++) {
                 if (W[i][j] == 0) {
-                    zeroPairs.add(new int[] { i, j });
+                    zeroPairs.add(new int[]{i, j});
                 }
             }
         }
@@ -152,13 +196,13 @@ public class calculater {
 
     /// Algorithm of Randomy Change of W
     public static List<int[]> selectPairs_v1(double[][] W, double[] z) {
-        int numPairs = (int) z.length / 2 ;
+        int numPairs = (int) z.length / 2;
         List<int[]> Pairs = new ArrayList<>();
 
         // W行列から値が0の(i, j)ペアを見つけてリストに格納
         for (int i = 0; i < W.length; i++) {
             for (int j = 0; j < W[i].length; j++) {
-                Pairs.add(new int[] { i, j });
+                Pairs.add(new int[]{i, j});
             }
         }
 
@@ -174,4 +218,5 @@ public class calculater {
 
         return selectedPairs;
     }
+
 }

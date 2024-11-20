@@ -1,7 +1,7 @@
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import main.utils.matrix_util;
@@ -93,7 +93,7 @@ public class TestLoad{
 
         // create "notConnected Matrix" in which we can know which node not being
         // connected with any other nodes.
-        Set<Integer> notConnected = new HashSet<>();
+        /*Set<Integer> notConnected = new HashSet<>();
         for (int i = 0; i < nSNS; i++) {
             boolean connected = false;
             for (int j = 0; j < nSNS; j++) {
@@ -105,7 +105,7 @@ public class TestLoad{
             if (!connected) {
                 notConnected.add(i);
             }
-        }
+        }*/
 
         // Create z
         double[] z = new double[nSNS];

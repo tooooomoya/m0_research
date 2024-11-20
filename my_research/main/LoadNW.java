@@ -1,12 +1,13 @@
-import java.io.FileReader;
-import java.io.FileWriter;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
-import main.utils.matrix_util;
+import main.utils.*;
 
 public class LoadNW {
+
     private double[][] A;
     private double[] s;
 
@@ -70,99 +71,45 @@ public class LoadNW {
             e.printStackTrace();
         }
 
-        // create "zDict"
-        // Use "Map" Structure(contains opinon value z): key -> int, value -> list of
-        // double
-        Map<Integer, List<Double>> zDict = new HashMap<>();
-        for (int i = 0; i < nSNS; i++) {
-            // put `nSNS` vacant entries to zDict (initialization)
-            zDict.put(i, new ArrayList<>());
-        }
-
+        double[] z = new double[nSNS];
         try (BufferedReader br = new BufferedReader(new FileReader(opinionFilePath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split("\t");
                 int u = Integer.parseInt(parts[0]) - 1; // draw node index
                 double w = Double.parseDouble((parts[2]));// draw the node's opinion
-                zDict.get(u).add(w);
+                z[u] = w;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        // create "notConnected Matrix" in which we can know which node not being
-        // connected with any other nodes.
-        Set<Integer> notConnected = new HashSet<>();
-        for (int i = 0; i < nSNS; i++) {
-            boolean connected = false;
-            for (int j = 0; j < nSNS; j++) {
-                if (A[i][j] > 0) {
-                    connected = true;
-                    break;
-                }
-            }
-            if (!connected) {
-                notConnected.add(i);
-                A = removeRowAndColumn(A, i);
-                nSNS -= 1;
-            }
+ 
+        s = new double[z.length];
+        for (int i = 0; i < z.length; i++) {
+            s[i] = z[i];
         }
-
-        // Create z
-        double[] z = new double[nSNS];
-        for (int i = 0; i < nSNS; i++) {
-            List<Double> opinions = zDict.get(i);
-            double sum = 0;
-            for (Double opinion : opinions) {
-                sum += opinion;
-            }
-            // 投稿のopinion値の平均を取ってZ行列に入れる。
-            z[i] = sum / opinions.size();
-
-            /*
-             * 確認用
-             * if (i % 10 == 0) {
-             * System.out.printf("%d opinion: %.2f\n", i, z[i]); // %.2f
-             * は小数点以下2桁まで表示するフォーマット
-             * }
-             */
-        }
-
-        double[][] L = matrix_util.createL(A, nSNS);
-        double[][] I = matrix_util.createIdentityMatrix(nSNS);
-        double[][] LPlusI = matrix_util.add(L, I);
-        // "s" is intrinsic opinion(個人に潜在的で本質的な不変のopinion value)
-        System.out.println("\nthe innate z: ");
-        matrix_util.printVector(z);
-        s = matrix_util.multiplyMatrixVector(LPlusI, z);
-
-        // clipping to the scale of max 1, min 0
-        for (int i = 0; i < s.length; i++) {
-            s[i] = Math.min(Math.max(s[i], 0), 1);
-        }
-        System.out.println("\nthe intrinsic s: ");
+       
+        
+        System.out.println("\nthe intrinsic s (calculate the situation before FJ model): ");
         matrix_util.printVector(s);
 
-        /*
-         * int a = 0, b = 0, c = 0, d = 0;
-         * for (int i = 0; i < s.length; i++) {
-         * if (s[i] < 0.25) {
-         * a++;
-         * } else if (s[i] < 0.5) {
-         * b++;
-         * } else if (s[i] < 0.75) {
-         * c++;
-         * } else {
-         * d++;
-         * }
-         * }
-         * System.out.println("Confirm the distribution of intinsic opinions ↓↓↓");
-         * System.out.printf("0 ~ 0.25: %d\n", a);
-         * System.out.printf("0.25 ~ 0.5: %d\n", b);
-         * System.out.printf("0.5 ~ 0.75: %d\n", c);
-         * System.out.printf("0.75 ~ 1.0: %d\n", d);
-         */
+        int a = 0, b = 0, c = 0, d = 0;
+        for (int i = 0; i < s.length; i++) {
+            if (s[i] < 0.25) {
+                a++;
+            } else if (s[i] < 0.5) {
+                b++;
+            } else if (s[i] < 0.75) {
+                c++;
+            } else {
+                d++;
+            }
+        }
+        System.out.println("Confirm the distribution of intinsic opinions ↓↓↓");
+        System.out.printf("0 ~ 0.25: %d\n", a);
+        System.out.printf("0.25 ~ 0.5: %d\n", b);
+        System.out.printf("0.5 ~ 0.75: %d\n", c);
+        System.out.printf("0.75 ~ 1.0: %d\n", d);
 
     }
 
@@ -185,13 +132,13 @@ public class LoadNW {
         double[][] newMatrix = new double[n - 1][n - 1];
 
         for (int row = 0, newRow = 0; row < n; row++) {
-            if (row == i)
+            if (row == i) {
                 continue; // Skip the specified row
-
+            }
             for (int col = 0, newCol = 0; col < n; col++) {
-                if (col == i)
+                if (col == i) {
                     continue; // Skip the specified column
-
+                }
                 newMatrix[newRow][newCol] = matrix[row][col];
                 newCol++;
             }
