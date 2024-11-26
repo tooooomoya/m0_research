@@ -25,7 +25,10 @@ public class PlotResults {
             //System.out.println("initialPls: "+ initialPls);
             double finalPls = pls.get(pls.size() - 1);
             //System.out.println("finalPls: "+ finalPls);
-            plsRatioList[i] = finalPls / initialPls;
+            if(i == 0){
+            System.err.println("The initial Pls: "+initialPls);
+            }
+            plsRatioList[i] = finalPls ;
         }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(("results/pls" + filename + ".csv")))) {

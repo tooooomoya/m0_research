@@ -127,7 +127,7 @@ public class calculater {
         double diversity = 0.0;
         for (Map.Entry<Integer, List<Integer>> entry : communities.entrySet()) {
             double my_diversity = 0.0;
-            
+
             List<Integer> agents = entry.getValue();
             double[] groupCounts = new double[5]; // 5つのグループに対応
 
@@ -221,6 +221,65 @@ public class calculater {
         }
 
         return selectedPairs;
+    }
+
+    public static double[][] friendRecommend(double[][] W, double[] z) {
+
+        int n = W.length; // 隣接行列のサイズ
+        Random random = new Random();
+        double[][] W1 = matrix_util.copyMatrix(W);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if(W1[i][j] > 0){
+                W1[i][j] = 1;
+                }
+            }
+        }
+
+        // 隣接行列を二乗して友達の友達を計算
+        double[][] W2 = matrix_util.multiply(W1,W1);
+        int changedlink = 0;
+        double avWeight = 0.0;
+
+        // 各ノードについて最も重みが小さいリンクを特定
+        for (int i = 0; i < n; i++) {
+            int minIndex = -1;
+            double maxDiff = 0;
+
+            // 最小重みのリンクを探索
+            for (int j = 0; j < n; j++) {
+                if (W[i][j] > 0.1) {
+                    double diff = Math.abs(z[i] - z[j]);
+                    if(diff > maxDiff){
+                    maxDiff = diff;
+                    minIndex = j;
+                    }
+                }
+            }
+
+            // 友達の友達からランダムに1つ選ぶ
+            if (minIndex != -1) {
+                int newFriend = -1;
+                int attempts = 0; // 安全対策でループ回数を制限
+                do {
+                    newFriend = random.nextInt(n);
+                    attempts++;
+                    //W2[i][newFriend]が1だったら、そいつは友達の友達だからそいつで決定！。
+                } while (attempts < 100 && (W2[i][newFriend] == 0 || newFriend == i || newFriend == minIndex));
+
+                // リンクを付け替える
+                if (newFriend != -1 && W2[i][newFriend] > 0) {
+                    double swapWeight = W[i][minIndex];
+                    W[i][minIndex] = 0; // 元のリンクを削除
+                    W[i][newFriend] = swapWeight; // 新しいリンクを追加
+                    changedlink ++ ;
+                    avWeight += swapWeight;
+                }
+            }
+        }
+        System.out.println("the num of links changed:"+changedlink);
+        System.out.println("the avg of weight changed: "+avWeight / changedlink);
+        return W;
     }
 
 }

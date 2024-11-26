@@ -1,7 +1,7 @@
 import pandas as pd
 import random
 
-number = 50
+number = 500
 
 # 1列目: 1から100までの整数
 col1 = list(range(1, number + 1))
@@ -13,14 +13,10 @@ col2 = [0] * number
 col3 = [random.random() for _ in range(number)]
 
 # データフレームに変換
-df = pd.DataFrame({
-    'Column1': col1,
-    'Column2': col2,
-    'Column3': col3
-})
+df = pd.DataFrame(zip(col1, col2, col3))
 
 # タブ区切りでファイルに書き出し
 tsv_filename = 'random_opinion.txt'
-df.to_csv(tsv_filename, sep='\t', index=False)
+df.to_csv(tsv_filename, sep='\t', index=False, header=False)
 
 print(f"ファイル {tsv_filename} が作成されました。")

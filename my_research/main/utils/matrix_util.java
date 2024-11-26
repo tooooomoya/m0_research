@@ -1,5 +1,4 @@
 package main.utils;
-import java.util.Arrays;
 
 public class matrix_util {
     // COPY matrix
@@ -175,6 +174,30 @@ public class matrix_util {
         for (double val : vector) {
             System.out.printf("%.2f, ", val);  // 小数第2位まで表示
         }
+    }
+
+    public static void printDist(double[] z){
+        int a = 0, b = 0, c = 0, d = 0, e = 0;
+            for (int t = 0; t < z.length; t++) {
+                if (-1 <= z[t] && z[t] < -0.6) {
+                    a++;
+                } else if (z[t] < -0.2) {
+                    b++;
+                } else if (z[t] < 0.2) {
+                    c++;
+                } else if (z[t] < 0.6) {
+                    d++;
+                } else if (z[t] <= 1.0) {
+                    e++;
+                }
+            }
+
+            System.out.println("Confirm the distribution of z (opinions) ↓↓↓");
+            System.out.printf("-1 ~ -0.6: %d\n", a);
+            System.out.printf("-0.6 ~ -0.2: %d\n", b);
+            System.out.printf("-0.2 ~ 0.2: %d\n", c);
+            System.out.printf("0.2 ~ 0.6: %d\n", d);
+            System.out.printf("0.6 ~ 1.0: %d\n", e);
     }
     
 

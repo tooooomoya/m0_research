@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import main.utils.*;
 
 public class LoadNW {
@@ -83,6 +84,18 @@ public class LoadNW {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        // スケーリング範囲
+        double minTarget = 0.2;
+        double maxTarget = 0.8;
+
+        // 元データの最小値と最大値を計算
+        double minZ = Arrays.stream(z).min().getAsDouble();
+        double maxZ = Arrays.stream(z).max().getAsDouble();
+
+        // min-maxスケーリングを適用
+        for (int i = 0; i < z.length; i++) {
+            z[i] = minTarget + (z[i] - minZ) / (maxZ - minZ) * (maxTarget - minTarget);
+        }
  
         s = new double[z.length];
         for (int i = 0; i < z.length; i++) {
@@ -93,23 +106,27 @@ public class LoadNW {
         System.out.println("\nthe intrinsic s (calculate the situation before FJ model): ");
         matrix_util.printVector(s);
 
-        int a = 0, b = 0, c = 0, d = 0;
-        for (int i = 0; i < s.length; i++) {
-            if (s[i] < 0.25) {
-                a++;
-            } else if (s[i] < 0.5) {
-                b++;
-            } else if (s[i] < 0.75) {
-                c++;
-            } else {
-                d++;
+        int a = 0, b = 0, c = 0, d = 0, e = 0;
+            for (int t = 0; t < z.length; t++) {
+                if (0 <= z[t] && z[t] < 0.2) {
+                    a++;
+                } else if (z[t] < 0.4) {
+                    b++;
+                } else if (z[t] < 0.6) {
+                    c++;
+                } else if (z[t] < 0.8) {
+                    d++;
+                } else if (z[t] <= 1.0) {
+                    e++;
+                }
             }
-        }
-        System.out.println("Confirm the distribution of intinsic opinions ↓↓↓");
-        System.out.printf("0 ~ 0.25: %d\n", a);
-        System.out.printf("0.25 ~ 0.5: %d\n", b);
-        System.out.printf("0.5 ~ 0.75: %d\n", c);
-        System.out.printf("0.75 ~ 1.0: %d\n", d);
+
+            System.out.println("Confirm the distribution of z (opinions) ↓↓↓");
+            System.out.printf("0 ~ 0.2: %d\n", a);
+            System.out.printf("0.2 ~ 0.4: %d\n", b);
+            System.out.printf("0.4 ~ 0.6: %d\n", c);
+            System.out.printf("0.6 ~ 0.8: %d\n", d);
+            System.out.printf("0.8 ~ 1.0: %d\n", e);
 
     }
 

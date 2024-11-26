@@ -5,6 +5,7 @@ import main.utils.matrix_util;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.math3.linear.*;
+import java.util.stream.IntStream;
 
 import main.structure.OptResult;
 
@@ -13,6 +14,16 @@ public class optimization {
     // minZ : the STEP where users change their opinion according to the FJ model
     public static double[] minZ(double[][] W, double[] s, double[] z) {
         int n = z.length;
+        
+        /*for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if(W[i][j] > 0){
+                    W[i][j] = 1.0;
+                }
+            }
+        }
+        */
+        
 
         // d の初期化
         double[] d = new double[n];
@@ -22,16 +33,29 @@ public class optimization {
                 d[i] += W[i][j];
             }
         }
+        double[] z1 = new double[n];
+        double[] s1 = new double[n];
+        for (int i = 0; i < n; i++) {
+            z1[i] = 2 * z[i] - 1;
+            s1[i] = 2* s[i] -1;
+        }
+        //matrix_util.printDist(z1);
+        //matrix_util.printDist(s1);
 
+
+        double lambda = 0.5;
+        double coeff = 1.4;
         // new_z の初期化
         double[] new_z = new double[n];
         for (int i = 0; i < n; i++) {
             double temp = 0.0;
             for (int j = 0; j < n; j++) {
-                temp += W[i][j] * z[j];
+                temp += W[i][j] * z1[j];
             }
-            new_z[i] = (s[i] + temp) / (d[i]+1);
+            new_z[i] =  coeff *  (s1[i] + temp) / (d[i] + 1);
+            //new_z[i] = temp * lambda + (1 - lambda) * s[i]; 
         }
+        //matrix_util.printDist(new_z);
 
         double z_min = 0.0;
         double z_max = 0.0;
@@ -42,9 +66,17 @@ public class optimization {
                 z_min = new_z[i];
             }
         }
+        System.out.println("z_max: "+z_max);
+        System.out.println("z_min: "+z_min);      
 
         for (int i = 0; i < z.length; i++) {
-            new_z[i] = (new_z[i] - z_min) / (z_max - z_min);
+            if(new_z[i] < -1){
+                new_z[i] = -1;
+            }else if (new_z[i] > 1){
+                new_z[i]  = 1;
+            }
+            new_z[i] = (new_z[i] + 1) / 2;
+            //new_z[i] = (new_z[i] - z_min)/(z_max - z_min);
         }
 
         return new_z;
@@ -115,7 +147,7 @@ public class optimization {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (i > j) {
-                    x[i][j] = model.addVar(0.0, GRB.INFINITY, 0.0, GRB.CONTINUOUS, "x_" + i + "_" + j);
+                    x[i][j] = model.addVar(0.0, 10.0, 0.0, GRB.CONTINUOUS, "x_" + i + "_" + j);
                     // x[j][i] = x[i][j]; // 対称行列を作る →いるか？
                 }
             }
@@ -137,6 +169,40 @@ public class optimization {
 
         // Objective: minimize ∑_ij w_ij (zi - zj)^2
         GRBQuadExpr objExp = new GRBQuadExpr();
+
+        // objExpは最小化する目的関数となる。
+        if (existing) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (i > j && W0[i][j] > 0) {
+                        double diff = 10 - 25 * (z[i] - z[j]) ;
+                        objExp.addTerm(diff, x[i][j]);
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (i > j) {
+                        double diff = 10 - 25 * Math.abs(z[i] - z[j]) ;
+                        objExp.addTerm(diff, x[i][j]);
+                        // diff*x[i][j]という項(Term)をAddする、という意味
+                    }
+                }
+            }
+        }
+
+        // If reducePls is true, add the regularization term γ * ∑(x_ij^2)
+        if (reducePls) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (i > j) {
+                        objExp.addTerm(gam, x[i][j], x[i][j]); // γ * x_ij^2 term
+                    }
+                }
+            }
+        }
+        /*
         // objExpは最小化する目的関数となる。
         if (existing) {
             for (int i = 0; i < n; i++) {
@@ -169,9 +235,10 @@ public class optimization {
                 }
             }
         }
+        */
 
 
-        model.setObjective(objExp, GRB.MINIMIZE);
+        model.setObjective(objExp, GRB.MAXIMIZE);
         // System.out.println("Set the objective!");
 
         
@@ -246,13 +313,13 @@ public class optimization {
                     if (existing && W0[i][j] > 0) {
                         expr1.addTerm(1.0, x[i][j], x[i][j]); // x[i,j]^2
                         expr1.addTerm(-2.0 * W0[i][j], x[i][j]); // -2 * W0[i,j] * x[i,j]
-                        if(W0[i][j] != 0){
+                        if(W0[i][j] > 0){
                         expr1.addConstant(W0[i][j] * W0[i][j]); // W0[i,j]^2 as a constant
                         }
                     } else if (!existing) {
                         expr1.addTerm(1.0, x[i][j], x[i][j]); // x[i,j]^2
                         expr1.addTerm(-2.0 * W0[i][j], x[i][j]); // -2 * W0[i,j] * x[i,j]
-                        if(W0[i][j] != 0){
+                        if(W0[i][j] > 0){
                         expr1.addConstant(W0[i][j] * W0[i][j]); // W0[i,j]^2 as a constant
                         }
                     }
@@ -294,6 +361,33 @@ public class optimization {
     }
 
     public static double computePls(double[] z) {
+        int n = z.length;
+        // 平均を計算
+        double mean = IntStream.range(0, n).mapToDouble(i -> z[i]).average().orElse(0.0);
+
+        // 分散を計算
+        double variance = IntStream.range(0, n)
+                .mapToDouble(i -> Math.pow(z[i] - mean, 2))
+                .sum() / n;
+
+        // 歪度 (m3) を計算
+        double m3 = IntStream.range(0, n)
+                .mapToDouble(i -> Math.pow(z[i] - mean, 3))
+                .sum() / (n * Math.pow(variance, 1.5));
+
+        // 尖度 (m4) を計算
+        double m4 = IntStream.range(0, n)
+                .mapToDouble(i -> Math.pow(z[i] - mean, 4))
+                .sum() / (n * Math.pow(variance, 2)) - 3.0; // Excess Kurtosis
+
+        // Bimodality Coefficient (BC) を計算
+        double numerator = m3 * m3 + 1;
+        double denominator = m4 + (3.0 * Math.pow(n - 1, 2)) / ((n - 2) * (n - 3));
+        double BC = numerator / denominator;
+
+        return BC;
+        
+        /*
         double sum = 0.0;
         for (double value : z) {
             sum += value;
@@ -306,5 +400,6 @@ public class optimization {
             sumSquareDifferences += difference * difference;
         }
         return sumSquareDifferences;
+        */
     }
 }

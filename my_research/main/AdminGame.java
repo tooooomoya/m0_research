@@ -1,3 +1,4 @@
+
 import com.gurobi.gurobi.GRBException;
 import java.util.Map;
 import java.util.ArrayList;
@@ -27,7 +28,6 @@ public class AdminGame {
         pls.add(optimization.computePls(z));
         //System.out.println("\npls before iteration: "+ optimization.computePls(z));
 
-
         ///// Set disaggs
         double[][] L = matrix_util.createL(W, W.length);
         ArrayList<Double> disaggs = new ArrayList<>();
@@ -49,7 +49,7 @@ public class AdminGame {
         ///// Set cdv
         ArrayList<Double> cdv = new ArrayList<>();
         cdv.add(calculater.computeCdv(z, W, communities));
-        
+
         int i = 0;
         boolean flag = true;
         double[][] Wnew = null;
@@ -60,8 +60,6 @@ public class AdminGame {
             System.out.println("--------------------------");
             System.out.println("Iteration:" + i);
 
-            
-            
             try {
                 // Admin changes weight matrix
                 OptResult optResult = optimization.minWGurobi(z, lam, W, reducePls, gam, existing);
@@ -75,46 +73,45 @@ public class AdminGame {
                 finderror = true;
                 e.printStackTrace();
             }
+
             
-            if(Wnew == null){
+            if (Wnew == null) {
                 Wnew = W;
             }
 
-            double w_num = 0.0;
-            if(random){
-            /// My Method : randomly add weight
-            List<int[]> selectedPairs = new ArrayList<>();
-            selectedPairs = calculater.selectPairs_v0(Wnew,z);
-            for (int[] pair : selectedPairs){
-                Wnew[pair[0]][pair[1]] += 0.5;
-                w_num += 1;
-            }
-        }
-        System.out.println("The sum of w added by my method: "+w_num);
-        weight_added += w_num;
+            Wnew = calculater.friendRecommend(Wnew, z);
 
+            double w_num = 0.0;
+            if (random) {
+                /// My Method : randomly add weight
+            List<int[]> selectedPairs = new ArrayList<>();
+                selectedPairs = calculater.selectPairs_v1(Wnew, z);
+                for (int[] pair : selectedPairs) {
+                    Wnew[pair[0]][pair[1]] += 0.5;
+                    w_num += 1;
+                }
+            }
+            System.out.println("The sum of w added by my method: " + w_num);
+            weight_added += w_num;
 
             /// confirm the maximum weight
             double max_w = 0.0;
-            for(int ii=0; ii<z.length;ii++){
-                for(int j=0; j<z.length; j++){
-                    if(Wnew[i][j] > max_w){
+            for (int ii = 0; ii < z.length; ii++) {
+                for (int j = 0; j < z.length; j++) {
+                    if (Wnew[i][j] > max_w) {
                         max_w = Wnew[ii][j];
                     }
                 }
             }
             System.out.println("\nMaximum Weight of W matrix : " + max_w);
 
-
             // After Admin action, each user change its opinion according to the FJ model
             // System.out.println("\nz before this time Admin effect: ");
             // matrix_util.printVector(z);
-
             double[] znew = optimization.minZ(Wnew, s, z);
-            
+
             // System.out.println("\nNew z after Admin effect: ");
             // matrix_util.printVector(znew);
-
             // Terminal Criterion(both z and W can be considered to be converged, or maxIter
             // criterion)
             System.out.println("z-znew:\n" + norm(z, znew));
@@ -127,13 +124,11 @@ public class AdminGame {
             z = znew;
             W = Wnew;
             i++;
-            
 
             //double PLS = calculateDiversity(znew, Wnew);
-
             double PLS = optimization.computePls(z);
             pls.add(PLS);
-            //System.out.println("\npls: " + PLS);
+            System.out.println("\npls: " + PLS);
 
             L = matrix_util.createL(W, W.length);
             double disagg = computeDisagreement(z, L);
@@ -142,45 +137,46 @@ public class AdminGame {
 
             double GPPLS = calculater.computeGpPls(z);
             gppls.add(GPPLS);
-            System.out.println("\ngppls: " + GPPLS);
+            //System.out.println("\ngppls: " + GPPLS);
 
             double stf = calculater.computeStf(z, W, communities);
             stfs.add(stf);
-            //System.out.println("\nstf: " + stf);
+            System.out.println("\nstf: " + stf);
 
             double UDV = calculater.computeUdv(z, W);
             udv.add(UDV);
-            System.out.println("\nudv: "+UDV);
+            //System.out.println("\nudv: " + UDV);
 
             double CDV = calculater.computeCdv(z, W, communities);
             cdv.add(CDV);
 
-            int a = 0, b = 0, c = 0, d = 0;
+            int a = 0, b = 0, c = 0, d = 0, e = 0;
             for (int t = 0; t < z.length; t++) {
-                if (0 <= z[t] && z[t] < 0.25) {
+                if (0 <= z[t] && z[t] < 0.2) {
                     a++;
-                } else if (z[t] < 0.5) {
+                } else if (z[t] < 0.4) {
                     b++;
-                } else if (z[t] < 0.75) {
+                } else if (z[t] < 0.6) {
                     c++;
-                } else if(z[t] <= 1.0) {
+                } else if (z[t] < 0.8) {
                     d++;
+                } else if (z[t] <= 1.0) {
+                    e++;
                 }
             }
 
             System.out.println("Confirm the distribution of z (opinions) ↓↓↓");
-            System.out.printf("0 ~ 0.25: %d\n", a);
-            System.out.printf("0.25 ~ 0.5: %d\n", b);
-            System.out.printf("0.5 ~ 0.75: %d\n", c);
-            System.out.printf("0.75 ~ 1.0: %d\n", d);
+            System.out.printf("0 ~ 0.2: %d\n", a);
+            System.out.printf("0.2 ~ 0.4: %d\n", b);
+            System.out.printf("0.4 ~ 0.6: %d\n", c);
+            System.out.printf("0.6 ~ 0.8: %d\n", d);
+            System.out.printf("0.8 ~ 1.0: %d\n", e);
 
         }
 
         System.out.println("The final sum of w added by my method: " + weight_added);
         return new Result(pls, disaggs, gppls, stfs, udv, cdv, z, W, finderror, weight_added);
     }
-
-
 
     /// Helper Functions
 
@@ -233,6 +229,3 @@ public class AdminGame {
         return disagreement;
     }
 }
-
-
-        
