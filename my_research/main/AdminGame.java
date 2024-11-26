@@ -1,7 +1,7 @@
+import com.gurobi.gurobi.GRBException;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.gurobi.gurobi.GRBException;
 
 import main.utils.*;
 import main.structure.*;
@@ -9,7 +9,7 @@ import main.structure.*;
 public class AdminGame {
 
     public static Result am(double[][] A, double[] s, double lam, boolean reducePls, double gam, int maxIter,
-            boolean existing, boolean random) {
+            boolean existing, boolean random, Map<Integer, List<Integer>> communities) {
         double[][] W = matrix_util.copyMatrix(A);
         // System.out.println("the first W matrix");
         // matrix_util.printMatrix(W);
@@ -17,20 +17,21 @@ public class AdminGame {
         // First, each user change its opinion according to the FJ model
         // System.out.println("\nthe first z: ");
         // matrix_util.printVector(s);
-        double[] z = optimization.minZ(W, s);
-        System.out.println("\nz after the FJ effect: ");
-        matrix_util.printVector(z);
+        //double[] z = optimization.minZ(W, s);
+        double[] z = s;
+        //System.out.println("\nthe fisrst z after the FJ effect (basis): ");
+        //matrix_util.printVector(z);
 
         ///// Set pls
         ArrayList<Double> pls = new ArrayList<>();
-        //pls.add(optimization.computePls(z));
+        pls.add(optimization.computePls(z));
         //System.out.println("\npls before iteration: "+ optimization.computePls(z));
 
 
         ///// Set disaggs
         double[][] L = matrix_util.createL(W, W.length);
         ArrayList<Double> disaggs = new ArrayList<>();
-        //disaggs.add(computeDisagreement(z, L));
+        disaggs.add(computeDisagreement(z, L));
         //System.out.println("\ndisagg before iteration: "+computeDisagreement(z, L));
 
         ///// Set gppls
@@ -39,11 +40,15 @@ public class AdminGame {
 
         ///// Set stfs
         ArrayList<Double> stfs = new ArrayList<>();
-        stfs.add(calculater.computeStf(z, W));
+        stfs.add(calculater.computeStf(z, W, communities));
 
-        ///// Set dvs
-        ArrayList<Double> dvs = new ArrayList<>();
-        dvs.add(calculater.computeUdv(z, W));
+        ///// Set udv
+        ArrayList<Double> udv = new ArrayList<>();
+        udv.add(calculater.computeUdv(z, W));
+
+        ///// Set cdv
+        ArrayList<Double> cdv = new ArrayList<>();
+        cdv.add(calculater.computeCdv(z, W, communities));
         
         int i = 0;
         boolean flag = true;
@@ -55,6 +60,7 @@ public class AdminGame {
             System.out.println("--------------------------");
             System.out.println("Iteration:" + i);
 
+            
             
             try {
                 // Admin changes weight matrix
@@ -69,7 +75,10 @@ public class AdminGame {
                 finderror = true;
                 e.printStackTrace();
             }
-            //Wnew = W;
+            
+            if(Wnew == null){
+                Wnew = W;
+            }
 
             double w_num = 0.0;
             if(random){
@@ -84,6 +93,7 @@ public class AdminGame {
         System.out.println("The sum of w added by my method: "+w_num);
         weight_added += w_num;
 
+
             /// confirm the maximum weight
             double max_w = 0.0;
             for(int ii=0; ii<z.length;ii++){
@@ -95,10 +105,13 @@ public class AdminGame {
             }
             System.out.println("\nMaximum Weight of W matrix : " + max_w);
 
+
             // After Admin action, each user change its opinion according to the FJ model
             // System.out.println("\nz before this time Admin effect: ");
             // matrix_util.printVector(z);
-            double[] znew = optimization.minZ(Wnew, s);
+
+            double[] znew = optimization.minZ(Wnew, s, z);
+            
             // System.out.println("\nNew z after Admin effect: ");
             // matrix_util.printVector(znew);
 
@@ -120,39 +133,42 @@ public class AdminGame {
 
             double PLS = optimization.computePls(z);
             pls.add(PLS);
-            System.out.println("\npls: " + PLS);
+            //System.out.println("\npls: " + PLS);
 
             L = matrix_util.createL(W, W.length);
             double disagg = computeDisagreement(z, L);
             disaggs.add(disagg);
-            System.out.println("\ndisagg: " + disagg);
+            //System.out.println("\ndisagg: " + disagg);
 
             double GPPLS = calculater.computeGpPls(z);
             gppls.add(GPPLS);
             System.out.println("\ngppls: " + GPPLS);
 
-            double stf = calculater.computeStf(z, W);
+            double stf = calculater.computeStf(z, W, communities);
             stfs.add(stf);
-            System.out.println("\nstf: " + stf);
+            //System.out.println("\nstf: " + stf);
 
-            double DVS = calculater.computeUdv(z, W);
-            dvs.add(DVS);
-            System.out.println("\ndvs: "+DVS);
+            double UDV = calculater.computeUdv(z, W);
+            udv.add(UDV);
+            System.out.println("\nudv: "+UDV);
+
+            double CDV = calculater.computeCdv(z, W, communities);
+            cdv.add(CDV);
 
             int a = 0, b = 0, c = 0, d = 0;
             for (int t = 0; t < z.length; t++) {
-                if (z[t] < 0.25) {
+                if (0 <= z[t] && z[t] < 0.25) {
                     a++;
                 } else if (z[t] < 0.5) {
                     b++;
                 } else if (z[t] < 0.75) {
                     c++;
-                } else {
+                } else if(z[t] <= 1.0) {
                     d++;
                 }
             }
 
-            System.out.println("Confirm the distribution of intinsic opinions ↓↓↓");
+            System.out.println("Confirm the distribution of z (opinions) ↓↓↓");
             System.out.printf("0 ~ 0.25: %d\n", a);
             System.out.printf("0.25 ~ 0.5: %d\n", b);
             System.out.printf("0.5 ~ 0.75: %d\n", c);
@@ -161,7 +177,7 @@ public class AdminGame {
         }
 
         System.out.println("The final sum of w added by my method: " + weight_added);
-        return new Result(pls, disaggs, gppls, stfs, dvs, z, W, finderror, weight_added);
+        return new Result(pls, disaggs, gppls, stfs, udv, cdv, z, W, finderror, weight_added);
     }
 
 

@@ -7,19 +7,21 @@ public class Result {
     private ArrayList<Double> disaggs;
     private ArrayList<Double> gppls;
     private ArrayList<Double> stfs;
-    private ArrayList<Double> dvs;
+    private ArrayList<Double> udv;
+    private ArrayList<Double> cdv;
     private double[] z;
     private double[][] W;
     private boolean finderror;
     private double weight_added;
 
-    public Result(ArrayList<Double> pls, ArrayList<Double> disaggs, ArrayList<Double> gppls, ArrayList<Double> stfs, ArrayList<Double> dvs, double[] z, double[][] W,
+    public Result(ArrayList<Double> pls, ArrayList<Double> disaggs, ArrayList<Double> gppls, ArrayList<Double> stfs, ArrayList<Double> udv, ArrayList<Double> cdv, double[] z, double[][] W,
             boolean finderror, double weight_added) {
         this.pls = pls;
         this.disaggs = disaggs;
         this.gppls = gppls;
         this.stfs = stfs;
-        this.dvs = dvs;
+        this.udv = udv;
+        this.cdv = cdv;
         this.z = z;
         this.W = W;
         this.finderror = finderror;
@@ -59,12 +61,20 @@ public class Result {
         this.stfs = stfs;
     }
 
-    public ArrayList<Double> getDvs() {
-        return dvs;
+    public ArrayList<Double> getUdv() {
+        return udv;
     }
 
-    public void setDvs(ArrayList<Double> dvs) {
-        this.dvs = dvs;
+    public void setUdv(ArrayList<Double> udv) {
+        this.udv = udv;
+    }
+
+    public ArrayList<Double> getCdv() {
+        return cdv;
+    }
+
+    public void setCdv(ArrayList<Double> cdv) {
+        this.cdv = cdv;
     }
 
     public double[] getZ() {
