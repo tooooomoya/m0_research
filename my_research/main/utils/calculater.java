@@ -43,7 +43,11 @@ public class calculater {
 
         /// connection effect
         double connect = 0.0;
+<<<<<<< HEAD
         double connect_threshold = 0.0;
+=======
+        double connect_threshold = 0.1;
+>>>>>>> origin/main
         double p = 0.05;
         for (int i = 0; i < z.length; i++) {
             double my_connect = 0.0;
@@ -56,9 +60,15 @@ public class calculater {
             if (my_connect == 1) {
                 my_connect = 0;
             } else {
+<<<<<<< HEAD
                 my_connect = 1 - 1 / Math.pow(Math.exp(my_connect), p);
             }
             connect += my_connect;
+=======
+                my_connect = 1 - 1 / Math.pow(Math.log(my_connect), p);
+            }
+            connect += my_connect ;
+>>>>>>> origin/main
         }
         connect = connect / z.length;
 
@@ -127,6 +137,7 @@ public class calculater {
         double diversity = 0.0;
         for (Map.Entry<Integer, List<Integer>> entry : communities.entrySet()) {
             double my_diversity = 0.0;
+<<<<<<< HEAD
 
             List<Integer> agents = entry.getValue();
             double[] groupCounts = new double[5]; // 5つのグループに対応
@@ -165,6 +176,42 @@ public class calculater {
             }
         }
 
+=======
+            int left = 0;
+            int middle = 0;
+            int right = 0;
+
+            List<Integer> agents = entry.getValue();
+            for (int agentIndex : agents) {
+                double opinion = z[agentIndex];
+                if (opinion < 0.3) {
+                    left++;
+                } else if (opinion <= 0.7) {
+                    middle++;
+                } else {
+                    right++;
+                }
+            }
+
+            int num = left + middle + right;
+            if (left > 0) {
+                double pLeft = (double) left / num;
+                my_diversity -= pLeft * Math.log(pLeft);
+            }
+            if (middle > 0) {
+                double pMiddle = (double) middle / num;
+                my_diversity -= pMiddle * Math.log(pMiddle);
+            }
+            if (right > 0) {
+                double pRight = (double) right / num;
+                my_diversity -= pRight * Math.log(pRight);
+            }
+
+            diversity += my_diversity;
+        }
+
+        diversity = diversity / communities.size();
+>>>>>>> origin/main
         return diversity;
     }
 
@@ -200,7 +247,11 @@ public class calculater {
 
     /// Algorithm of Randomy Change of W
     public static List<int[]> selectPairs_v1(double[][] W, double[] z) {
+<<<<<<< HEAD
         int numPairs = (int) 100 * z.length ;
+=======
+        int numPairs = (int) z.length / 2;
+>>>>>>> origin/main
         List<int[]> Pairs = new ArrayList<>();
 
         // W行列から(i, j)ペアを見つけてリストに格納
@@ -223,6 +274,7 @@ public class calculater {
         return selectedPairs;
     }
 
+<<<<<<< HEAD
     public static double[][] friendRecommend(double[][] W, double[] z) {
 
         int n = W.length; // 隣接行列のサイズ
@@ -282,4 +334,6 @@ public class calculater {
         return W;
     }
 
+=======
+>>>>>>> origin/main
 }

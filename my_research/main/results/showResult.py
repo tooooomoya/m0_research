@@ -62,6 +62,7 @@ def plot_csv_data(csv_filename, output_filename, plain_filename, i):
 
 
 
+<<<<<<< HEAD
 plot_csv_data('plsReddit.csv', 'img/plsReddit.jpg', 'plsReddit0.csv', 1)
 plot_csv_data('disaggReddit.csv', 'img/disaggReddit.jpg', 'disaggReddit0.csv', 2)
 plot_csv_data('gpplsReddit.csv', 'img/gpplsReddit.jpg', 'gpplsReddit0.csv', 3)
@@ -76,3 +77,19 @@ plot_csv_data('gpplsTwitter.csv', 'img/gpplsTwitter.jpg', 'gpplsTwitter0.csv', 3
 plot_csv_data('stfsTwitter.csv', 'img/stfsTwitter.jpg', 'stfsTwitter0.csv', 4)
 plot_csv_data('udvTwitter.csv', 'img/udvTwitter.jpg', 'udvTwitter0.csv', 5)
 plot_csv_data('cdvTwitter.csv', 'img/cdvTwitter.jpg', 'cdvTwitter0.csv', 6)
+=======
+plot_csv_data('plsReddit.csv', 'plsReddit.jpg', 'plsReddit0.csv', 1)
+plot_csv_data('disaggReddit.csv', 'disaggReddit.jpg', 'disaggReddit0.csv', 2)
+plot_csv_data('gpplsReddit.csv', 'gpplsReddit.jpg', 'gpplsReddit0.csv', 3)
+plot_csv_data('stfsReddit.csv', 'stfsReddit.jpg', 'stfsReddit0.csv', 4)
+plot_csv_data('udvReddit.csv', 'udvReddit.jpg', 'udvReddit0.csv', 5)
+plot_csv_data('cdvReddit.csv', 'cdvReddit.jpg', 'cdvReddit0.csv', 6)
+
+
+plot_csv_data('plsTwitter.csv', 'plsTwitter.jpg', 'plsTwitter0.csv', 1)
+plot_csv_data('disaggTwitter.csv', 'disaggTwitter.jpg', 'disaggTwitter0.csv', 2)
+plot_csv_data('gpplsTwitter.csv', 'gpplsTwitter.jpg', 'gpplsTwitter0.csv', 3)
+plot_csv_data('stfsTwitter.csv', 'stfsTwitter.jpg', 'stfsTwitter0.csv', 4)
+plot_csv_data('udvTwitter.csv', 'udvTwitter.jpg', 'udvTwitter0.csv', 5)
+plot_csv_data('cdvTwitter.csv', 'cdvTwitter.jpg', 'cdvTwitter0.csv', 6)
+>>>>>>> origin/main

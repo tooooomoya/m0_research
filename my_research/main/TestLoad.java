@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -74,10 +77,28 @@ public class TestLoad {
             e.printStackTrace();
         }
 
+<<<<<<< HEAD
         s = new double[z.length];
         for (int i = 0; i < z.length; i++) {
             s[i] = z[i];
         }
+=======
+        // create "notConnected Matrix" in which we can know which node not being
+        // connected with any other nodes.
+        /*Set<Integer> notConnected = new HashSet<>();
+        for (int i = 0; i < nSNS; i++) {
+            boolean connected = false;
+            for (int j = 0; j < nSNS; j++) {
+                if (A[i][j] > 0) {
+                    connected = true;
+                    break;
+                }
+            }
+            if (!connected) {
+                notConnected.add(i);
+            }
+        }*/
+>>>>>>> origin/main
 
         System.out.println("\nthe intrinsic s (calculate the situation before FJ model): ");
         matrix_util.printVector(s);

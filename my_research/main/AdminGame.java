@@ -94,6 +94,7 @@ public class AdminGame {
             System.out.println("The sum of w added by my method: " + w_num);
             weight_added += w_num;
 
+
             /// confirm the maximum weight
             double max_w = 0.0;
             for (int ii = 0; ii < z.length; ii++) {
@@ -104,6 +105,7 @@ public class AdminGame {
                 }
             }
             System.out.println("\nMaximum Weight of W matrix : " + max_w);
+
 
             // After Admin action, each user change its opinion according to the FJ model
             // System.out.println("\nz before this time Admin effect: ");
@@ -128,7 +130,7 @@ public class AdminGame {
             //double PLS = calculateDiversity(znew, Wnew);
             double PLS = optimization.computePls(z);
             pls.add(PLS);
-            System.out.println("\npls: " + PLS);
+            //System.out.println("\npls: " + PLS);
 
             L = matrix_util.createL(W, W.length);
             double disagg = computeDisagreement(z, L);
@@ -141,7 +143,7 @@ public class AdminGame {
 
             double stf = calculater.computeStf(z, W, communities);
             stfs.add(stf);
-            System.out.println("\nstf: " + stf);
+            //System.out.println("\nstf: " + stf);
 
             double UDV = calculater.computeUdv(z, W);
             udv.add(UDV);

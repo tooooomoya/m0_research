@@ -14,6 +14,7 @@ public class optimization {
     // minZ : the STEP where users change their opinion according to the FJ model
     public static double[] minZ(double[][] W, double[] s, double[] z) {
         int n = z.length;
+<<<<<<< HEAD
         
         /*for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -24,6 +25,8 @@ public class optimization {
         }
         */
         
+=======
+>>>>>>> origin/main
 
         // d の初期化
         double[] d = new double[n];
@@ -33,6 +36,7 @@ public class optimization {
                 d[i] += W[i][j];
             }
         }
+<<<<<<< HEAD
         double[] z1 = new double[n];
         double[] s1 = new double[n];
         for (int i = 0; i < n; i++) {
@@ -45,17 +49,27 @@ public class optimization {
 
         double lambda = 0.5;
         double coeff = 1.4;
+=======
+
+>>>>>>> origin/main
         // new_z の初期化
         double[] new_z = new double[n];
         for (int i = 0; i < n; i++) {
             double temp = 0.0;
             for (int j = 0; j < n; j++) {
+<<<<<<< HEAD
                 temp += W[i][j] * z1[j];
             }
             new_z[i] =  coeff *  (s1[i] + temp) / (d[i] + 1);
             //new_z[i] = temp * lambda + (1 - lambda) * s[i]; 
         }
         //matrix_util.printDist(new_z);
+=======
+                temp += W[i][j] * z[j];
+            }
+            new_z[i] = (s[i] + temp) / (d[i]+1);
+        }
+>>>>>>> origin/main
 
         double z_min = 0.0;
         double z_max = 0.0;
@@ -66,6 +80,7 @@ public class optimization {
                 z_min = new_z[i];
             }
         }
+<<<<<<< HEAD
         System.out.println("z_max: "+z_max);
         System.out.println("z_min: "+z_min);      
 
@@ -77,6 +92,11 @@ public class optimization {
             }
             new_z[i] = (new_z[i] + 1) / 2;
             //new_z[i] = (new_z[i] - z_min)/(z_max - z_min);
+=======
+
+        for (int i = 0; i < z.length; i++) {
+            new_z[i] = (new_z[i] - z_min) / (z_max - z_min);
+>>>>>>> origin/main
         }
 
         return new_z;
@@ -313,13 +333,21 @@ public class optimization {
                     if (existing && W0[i][j] > 0) {
                         expr1.addTerm(1.0, x[i][j], x[i][j]); // x[i,j]^2
                         expr1.addTerm(-2.0 * W0[i][j], x[i][j]); // -2 * W0[i,j] * x[i,j]
+<<<<<<< HEAD
                         if(W0[i][j] > 0){
+=======
+                        if(W0[i][j] != 0){
+>>>>>>> origin/main
                         expr1.addConstant(W0[i][j] * W0[i][j]); // W0[i,j]^2 as a constant
                         }
                     } else if (!existing) {
                         expr1.addTerm(1.0, x[i][j], x[i][j]); // x[i,j]^2
                         expr1.addTerm(-2.0 * W0[i][j], x[i][j]); // -2 * W0[i,j] * x[i,j]
+<<<<<<< HEAD
                         if(W0[i][j] > 0){
+=======
+                        if(W0[i][j] != 0){
+>>>>>>> origin/main
                         expr1.addConstant(W0[i][j] * W0[i][j]); // W0[i,j]^2 as a constant
                         }
                     }
@@ -400,6 +428,9 @@ public class optimization {
             sumSquareDifferences += difference * difference;
         }
         return sumSquareDifferences;
+<<<<<<< HEAD
         */
+=======
+>>>>>>> origin/main
     }
 }
