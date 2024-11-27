@@ -87,7 +87,7 @@ public class AdminGame {
             List<int[]> selectedPairs = new ArrayList<>();
                 selectedPairs = calculater.selectPairs_v0(Wnew, z);
                 for (int[] pair : selectedPairs) {
-                    Wnew[pair[0]][pair[1]] += 0.5;
+                    Wnew[pair[0]][pair[1]] += Constants.ADD_WEIGHT;
                     w_num += 1;
                 }
             }
