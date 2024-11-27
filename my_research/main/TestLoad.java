@@ -1,12 +1,10 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/main
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import main.utils.matrix_util;
 
 public class TestLoad {
@@ -15,7 +13,6 @@ public class TestLoad {
     private double[] s;
 
     public TestLoad(int whichSNS) {
-        // whichSNSによってグラフ構造選べるようにとかするか。
         int nSNS = 500;
         String directory = "Random";
         String name = "random";
@@ -76,29 +73,23 @@ public class TestLoad {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        // スケーリング範囲
+        double minTarget = 0.2;
+        double maxTarget = 0.8;
 
-<<<<<<< HEAD
+        // 元データの最小値と最大値を計算
+        double minZ = Arrays.stream(z).min().getAsDouble();
+        double maxZ = Arrays.stream(z).max().getAsDouble();
+
+        // min-maxスケーリングを適用
+        for (int i = 0; i < z.length; i++) {
+            z[i] = minTarget + (z[i] - minZ) / (maxZ - minZ) * (maxTarget - minTarget);
+        }
+
         s = new double[z.length];
         for (int i = 0; i < z.length; i++) {
             s[i] = z[i];
         }
-=======
-        // create "notConnected Matrix" in which we can know which node not being
-        // connected with any other nodes.
-        /*Set<Integer> notConnected = new HashSet<>();
-        for (int i = 0; i < nSNS; i++) {
-            boolean connected = false;
-            for (int j = 0; j < nSNS; j++) {
-                if (A[i][j] > 0) {
-                    connected = true;
-                    break;
-                }
-            }
-            if (!connected) {
-                notConnected.add(i);
-            }
-        }*/
->>>>>>> origin/main
 
         System.out.println("\nthe intrinsic s (calculate the situation before FJ model): ");
         matrix_util.printVector(s);
