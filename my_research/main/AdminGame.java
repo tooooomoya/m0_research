@@ -85,7 +85,7 @@ public class AdminGame {
             if (random) {
                 /// My Method : randomly add weight
             List<int[]> selectedPairs = new ArrayList<>();
-                selectedPairs = calculater.selectPairs_v1(Wnew, z);
+                selectedPairs = calculater.selectPairs_v0(Wnew, z);
                 for (int[] pair : selectedPairs) {
                     Wnew[pair[0]][pair[1]] += 0.5;
                     w_num += 1;
@@ -171,6 +171,8 @@ public class AdminGame {
             System.out.printf("0.4 ~ 0.6: %d\n", c);
             System.out.printf("0.6 ~ 0.8: %d\n", d);
             System.out.printf("0.8 ~ 1.0: %d\n", e);
+
+            GIFMaker.recordHistogram(lam, z);
 
         }
 

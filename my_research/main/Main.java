@@ -60,6 +60,8 @@ public class Main {
             plotResults.exportCdv(resultPair, "Test", lamvals);
         }
 
+        GIFCreator.createGIF("output.gif");
+
         scanner.close();
     }
 }

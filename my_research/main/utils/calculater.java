@@ -200,7 +200,7 @@ public class calculater {
 
     /// Algorithm of Randomy Change of W
     public static List<int[]> selectPairs_v1(double[][] W, double[] z) {
-        int numPairs = (int) z.length / 2;
+        int numPairs = (int) 100 * z.length ;
         List<int[]> Pairs = new ArrayList<>();
 
         // W行列から(i, j)ペアを見つけてリストに格納

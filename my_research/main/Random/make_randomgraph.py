@@ -6,7 +6,7 @@ import random
 
 # ノード数とエッジ数のパラメータ
 num_nodes = 500  # ノード数を1から100に設定
-edge_prob = 0.3  # エッジが存在する確率 (0から1の範囲)
+edge_prob = 0.01  # エッジが存在する確率 (0から1の範囲)
 
 # ランダムグラフを作成 (gnp_random_graph はランダムにエッジを生成)
 random_graph = nx.gnp_random_graph(num_nodes, edge_prob)

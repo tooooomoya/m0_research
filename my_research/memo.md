@@ -89,11 +89,11 @@ javac -cp "/Library/gurobi1103/macos_universal2/lib/gurobi.jar:/Library/ApacheCo
 以下でMainが実行できます。
 
 ```
-javac -cp "/Library/gurobi1103/macos_universal2/lib/gurobi.jar:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" -d out utils/*.java structure/*.java *.java
+javac -cp "/Users/tomoyatakeda/Library/gurobi1103/macos_universal2/lib/gurobi.jar:/Users/tomoyatakeda/Library/ApacheCommonsMath/commons-math3-3.6.1.jar:/Users/tomoyatakeda/Library/AnimatedGIF/animated-gif-lib-1.4.jar" -d out utils/*.java structure/*.java *.java
 ```
 
 ```
-java -cp "out:/Library/gurobi1103/macos_universal2/lib/gurobi.jar:/Library/ApacheCommonsMath/commons-math3-3.6.1.jar" Main
+java -cp "out:/Users/tomoyatakeda/Library/gurobi1103/macos_universal2/lib/gurobi.jar:/Users/tomoyatakeda/Library/ApacheCommonsMath/commons-math3-3.6.1.jar:/Users/tomoyatakeda/Library/AnimatedGIF/animated-gif-lib-1.4.jar" Main 
 ```
 
 以下は、マシン上で動かすとき。
