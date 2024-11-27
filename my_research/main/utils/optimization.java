@@ -14,16 +14,6 @@ public class optimization {
     // minZ : the STEP where users change their opinion according to the FJ model
     public static double[] minZ(double[][] W, double[] s, double[] z) {
         int n = z.length;
-        
-        /*for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if(W[i][j] > 0){
-                    W[i][j] = 1.0;
-                }
-            }
-        }
-        */
-        
 
         // d の初期化
         double[] d = new double[n];
@@ -37,11 +27,10 @@ public class optimization {
         double[] s1 = new double[n];
         for (int i = 0; i < n; i++) {
             z1[i] = 2 * z[i] - 1;
-            s1[i] = 2* s[i] -1;
+            s1[i] = 2 * s[i] - 1;
         }
         //matrix_util.printDist(z1);
         //matrix_util.printDist(s1);
-
 
         double lambda = 0.5;
         double coeff = 1.4;
@@ -52,7 +41,7 @@ public class optimization {
             for (int j = 0; j < n; j++) {
                 temp += W[i][j] * z1[j];
             }
-            new_z[i] =  coeff *  (s1[i] + temp) / (d[i] + 1);
+            new_z[i] = coeff * (s1[i] + temp) / (d[i] + 1);
             //new_z[i] = temp * lambda + (1 - lambda) * s[i]; 
         }
         //matrix_util.printDist(new_z);
@@ -66,14 +55,14 @@ public class optimization {
                 z_min = new_z[i];
             }
         }
-        System.out.println("z_max: "+z_max);
-        System.out.println("z_min: "+z_min);      
+        System.out.println("z_max: " + z_max);
+        System.out.println("z_min: " + z_min);
 
         for (int i = 0; i < z.length; i++) {
-            if(new_z[i] < -1){
+            if (new_z[i] < -1) {
                 new_z[i] = -1;
-            }else if (new_z[i] > 1){
-                new_z[i]  = 1;
+            } else if (new_z[i] > 1) {
+                new_z[i] = 1;
             }
             new_z[i] = (new_z[i] + 1) / 2;
             //new_z[i] = (new_z[i] - z_min)/(z_max - z_min);
@@ -81,42 +70,6 @@ public class optimization {
 
         return new_z;
     }
-
-
-    /*public static double[] minZ(double[][] W, double[] s) {
-        double[][] L = matrix_util.createL(W, W.length);
-        int n = W.length;
-
-        // Create identity matrix (I)
-        double[][] identityMatrix = new double[n][n];
-        for (int i = 0; i < n; i++) {
-            identityMatrix[i][i] = 1.0;
-        }
-
-        double[][] LPlusI = matrix_util.add(identityMatrix, L);
-
-        // z = (LPlusI)^-1 * s : calculateLE solves this linear equation
-
-        // calculate (LPlusI)'s inverse matrix
-        RealMatrix matrixLPlusI = MatrixUtils.createRealMatrix(LPlusI);
-        // 微小な値を加えて正則化
-        /*
-         * double regularizationValue = 0.00000001;
-         * for (int i = 0; i < matrixLPlusI.getRowDimension(); i++) {
-         * matrixLPlusI.setEntry(i, i, matrixLPlusI.getEntry(i, i) +
-         * regularizationValue);
-         * }
-     *//*
-    LUDecomposition luDecomposition = new LUDecomposition(matrixLPlusI);
-    RealMatrix inverseMatrix = luDecomposition.getSolver().getInverse();
-
-    // z = (LPlusI)^-1 * s
-    RealVector vectorS = new ArrayRealVector(s);
-    RealVector vectorZ = inverseMatrix.operate(vectorS);
-
-    return vectorZ.toArray ();
-}
-*/
 
     // minW : the STEP where Admin changes(minimizes) W matrix under some
     // constraints
@@ -137,8 +90,6 @@ public class optimization {
         //model.set(GRB.IntParam.BarIterLimit, 200); // Increase iteration limit to allow more iterations if needed
         //model.set(GRB.DoubleParam.MIPGap, 0.01); // 例: 0.01
         //model.set(GRB.IntParam.BarIterLimit, 50);
-        
-
 
         System.out.println("---------- end information ----------");
 
@@ -146,10 +97,10 @@ public class optimization {
         GRBVar[][] x = new GRBVar[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (i > j) {
-                    x[i][j] = model.addVar(0.0, 10.0, 0.0, GRB.CONTINUOUS, "x_" + i + "_" + j);
-                    // x[j][i] = x[i][j]; // 対称行列を作る →いるか？
-                }
+                //if (i > j) {
+                x[i][j] = model.addVar(0.0, 10.0, 0.0, GRB.CONTINUOUS, "x_" + i + "_" + j);
+                // x[j][i] = x[i][j]; // 対称行列を作る →いるか？
+                //}
             }
         }
         // x_1_2みたいなguroubi用の変数ができる。
@@ -158,9 +109,9 @@ public class optimization {
         int count = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (i > j && x[i][j] != null) {
-                    count++;
-                }
+                //if (i > j && x[i][j] != null) {
+                count++;
+                //}
             }
         }
 
@@ -175,7 +126,7 @@ public class optimization {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
                     if (i > j && W0[i][j] > 0) {
-                        double diff = 10 - 25 * (z[i] - z[j]) ;
+                        double diff = 10 - 25 * Math.abs(z[i] - z[j]);
                         objExp.addTerm(diff, x[i][j]);
                     }
                 }
@@ -183,11 +134,11 @@ public class optimization {
         } else {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
-                    if (i > j) {
-                        double diff = 10 - 25 * Math.abs(z[i] - z[j]) ;
-                        objExp.addTerm(diff, x[i][j]);
-                        // diff*x[i][j]という項(Term)をAddする、という意味
-                    }
+                    //if (i > j) {
+                    double diff = 10 - 25 * Math.abs(z[i] - z[j]);
+                    objExp.addTerm(diff, x[i][j]);
+                    // diff*x[i][j]という項(Term)をAddする、という意味
+                    //}
                 }
             }
         }
@@ -235,16 +186,13 @@ public class optimization {
                 }
             }
         }
-        */
-
+         */
 
         model.setObjective(objExp, GRB.MAXIMIZE);
         // System.out.println("Set the objective!");
 
-        
         // Add constraints sum_j x[i,j] = di : the degree of each vertex should not
         // change
-
         // calculate d[i] d[i]にはノードiのinitialの度数が入る
         double[] d = new double[n];
         for (int i = 0; i < n; i++) {
@@ -257,7 +205,7 @@ public class optimization {
         for (int i = 0; i < n; i++) {// 各ノードiに対して
             GRBLinExpr expr = new GRBLinExpr();
 
-            if (existing) {
+            /*if (existing) {
                 // W0[i,j] > 0 の場合に制約を追加
                 for (int j = i + 1; j < n; j++) {
                     if (W0[i][j] > 0 & x[i][j] != null) {
@@ -281,6 +229,11 @@ public class optimization {
                         expr.addTerm(1.0, x[i][j]);
                     }
                 }
+            }*/
+            for (int j = 0; j < n; j++) {
+                if (x[i][j] != null) {
+                    expr.addTerm(1.0, x[i][j]);
+                }
             }
 
             // 制約: sum_j x[i,j] = d[i]
@@ -288,12 +241,9 @@ public class optimization {
         }
 
         // System.out.println("added first constraint");
-        
-
         // Add the constraint ∑(wij - w0ij) < lam * ||w0||^2
         // This part would need adjustment based on the actual implementation context
         // The right-hand side would be defined according to your original logic
-
         // Calculate Frobenius norm of W0 (||W0||^2 : 二乗和)
         double normW0Squared = 0.0;
         for (int i = 0; i < n; i++) {
@@ -307,23 +257,23 @@ public class optimization {
         // Create the expression for the constraint: ∑(wij - w0ij)
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (i > j) { // Only consider pairs where i > j
+                //if (i > j) { // Only consider pairs where i > j
 
                     // Add the terms to the quadratic expression
                     if (existing && W0[i][j] > 0) {
                         expr1.addTerm(1.0, x[i][j], x[i][j]); // x[i,j]^2
                         expr1.addTerm(-2.0 * W0[i][j], x[i][j]); // -2 * W0[i,j] * x[i,j]
-                        if(W0[i][j] > 0){
-                        expr1.addConstant(W0[i][j] * W0[i][j]); // W0[i,j]^2 as a constant
+                        if (W0[i][j] > 0) {
+                            expr1.addConstant(W0[i][j] * W0[i][j]); // W0[i,j]^2 as a constant
                         }
                     } else if (!existing) {
                         expr1.addTerm(1.0, x[i][j], x[i][j]); // x[i,j]^2
                         expr1.addTerm(-2.0 * W0[i][j], x[i][j]); // -2 * W0[i,j] * x[i,j]
-                        if(W0[i][j] > 0){
-                        expr1.addConstant(W0[i][j] * W0[i][j]); // W0[i,j]^2 as a constant
+                        if (W0[i][j] > 0) {
+                            expr1.addConstant(W0[i][j] * W0[i][j]); // W0[i,j]^2 as a constant
                         }
                     }
-                }
+                //}
             }
         }
         // Add the quadratic constraint: expr <= rhs
@@ -347,7 +297,7 @@ public class optimization {
             for (int j = 0; j < n; j++) {
                 if (i > j) {
                     W[i][j] = x[i][j].get(GRB.DoubleAttr.X); // Get the optimized value of x[i][j]
-                    if(W[i][j] < 0.01){
+                    if (W[i][j] < 0.01) {
                         W[i][j] = 0;
                     }
                     W[j][i] = W[i][j]; // Symmetric matrix
@@ -386,7 +336,7 @@ public class optimization {
         double BC = numerator / denominator;
 
         return BC;
-        
+
         /*
         double sum = 0.0;
         for (double value : z) {
@@ -400,6 +350,6 @@ public class optimization {
             sumSquareDifferences += difference * difference;
         }
         return sumSquareDifferences;
-        */
+         */
     }
 }

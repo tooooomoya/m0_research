@@ -36,7 +36,7 @@ public class TestLoad {
                             // 2 sets of nodes indexes in the "edges_SNS.txt" file mean interaction between
                             // them
                             A[u][v] = 1;
-                            A[v][u] = 1;
+                            //A[v][u] = 1;
                         }
                     } catch (NumberFormatException e) {
                         System.err.println("Number format exception: " + e.getMessage());

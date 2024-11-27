@@ -26,7 +26,7 @@ public class calculater {
             int links = 0;
             int similar = 0;
             for (int j = 0; j < z.length; j++) {
-                if (W[i][j] > 0.0) {
+                if (W[i][j] > Constants.W_THRES) {
                     links++;
                     if (z[j] >= z[i] - 0.2 && z[j] <= z[i] + 0.2) {
                         similar++;
@@ -43,7 +43,7 @@ public class calculater {
 
         /// connection effect
         double connect = 0.0;
-        double connect_threshold = 0.0;
+        double connect_threshold = Constants.W_THRES;
         double p = 0.05;
         for (int i = 0; i < z.length; i++) {
             double my_connect = 0.0;
@@ -81,7 +81,7 @@ public class calculater {
 
             if (my_opinion > 0.5) {
                 for (int j = 0; j < z.length; j++) {
-                    if (W[i][j] > 0) {
+                    if (W[i][j] > Constants.W_THRES) {
                         adjacency_sum += W[i][j];
                         if (z[j] < 0.5) {
                             adjacency_opinion_sum += W[i][j];
@@ -90,7 +90,7 @@ public class calculater {
                 }
             } else if (my_opinion < 0.5) {
                 for (int j = 0; j < z.length; j++) {
-                    if (W[i][j] > 0) {
+                    if (W[i][j] > Constants.W_THRES) {
                         adjacency_sum += W[i][j];
                         if (z[j] > 0.5) {
                             adjacency_opinion_sum += W[i][j];
@@ -170,7 +170,7 @@ public class calculater {
 
     /// Algorithm of Randomy Change of W
     public static List<int[]> selectPairs_v0(double[][] W, double[] z) {
-        int numPairs = (int) Constants.ALPHA * z.length ;
+        int numPairs = (int) Constants.ALPHA * z.length;
         List<int[]> zeroPairs = new ArrayList<>();
 
         // W行列から値が0の(i, j)ペアを見つけてリストに格納
@@ -200,7 +200,7 @@ public class calculater {
 
     /// Algorithm of Randomy Change of W
     public static List<int[]> selectPairs_v1(double[][] W, double[] z) {
-        int numPairs = (int) Constants.ALPHA * z.length ;
+        int numPairs = (int) Constants.ALPHA * z.length;
         List<int[]> Pairs = new ArrayList<>();
 
         // W行列から(i, j)ペアを見つけてリストに格納
@@ -230,14 +230,14 @@ public class calculater {
         double[][] W1 = matrix_util.copyMatrix(W);
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if(W1[i][j] > 0){
-                W1[i][j] = 1;
+                if (W1[i][j] > Constants.W_THRES) {
+                    W1[i][j] = 1;
                 }
             }
         }
 
         // 隣接行列を二乗して友達の友達を計算
-        double[][] W2 = matrix_util.multiply(W1,W1);
+        double[][] W2 = matrix_util.multiply(W1, W1);
         int changedlink = 0;
         double avWeight = 0.0;
 
@@ -250,9 +250,9 @@ public class calculater {
             for (int j = 0; j < n; j++) {
                 if (W[i][j] > 0.1) {
                     double diff = Math.abs(z[i] - z[j]);
-                    if(diff > maxDiff){
-                    maxDiff = diff;
-                    minIndex = j;
+                    if (diff > maxDiff) {
+                        maxDiff = diff;
+                        minIndex = j;
                     }
                 }
             }
@@ -272,13 +272,13 @@ public class calculater {
                     double swapWeight = W[i][minIndex];
                     W[i][minIndex] = 0; // 元のリンクを削除
                     W[i][newFriend] = swapWeight; // 新しいリンクを追加
-                    changedlink ++ ;
+                    changedlink++;
                     avWeight += swapWeight;
                 }
             }
         }
-        System.out.println("the num of links changed:"+changedlink);
-        System.out.println("the avg of weight changed: "+avWeight / changedlink);
+        System.out.println("the num of links changed:" + changedlink);
+        System.out.println("the avg of weight changed: " + avWeight / changedlink);
         return W;
     }
 

@@ -99,7 +99,7 @@ public class AdminGame {
             double max_w = 0.0;
             for (int ii = 0; ii < z.length; ii++) {
                 for (int j = 0; j < z.length; j++) {
-                    if (Wnew[i][j] > max_w) {
+                    if (Wnew[ii][j] > max_w) {
                         max_w = Wnew[ii][j];
                     }
                 }

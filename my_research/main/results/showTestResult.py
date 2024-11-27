@@ -68,18 +68,9 @@ def plot_csv_data(csv_filename, output_filename, plain_filename, i):
 
 
 
-<<<<<<< HEAD
 plot_csv_data('plsTest.csv', 'testimg/plsTest.jpg','plsTest0.csv', 1)
 plot_csv_data('disaggTest.csv', 'testimg/disaggTest.jpg','disaggTest0.csv', 2)
 plot_csv_data('gpplsTest.csv', 'testimg/gpplsTest.jpg','gpplsTest0.csv', 3)
 plot_csv_data('stfsTest.csv', 'testimg/stfsTest.jpg','stfsTest0.csv', 4)
 plot_csv_data('udvTest.csv', 'testimg/udvTest.jpg','udvTest0.csv', 5)
 plot_csv_data('cdvTest.csv', 'testimg/cdvTest.jpg','cdvTest0.csv', 6)
-=======
-plot_csv_data('plsTest.csv', 'plsTest.jpg', 1)
-plot_csv_data('disaggTest.csv', 'disaggTest.jpg', 2)
-plot_csv_data('gpplsTest.csv', 'gpplsTest.jpg', 3)
-plot_csv_data('stfsTest.csv', 'stfsTest.jpg', 4)
-plot_csv_data('udvTest.csv', 'udvTest.jpg', 5)
-plot_csv_data('cdvTest.csv', 'cdvTest.jpg', 6)
->>>>>>> origin/main
