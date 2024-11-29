@@ -174,7 +174,7 @@ public class AdminGame {
             System.out.printf("0.6 ~ 0.8: %d\n", d);
             System.out.printf("0.8 ~ 1.0: %d\n", e);
 
-            GIFMaker.recordHistogram(lam, z);
+            GIFMaker.recordHistogram(lam, z, W);
 
         }
 

@@ -9,10 +9,14 @@ public class Constants {
 
     //wの値で閾値以上なら関係性がある、と判断する
     public static final double W_THRES = 0.1;
+    public static final int MAT_ITERATION = 10;
 
     //リンクのランダム追加アルゴリズムの定数
     public static final double ALPHA = 1.0;
     public static final double ADD_WEIGHT = 0.5;
+
+    //グラフ構造描画の定数
+    public static final double LINK_THRES = 0.2;
     
     // コンストラクタをprivateにしてインスタンス化を防ぐ
     private Constants() {

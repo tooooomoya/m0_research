@@ -62,13 +62,61 @@ public class calculater {
         }
         connect = connect / z.length;
 
+        ///Diversity Effect
+                int n = W.length; // ノード数
+        double totalEntropy = 0.0;
+        int validNodeCount = 0;
+
+        for (int i = 0; i < n; i++) {
+            // ノード i の接続ノードを収集
+            List<Double> neighborOpinions = new ArrayList<>();
+            for (int j = 0; j < n; j++) {
+                if (W[i][j] > Constants.W_THRES) {
+                    neighborOpinions.add(z[j]);
+                }
+            }
+
+            // 接続ノードが存在する場合のみエントロピーを計算
+            if (!neighborOpinions.isEmpty()) {
+                double[] probabilities = neighborOpinions.stream().mapToDouble(Double::doubleValue).toArray();
+                double entropy = calculateEntropy(probabilities);
+                totalEntropy += entropy;
+                validNodeCount++;
+            }
+        }
+
+        // エントロピーの平均値を計算（接続のないノードは無視）
+        double avgentropy =  validNodeCount > 0 ? totalEntropy / validNodeCount : 0.0;
+        
+
         /// calculate satisfaction
-        double alpha = 0.8;
+        double alpha = 0.4;
         double beta = 0.2;
         double gamma = 1.0 - (alpha + beta);
-        double satisfaction = alpha * homogeneous + beta * connect;
+        double satisfaction = alpha * homogeneous + beta * connect + gamma * avgentropy;
 
         return satisfaction;
+    }
+
+    // エントロピーを計算する関数
+    private static double calculateEntropy(double[] values) {
+        // 値を正規化して確率分布に変換
+        double sum = 0.0;
+        for (double value : values) {
+            sum += value;
+        }
+        if (sum == 0) {
+            return 0.0; // 全ての値が0ならエントロピーは0
+        }
+
+        double entropy = 0.0;
+        for (double value : values) {
+            double p = value / sum; // 確率値
+            if (p > 0) { // log(0) の計算を防ぐ
+                entropy -= p * (Math.log(p) / Math.log(2));
+            }
+        }
+        return entropy;
     }
 
     public static double computeUdv(double[] z, double[][] W) {

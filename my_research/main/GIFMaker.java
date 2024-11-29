@@ -1,42 +1,52 @@
+
 import java.util.ArrayList;
 import java.util.List;
+import main.utils.Constants;
 
 public class GIFMaker {
-    // λと度数分布のペアを格納するデータ構造
-    public static List<Pair<Double, int[]>> histograms = new ArrayList<>();
+
+    // λ、度数分布、隣接行列を格納するデータ構造
+    public static List<Triple<Double, double[], double[][]>> histogramsWithAdjacency = new ArrayList<>();
     private static final int numBins = 20;
 
-    // 度数分布を記録する関数
-    public static void recordHistogram(double lambda, double[] z) {
-        int[] bins = new int[numBins];
-        double binWidth = 1.0 / numBins;
+    // 度数分布と隣接行列を記録する関数
+    public static void recordHistogram(double lambda, double[] z, double[][] adjacencyMatrix) {
 
-        // 度数分布を計算
-        for (double value : z) {
-            int binIndex = (int) Math.min(value / binWidth, numBins - 1);
-            bins[binIndex]++;
+        for (int i = 0; i < z.length; i++) {
+            for (int j = 0; j < z.length; j++) {
+                if (adjacencyMatrix[i][j] < Constants.LINK_THRES) {
+                    adjacencyMatrix[i][j] = 0;
+                }
+            }
         }
 
-        // λとヒストグラムをペアで保存
-        histograms.add(new Pair<>(lambda, bins));
+        // λ、ヒストグラム、隣接行列をペアで保存
+        histogramsWithAdjacency.add(new Triple<>(lambda, z, adjacencyMatrix));
     }
 }
 
-// λとヒストグラムを表すペアクラス
-class Pair<K, V> {
-    private final K key;
-    private final V value;
+// λ、ヒストグラム、隣接行列を表すトリプルクラス
+class Triple<K, V, T> {
 
-    public Pair(K key, V value) {
+    private final K key;
+    private final V value1;
+    private final T value2;
+
+    public Triple(K key, V value1, T value2) {
         this.key = key;
-        this.value = value;
+        this.value1 = value1;
+        this.value2 = value2;
     }
 
     public K getKey() {
         return key;
     }
 
-    public V getValue() {
-        return value;
+    public V getValue1() {
+        return value1;
+    }
+
+    public T getValue2() {
+        return value2;
     }
 }

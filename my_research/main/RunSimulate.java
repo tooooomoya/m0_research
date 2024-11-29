@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import main.structure.*;
+import main.utils.Constants;
 
 public class RunSimulate {
 
@@ -27,7 +28,7 @@ public class RunSimulate {
         HashMap<Double, Result> rd = new HashMap<>();       // results of NA dynamics
         HashMap<Double, Result> rdFix = new HashMap<>();    // results of regularized NA dynamics
 
-        int maxIter = 10;
+        int maxIter = Constants.MAT_ITERATION;
         double gam = 0.0; // L2 regularization coefficient 
         ArrayList<Double> ErrorLambda = new ArrayList<>();
         double[] AddedWeight = new double[lamList.length];

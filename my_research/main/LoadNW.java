@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
-import main.utils.*;
 
 public class LoadNW {
 
@@ -103,8 +102,8 @@ public class LoadNW {
         }
        
         
-        System.out.println("\nthe intrinsic s (calculate the situation before FJ model): ");
-        matrix_util.printVector(s);
+        //System.out.println("\nthe intrinsic s (calculate the situation before FJ model): ");
+        //matrix_util.printVector(s);
 
         int a = 0, b = 0, c = 0, d = 0, e = 0;
             for (int t = 0; t < z.length; t++) {
