@@ -280,6 +280,8 @@ public class calculater {
             for (int j = 0; j < n; j++) {
                 if (W1[i][j] > Constants.W_THRES) {
                     W1[i][j] = 1;
+                }else{
+                    W1[i][j] = 0;
                 }
             }
         }
@@ -325,8 +327,8 @@ public class calculater {
                 }
             }
         }
-        System.out.println("the num of links changed:" + changedlink);
-        System.out.println("the avg of weight changed: " + avWeight / changedlink);
+        System.out.println("\nthe num of links changed in friendRecommend: " + changedlink);
+        System.out.println("the avg of weight changed in friendReccomend: " + avWeight / changedlink);
         return W;
     }
 

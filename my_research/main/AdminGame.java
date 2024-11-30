@@ -41,6 +41,7 @@ public class AdminGame {
         ///// Set stfs
         ArrayList<Double> stfs = new ArrayList<>();
         stfs.add(calculater.computeStf(z, W, communities));
+        System.out.println("\nstfs before iteration: " + calculater.computeStf(z, W, communities));
 
         ///// Set udv
         ArrayList<Double> udv = new ArrayList<>();
@@ -49,6 +50,8 @@ public class AdminGame {
         ///// Set cdv
         ArrayList<Double> cdv = new ArrayList<>();
         cdv.add(calculater.computeCdv(z, W, communities));
+
+        GIFMaker.recordHistogram(0.0, z, W);
 
         int i = 0;
         boolean flag = true;
@@ -74,12 +77,11 @@ public class AdminGame {
                 e.printStackTrace();
             }
 
-            
             if (Wnew == null) {
                 Wnew = W;
             }
 
-            Wnew = calculater.friendRecommend(Wnew, z);
+           //Wnew = calculater.friendRecommend(Wnew, z);
 
             double w_num = 0.0;
             if (random) {
@@ -90,10 +92,9 @@ public class AdminGame {
                     Wnew[pair[0]][pair[1]] += Constants.ADD_WEIGHT;
                     w_num += 1;
                 }
+                System.out.println("The sum of w added by my method: " + w_num);
             }
-            System.out.println("The sum of w added by my method: " + w_num);
             weight_added += w_num;
-
 
             /// confirm the maximum weight
             double max_w = 0.0;
@@ -106,7 +107,6 @@ public class AdminGame {
             }
             System.out.println("\nMaximum Weight of W matrix : " + max_w);
 
-
             // After Admin action, each user change its opinion according to the FJ model
             // System.out.println("\nz before this time Admin effect: ");
             // matrix_util.printVector(z);
@@ -116,7 +116,7 @@ public class AdminGame {
             // matrix_util.printVector(znew);
             // Terminal Criterion(both z and W can be considered to be converged, or maxIter
             // criterion)
-            System.out.println("z-znew:\n" + norm(z, znew));
+            System.out.println("\nz-znew:\n" + norm(z, znew));
             System.out.println("W-Wnew:\n" + matrixNorm(W, Wnew));
             if (Math.max(norm(z, znew), matrixNorm(W, Wnew)) < 5e-1 || i > maxIter - 1) {
                 System.out.println("\nTerminal Criterion!!!!!!!");
@@ -143,7 +143,7 @@ public class AdminGame {
 
             double stf = calculater.computeStf(z, W, communities);
             stfs.add(stf);
-            //System.out.println("\nstf: " + stf);
+            System.out.println("\nstf: " + stf);
 
             double UDV = calculater.computeUdv(z, W);
             udv.add(UDV);

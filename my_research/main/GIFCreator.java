@@ -3,7 +3,8 @@ import org.apache.commons.math3.linear.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import com.madgag.gif.fmsware.AnimatedGifEncoder;
-import java.util.Random;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class GIFCreator {
 
@@ -16,7 +17,7 @@ public class GIFCreator {
         int width = 600; // 画像の幅
         int height = 400; // 画像の高さ
 
-        // `Triple<Double, int[], double[][]>` を処理
+        int step = 0;
         for (Triple<Double, double[], double[][]> entry : GIFMaker.histogramsWithAdjacency) {
             double lambda = entry.getKey();
             double[] z = entry.getValue1();
@@ -32,6 +33,16 @@ public class GIFCreator {
                 bins[binIndex]++;
             }
 
+            // 隣接行列をCSVに出力
+            saveAdjacencyMatrixToCSV(step, adjacencyMatrix);
+
+            // zの情報をCSVに出力
+            saveZToCSV(step, z);
+
+            // λの情報をCSVに出力
+            saveLambdaToCSV(step, lambda);
+
+            // 画像生成
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Graphics2D g2d = image.createGraphics();
 
@@ -39,22 +50,59 @@ public class GIFCreator {
             g2d.setColor(Color.WHITE);
             g2d.fillRect(0, 0, width, height);
 
-            // 画像を2つの領域に分割
-            int barGraphWidth = width / 2; // 左側: 棒グラフ
-            int graphVisualizationWidth = width / 2; // 右側: グラフ可視化
-
-            // 棒グラフを描画
-            drawBarGraph(g2d, bins, lambda, barGraphWidth, height);
-
-            // グラフの隣接行列を描画
-            drawGraphVisualization(g2d, adjacencyMatrix, z, barGraphWidth, graphVisualizationWidth, height);
+            // 度数分布を描画
+            drawBarGraph(g2d, bins, lambda, width, height);
 
             gifEncoder.addFrame(image);
             g2d.dispose();
+
+            step++;
         }
 
         gifEncoder.finish();
         System.out.println("GIF created: " + outputFileName);
+    }
+
+    private static void saveAdjacencyMatrixToCSV(int step, double[][] adjacencyMatrix) {
+        String fileName = String.format("Temp/graph_step%d.csv", step);
+        try (FileWriter writer = new FileWriter(fileName)) {
+            // 隣接行列を保存
+            for (double[] row : adjacencyMatrix) {
+                for (int j = 0; j < row.length; j++) {
+                    writer.append(String.valueOf(row[j]));
+                    if (j < row.length - 1) {
+                        writer.append(",");
+                    }
+                }
+                writer.append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // zの情報をCSVに出力
+    private static void saveZToCSV(int step, double[] z) {
+        String fileName = String.format("Temp/z_step%d.csv", step);
+        try (FileWriter writer = new FileWriter(fileName)) {
+            // zの各値を保存
+            for (double value : z) {
+                writer.append(String.valueOf(value)).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // λの情報をCSVに出力
+    private static void saveLambdaToCSV(int step, double lambda) {
+        String fileName = String.format("Temp/lambda_step%d.csv", step);
+        try (FileWriter writer = new FileWriter(fileName)) {
+            // λの値を保存
+            writer.append(String.valueOf(lambda)).append("\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void drawBarGraph(Graphics2D g2d, int[] bins, double lambda, int width, int height) {
@@ -80,7 +128,6 @@ public class GIFCreator {
 
         // 棒グラフの描画
         for (int i = 0; i < bins.length; i++) {
-            // 色の決定
             double fraction = (double) i / bins.length;
             Color barColor = fraction <= 0.2 ? Color.RED
                     : fraction >= 0.8 ? Color.BLUE
@@ -90,7 +137,6 @@ public class GIFCreator {
                                     (int) (255 * ((fraction - 0.2) / 0.6))
                             );
 
-            // 棒グラフの高さ
             int barHeight = (int) ((double) bins[i] / maxCount * yAxisHeight);
             g2d.setColor(barColor);
             g2d.fillRect(50 + i * barWidth, height - barHeight - 50, barWidth - 2, barHeight); // -2で棒の間に間隔
@@ -109,161 +155,7 @@ public class GIFCreator {
         g2d.drawString(String.format("λ = %.2f", lambda), 10, 20);
     }
 
-    private static void drawGraphVisualization(Graphics2D g2d, double[][] adjacencyMatrix, double[] nodeOpinions, int offsetX, int width, int height) {
-        int n = adjacencyMatrix.length;
-        Point[] nodePositions = new Point[n];
-        int iterations = 100; // 配置計算の反復回数
-        double stepSize = 10.0; // ノードの移動ステップサイズ
-        int margin = 50; // 描画領域の余白
-        int canvasWidth = width - margin * 2;
-        int canvasHeight = height - margin * 2;
-
-        nodePositions = computeLayout(adjacencyMatrix, offsetX, canvasWidth, canvasHeight, margin, 100, 0.5);
-
-        /*
-        // ノードの初期位置をランダムに設定
-        for (int i = 0; i < n; i++) {
-            nodePositions[i] = new Point(
-                    offsetX + (int) (Math.random() * canvasWidth) + margin,
-                    margin + (int) (Math.random() * canvasHeight)
-            );
-        }
-        
-
-        for (int iter = 0; iter < iterations; iter++) {
-            Point[] newPositions = new Point[n];
-            for (int i = 0; i < n; i++) {
-                double dx = 0;
-                double dy = 0;
-
-                for (int j = 0; j < n; j++) {
-                    if (i != j) {
-                        double weight = adjacencyMatrix[i][j];
-                        if (weight > 0) {
-                            Point p1 = nodePositions[i];
-                            Point p2 = nodePositions[j];
-
-                            double dist = p1.distance(p2);
-                            double minDist = 5;
-                            if (dist < minDist) {
-                                dist = minDist; // 最小距離を設定
-                            }
-
-                            // 引力と反発力の計算
-                            double force = weight / dist - 1 / (dist * dist);
-                            dx += force * (p2.x - p1.x) / dist;
-                            dy += force * (p2.y - p1.y) / dist;
-                        }
-                    }
-                }
-
-                // ステップサイズとキャンバス制限
-                int newX = Math.min(offsetX + canvasWidth + margin,
-                        Math.max(offsetX + margin, (int) (nodePositions[i].x + stepSize * dx)));
-                int newY = Math.min(canvasHeight + margin,
-                        Math.max(margin, (int) (nodePositions[i].y + stepSize * dy)));
-                newPositions[i] = new Point(newX, newY);
-            }
-            nodePositions = newPositions;
-        }*/
-        // エッジを描画
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (adjacencyMatrix[i][j] > 0) {
-                    Point p1 = nodePositions[i];
-                    Point p2 = nodePositions[j];
-
-                    // 重みによるエッジの色分け
-                    double weight = adjacencyMatrix[i][j];
-                    g2d.setColor(weight >= 5 ? Color.BLACK : Color.GRAY);
-                    g2d.drawLine(p1.x, p1.y, p2.x, p2.y);
-                }
-            }
-        }
-
-        // ノードを描画
-        for (int i = 0; i < n; i++) {
-            Point p = nodePositions[i];
-            int nodeSize = 5;
-
-            // ノードの色（意見属性に基づく赤-青グラデーション）
-            double opinion = nodeOpinions[i];
-            opinion = Math.min(1, Math.max(0, opinion));
-            int red = (int) (255 * (1 - opinion));
-            int blue = (int) (255 * opinion);
-            g2d.setColor(new Color(red, 0, blue));
-            g2d.fillOval(p.x - nodeSize / 2, p.y - nodeSize / 2, nodeSize, nodeSize);
-
-            // ノードの枠線
-            g2d.setColor(Color.BLACK);
-            g2d.drawOval(p.x - nodeSize / 2, p.y - nodeSize / 2, nodeSize, nodeSize);
-        }
-    }
-
-    public static Point[] computeLayout(
-            double[][] adjacencyMatrix,
-            int offsetX, int canvasWidth, int canvasHeight, int margin,
-            int iterations, double stepSize) {
-
-        int n = adjacencyMatrix.length;
-        Random random = new Random();
-        Point[] nodePositions = new Point[n];
-
-        // 初期位置をランダムに設定
-        for (int i = 0; i < n; i++) {
-            int x = offsetX + margin + random.nextInt(canvasWidth - 2 * margin);
-            int y = margin + random.nextInt(canvasHeight - 2 * margin);
-            nodePositions[i] = new Point(x, y);
-        }
-
-        // 力学的レイアウト計算
-        for (int iter = 0; iter < iterations; iter++) {
-            Point[] newPositions = new Point[n];
-
-            for (int i = 0; i < n; i++) {
-                double dx = 0;
-                double dy = 0;
-
-                for (int j = 0; j < n; j++) {
-                    if (i != j) {
-                        Point p1 = nodePositions[i];
-                        Point p2 = nodePositions[j];
-
-                        double weight = adjacencyMatrix[i][j];
-                        double dist = p1.distance(p2);
-
-                        if (dist == 0) {
-                            dist = 0.1; // ゼロ除算を回避
-                        }
-
-                        // 重みが大きいほど引き寄せる力
-                        if (weight > 0) {
-                            double attraction = weight / dist; // 引力
-                            dx += attraction * (p2.x - p1.x) / dist;
-                            dy += attraction * (p2.y - p1.y) / dist;
-                        }
-
-                        // 距離が近すぎる場合の反発力
-                        double repulsion = 1 / (dist * dist); // 反発力
-                        dx -= repulsion * (p2.x - p1.x) / dist;
-                        dy -= repulsion * (p2.y - p1.y) / dist;
-                    }
-                }
-
-                // 新しい位置を計算（キャンバス範囲内に制限）
-                int newX = Math.min(offsetX + canvasWidth - margin, Math.max(offsetX + margin, (int) (nodePositions[i].x + stepSize * dx)));
-                int newY = Math.min(canvasHeight - margin, Math.max(margin, (int) (nodePositions[i].y + stepSize * dy)));
-                newPositions[i] = new Point(newX, newY);
-            }
-
-            nodePositions = newPositions;
-        }
-
-        return nodePositions;
-    }
-
     public static void main(String[] args) {
-        // GIF を作成
-        createGIF("output_with_graph.gif");
+        createGIF("output_with_adjacency_and_z.gif");
     }
 }

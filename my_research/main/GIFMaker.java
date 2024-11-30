@@ -17,6 +17,9 @@ public class GIFMaker {
                 if (adjacencyMatrix[i][j] < Constants.LINK_THRES) {
                     adjacencyMatrix[i][j] = 0;
                 }
+                /*else{
+                    adjacencyMatrix[i][j] = 1;
+                }*/
             }
         }
 

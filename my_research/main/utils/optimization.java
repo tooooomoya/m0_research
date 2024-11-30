@@ -55,7 +55,7 @@ public class optimization {
                 z_min = new_z[i];
             }
         }
-        System.out.println("z_max: " + z_max);
+        System.out.println("\nz_max: " + z_max);
         System.out.println("z_min: " + z_min);
 
         for (int i = 0; i < z.length; i++) {
