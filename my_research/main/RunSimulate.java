@@ -21,10 +21,6 @@ public class RunSimulate {
 
     public ResultPair runDynamics(double[] lamList, boolean random, int whichSNS) {
         // because of time issues, we run the NA dynamics separately 
-        //double[] lamList = {0.1, 0.2, 0.3, 0.4, 0.5};
-        //double[] lamList = {0.6, 0.7, 0.8, 0.9, 1.0};
-        //double[] lamList = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-        //double lamList = [0.6, 0.7, 0.8, 0.9, 1.0];
         HashMap<Double, Result> rd = new HashMap<>();       // results of NA dynamics
         HashMap<Double, Result> rdFix = new HashMap<>();    // results of regularized NA dynamics
 
