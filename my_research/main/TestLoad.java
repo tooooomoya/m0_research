@@ -34,7 +34,7 @@ public class TestLoad {
                         if (u >= 0 && u < nSNS && v >= 0 && v < nSNS) {
                             // 2 sets of nodes indexes in the "edges_SNS.txt" file mean interaction between
                             // them
-                            A[u][v] = 1;
+                            A[u][v] = 1.0;
                             
                         }
                     } catch (NumberFormatException e) {
@@ -73,8 +73,8 @@ public class TestLoad {
             e.printStackTrace();
         }
         // スケーリング範囲
-        double minTarget = 0.2;
-        double maxTarget = 0.8;
+        double minTarget = 0.0;
+        double maxTarget = 1.0;
 
         // 元データの最小値と最大値を計算
         double minZ = Arrays.stream(z).min().getAsDouble();

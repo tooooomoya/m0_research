@@ -51,7 +51,7 @@ public class AdminGame {
         ArrayList<Double> cdv = new ArrayList<>();
         cdv.add(calculater.computeCdv(z, W, communities));
 
-        GIFMaker.recordHistogram(0.0, z, W);
+        //GIFMaker.recordHistogram(0.0, z, W);
 
         int i = 0;
         boolean flag = true;
@@ -59,7 +59,8 @@ public class AdminGame {
         boolean finderror = false;
         double weight_added = 0;
 
-        simulation.updateGraph(z, W);
+        double[][] W_SIM = matrix_util.copyMatrix(W);
+        simulation.updateGraph(z, W_SIM);
         simulation.exportGraph(i);
 
         while (flag) {
@@ -82,9 +83,10 @@ public class AdminGame {
 
             if (Wnew == null) {
                 Wnew = W;
+                System.out.println("Wnew Error : Wnew and W will be Completely same");
             }
 
-            //Wnew = calculater.friendRecommend(Wnew, z);
+            Wnew = calculater.friendRecommend(Wnew, z);
             double w_num = 0.0;
             if (random) {
                 /// My Method : randomly add weight
@@ -104,6 +106,10 @@ public class AdminGame {
                 for (int j = 0; j < z.length; j++) {
                     if (Wnew[ii][j] > max_w) {
                         max_w = Wnew[ii][j];
+                    }else if(ii == j){
+                        if(Wnew[ii][j] != 0){
+                            System.out.println("Matrix error Occured!!!!!!!!!!!!");
+                        }
                     }
                 }
             }

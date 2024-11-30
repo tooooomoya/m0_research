@@ -5,6 +5,7 @@ import org.gephi.io.exporter.api.ExportController;
 import org.openide.util.Lookup;
 
 import java.io.File;
+import main.utils.Constants;
 
 public class NetworkSimulation {
 
@@ -69,6 +70,20 @@ public class NetworkSimulation {
             }
         }
 
+        for (int i = 0; i < newW.length; i++) {
+            for (int j = 0; j < newW.length; j++) {
+                if (newW[i][j] < Constants.LINK_THRES) {
+                    Edge edge = graph.getEdge(
+                            graph.getNode(String.valueOf(i)),
+                            graph.getNode(String.valueOf(j))
+                    );
+                    if (edge != null) {
+                        graph.removeEdge(edge); // エッジを削除
+                    }
+                }
+            }
+        }
+
         // エッジの重みを更新
         for (int i = 0; i < newW.length; i++) {
             for (int j = 0; j < newW[i].length; j++) {
@@ -96,23 +111,23 @@ public class NetworkSimulation {
 
     // GEXFファイルとしてエクスポート
     public void exportGraph(int step) {
-    try {
-        // λごとのディレクトリパスを作成
-        String lambdaFolder = "GEXF/lambda_" + lambda;
-        File lambdaDir = new File(lambdaFolder);
-        if (!lambdaDir.exists()) {
-            lambdaDir.mkdirs();  // フォルダがない場合は作成
+        try {
+            // λごとのディレクトリパスを作成
+            String lambdaFolder = "GEXF/lambda_" + lambda;
+            File lambdaDir = new File(lambdaFolder);
+            if (!lambdaDir.exists()) {
+                lambdaDir.mkdirs();  // フォルダがない場合は作成
+            }
+
+            // タイムステップごとのファイルパスを作成
+            String fileName = lambdaFolder + "/step_" + step + ".gexf";
+            File file = new File(fileName);
+
+            // エクスポート処理
+            exportController.exportFile(file);
+            System.out.println("Graph exported to " + fileName);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        // タイムステップごとのファイルパスを作成
-        String fileName = lambdaFolder + "/step_" + step + ".gexf";
-        File file = new File(fileName);
-
-        // エクスポート処理
-        exportController.exportFile(file);
-        System.out.println("Graph exported to " + fileName);
-    } catch (Exception e) {
-        e.printStackTrace();
     }
-}
 }

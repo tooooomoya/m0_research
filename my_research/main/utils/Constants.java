@@ -9,9 +9,9 @@ public class Constants {
 
     //wの値で閾値以上なら関係性がある、と判断する
     public static final double W_THRES = 0.1;
-    public static final int MAT_ITERATION = 100;
+    public static final int MAT_ITERATION = 50;
     //public static final double[] LAMBDA_ARRAY = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 };
-    public static final double[] LAMBDA_ARRAY = { 0.1};
+    public static final double[] LAMBDA_ARRAY = { 0.1, 0.6};
 
 
     //リンクのランダム追加アルゴリズムの定数

@@ -298,7 +298,7 @@ public class calculater {
 
             // 最小重みのリンクを探索
             for (int j = 0; j < n; j++) {
-                if (W[i][j] > 0.1) {
+                if (W[i][j] > 0.01) {
                     double diff = Math.abs(z[i] - z[j]);
                     if (diff > maxDiff) {
                         maxDiff = diff;
