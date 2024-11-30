@@ -1,0 +1,11 @@
+{
+    "java.project.sourcePaths": [
+        "test_for_javaenv",
+        "reproduce00",
+    ],
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+    ],
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.compile.nullAnalysis.mode": "automatic",
+}
