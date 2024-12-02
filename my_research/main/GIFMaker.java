@@ -1,55 +1,44 @@
-
 import java.util.ArrayList;
 import java.util.List;
-import main.utils.Constants;
 
 public class GIFMaker {
 
-    // λ、度数分布、隣接行列を格納するデータ構造
-    public static List<Triple<Double, double[], double[][]>> histogramsWithAdjacency = new ArrayList<>();
-    private static final int numBins = 20;
+    // λと度数分布を格納するデータ構造
+    public static List<Pair<Double, int[]>> lambdasWithHistogram = new ArrayList<>();
 
-    // 度数分布と隣接行列を記録する関数
-    public static void recordHistogram(double lambda, double[] z, double[][] adjacencyMatrix) {
+    // z[]を記録する関数
+    public static void recordHistogram(double lambda, double[] z) {
+        int numBins = 20;
+        int[] bins = new int[numBins];
+        double binWidth = 1.0 / numBins;
 
-        for (int i = 0; i < z.length; i++) {
-            for (int j = 0; j < z.length; j++) {
-                if (adjacencyMatrix[i][j] < Constants.LINK_THRES) {
-                    adjacencyMatrix[i][j] = 0;
-                }
-                /*else{
-                    adjacencyMatrix[i][j] = 1;
-                }*/
-            }
+        // 度数分布を計算
+        for (double value : z) {
+            int binIndex = (int) Math.min(value / binWidth, numBins - 1);
+            bins[binIndex]++;
         }
 
-        // λ、ヒストグラム、隣接行列をペアで保存
-        histogramsWithAdjacency.add(new Triple<>(lambda, z, adjacencyMatrix));
+        // λと度数分布をペアで保存
+        lambdasWithHistogram.add(new Pair<>(lambda, bins));
     }
 }
 
-// λ、ヒストグラム、隣接行列を表すトリプルクラス
-class Triple<K, V, T> {
+// λと度数分布を表すペアクラス
+class Pair<K, V> {
 
-    private final K key;
-    private final V value1;
-    private final T value2;
+    private final K key;  // λ
+    private final V value;  // 度数分布
 
-    public Triple(K key, V value1, T value2) {
+    public Pair(K key, V value) {
         this.key = key;
-        this.value1 = value1;
-        this.value2 = value2;
+        this.value = value;
     }
 
     public K getKey() {
         return key;
     }
 
-    public V getValue1() {
-        return value1;
-    }
-
-    public T getValue2() {
-        return value2;
+    public V getValue() {
+        return value;
     }
 }

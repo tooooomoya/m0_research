@@ -51,7 +51,7 @@ public class AdminGame {
         ArrayList<Double> cdv = new ArrayList<>();
         cdv.add(calculater.computeCdv(z, W, communities));
 
-        //GIFMaker.recordHistogram(0.0, z, W);
+        GIFMaker.recordHistogram(0.0, z);
 
         int i = 0;
         boolean flag = true;
@@ -184,7 +184,7 @@ public class AdminGame {
 
             i++;
             
-            //GIFMaker.recordHistogram(lam, z, W);
+            GIFMaker.recordHistogram(lam, z);
             simulation.updateGraph(z, W);
             simulation.exportGraph(i);
             

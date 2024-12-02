@@ -1,10 +1,6 @@
-
-import org.apache.commons.math3.linear.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import com.madgag.gif.fmsware.AnimatedGifEncoder;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class GIFCreator {
 
@@ -18,29 +14,9 @@ public class GIFCreator {
         int height = 400; // 画像の高さ
 
         int step = 0;
-        for (Triple<Double, double[], double[][]> entry : GIFMaker.histogramsWithAdjacency) {
+        for (Pair<Double, int[]> entry : GIFMaker.lambdasWithHistogram) {
             double lambda = entry.getKey();
-            double[] z = entry.getValue1();
-            double[][] adjacencyMatrix = entry.getValue2();
-            int numBins = 20;
-
-            int[] bins = new int[numBins];
-            double binWidth = 1.0 / numBins;
-
-            // 度数分布を計算
-            for (double value : z) {
-                int binIndex = (int) Math.min(value / binWidth, numBins - 1);
-                bins[binIndex]++;
-            }
-
-            // 隣接行列をCSVに出力
-            saveAdjacencyMatrixToCSV(step, adjacencyMatrix);
-
-            // zの情報をCSVに出力
-            saveZToCSV(step, z);
-
-            // λの情報をCSVに出力
-            saveLambdaToCSV(step, lambda);
+            int[] bins = entry.getValue();
 
             // 画像生成
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -61,48 +37,6 @@ public class GIFCreator {
 
         gifEncoder.finish();
         System.out.println("GIF created: " + outputFileName);
-    }
-
-    private static void saveAdjacencyMatrixToCSV(int step, double[][] adjacencyMatrix) {
-        String fileName = String.format("Temp/graph_step%d.csv", step);
-        try (FileWriter writer = new FileWriter(fileName)) {
-            // 隣接行列を保存
-            for (double[] row : adjacencyMatrix) {
-                for (int j = 0; j < row.length; j++) {
-                    writer.append(String.valueOf(row[j]));
-                    if (j < row.length - 1) {
-                        writer.append(",");
-                    }
-                }
-                writer.append("\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // zの情報をCSVに出力
-    private static void saveZToCSV(int step, double[] z) {
-        String fileName = String.format("Temp/z_step%d.csv", step);
-        try (FileWriter writer = new FileWriter(fileName)) {
-            // zの各値を保存
-            for (double value : z) {
-                writer.append(String.valueOf(value)).append("\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // λの情報をCSVに出力
-    private static void saveLambdaToCSV(int step, double lambda) {
-        String fileName = String.format("Temp/lambda_step%d.csv", step);
-        try (FileWriter writer = new FileWriter(fileName)) {
-            // λの値を保存
-            writer.append(String.valueOf(lambda)).append("\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private static void drawBarGraph(Graphics2D g2d, int[] bins, double lambda, int width, int height) {
@@ -156,6 +90,6 @@ public class GIFCreator {
     }
 
     public static void main(String[] args) {
-        createGIF("output_with_adjacency_and_z.gif");
+        createGIF("z_distribution.gif");
     }
 }
