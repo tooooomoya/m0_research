@@ -13,9 +13,10 @@ public class Result {
     private double[][] W;
     private boolean finderror;
     private double weight_added;
+    private int conv_speed;
 
     public Result(ArrayList<Double> pls, ArrayList<Double> disaggs, ArrayList<Double> gppls, ArrayList<Double> stfs, ArrayList<Double> udv, ArrayList<Double> cdv, double[] z, double[][] W,
-            boolean finderror, double weight_added) {
+            boolean finderror, double weight_added, int conv_speed) {
         this.pls = pls;
         this.disaggs = disaggs;
         this.gppls = gppls;
@@ -26,6 +27,7 @@ public class Result {
         this.W = W;
         this.finderror = finderror;
         this.weight_added = weight_added;
+        this.conv_speed = conv_speed;
     }
 
     // getter and setter
@@ -107,5 +109,13 @@ public class Result {
 
     public void setWeightadded(double weight_added){
         this.weight_added = weight_added;
+    }
+
+    public int getConv_speed(){
+        return conv_speed;
+    }
+
+    public void setConv_speed(int conv_speed){
+        this.conv_speed = conv_speed;
     }
 }

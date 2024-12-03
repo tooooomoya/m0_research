@@ -31,7 +31,7 @@ public class TestLoad {
                         // -1 because the index is ZERO based
                         int u = Integer.parseInt(parts[0].trim()) - 1;
                         int v = Integer.parseInt(parts[1].trim()) - 1;
-                        if (u >= 0 && u < nSNS && v >= 0 && v < nSNS) {
+                        if (u >= 0 && u < nSNS && v >= 0 && v < nSNS && u != v) {
                             // 2 sets of nodes indexes in the "edges_SNS.txt" file mean interaction between
                             // them
                             A[u][v] = 1.0;

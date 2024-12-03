@@ -36,7 +36,7 @@ public class calculater {
             if (links > 0) {
                 homogeneous += (double) similar / links;
             } else {
-                homogeneous = 0;
+                homogeneous += 0;
             }
         }
         homogeneous = homogeneous / z.length;
@@ -93,7 +93,9 @@ public class calculater {
         double alpha = 0.4;
         double beta = 0.2;
         double gamma = 1.0 - (alpha + beta);
-        double satisfaction = alpha * homogeneous + beta * connect + gamma * avgentropy;
+        double satisfaction = alpha * homogeneous + beta * connect + gamma * (avgentropy/2);
+        System.out.println("\nEcho effect in Stfs: "+homogeneous);
+        System.out.println("Diversity effect in Stfs: "+ avgentropy);
 
         return satisfaction;
     }
@@ -224,7 +226,7 @@ public class calculater {
         // W行列から値が0の(i, j)ペアを見つけてリストに格納
         for (int i = 0; i < W.length; i++) {
             for (int j = 0; j < W[i].length; j++) {
-                if (W[i][j] == 0) {
+                if (W[i][j] == 0 && i != j) {
                     zeroPairs.add(new int[]{i, j});
                 }
             }
@@ -254,7 +256,9 @@ public class calculater {
         // W行列から(i, j)ペアを見つけてリストに格納
         for (int i = 0; i < W.length; i++) {
             for (int j = 0; j < W[i].length; j++) {
+                if(i != j){
                 Pairs.add(new int[]{i, j});
+                }
             }
         }
 
@@ -278,7 +282,7 @@ public class calculater {
         double[][] W1 = matrix_util.copyMatrix(W);
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (W1[i][j] > Constants.W_THRES) {
+                if (W1[i][j] > Constants.FR_THRES) {
                     W1[i][j] = 1;
                 }else{
                     W1[i][j] = 0;
@@ -291,9 +295,9 @@ public class calculater {
         int changedlink = 0;
         double avWeight = 0.0;
 
-        // 各ノードについて最も重みが小さいリンクを特定
+        // 各ノードの閾値以上の関係性がある隣接ノードのうち、最も意見が遠いノードを選ぶ。
         for (int i = 0; i < n; i++) {
-            int minIndex = -1;
+            int dislike = -1;
             double maxDiff = 0;
 
             // 最小重みのリンクを探索
@@ -302,26 +306,26 @@ public class calculater {
                     double diff = Math.abs(z[i] - z[j]);
                     if (diff > maxDiff) {
                         maxDiff = diff;
-                        minIndex = j;
+                        dislike = j;
                     }
                 }
             }
 
             // 友達の友達からランダムに1つ選ぶ
-            if (minIndex != -1) {
+            if (dislike != -1) {//0.1以上の友達がいた。
                 int newFriend = -1;
                 int attempts = 0; // 安全対策でループ回数を制限
                 do {
                     newFriend = random.nextInt(n);
                     attempts++;
                     //W2[i][newFriend]が1だったら、そいつは友達の友達だからそいつで決定！。
-                } while (attempts < 100 && (W2[i][newFriend] == 0 || newFriend == i || newFriend == minIndex));
+                } while (attempts < 1000 && (W2[i][newFriend] != 1 || newFriend == i || newFriend == dislike));
 
                 // リンクを付け替える
-                if (newFriend != -1 && W2[i][newFriend] > 0) {
-                    double swapWeight = W[i][minIndex];
-                    W[i][minIndex] = 0; // 元のリンクを削除
-                    W[i][newFriend] = swapWeight; // 新しいリンクを追加
+                if (newFriend != -1 && W2[i][newFriend] == 1) {
+                    double swapWeight = W[i][dislike];
+                    W[i][dislike] = 0; // 元のリンクを削除
+                    W[i][newFriend] += swapWeight; // 新しいリンクを追加
                     changedlink++;
                     avWeight += swapWeight;
                 }

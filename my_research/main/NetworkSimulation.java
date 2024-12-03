@@ -47,7 +47,7 @@ public class NetworkSimulation {
         // エッジを初期化
         for (int i = 0; i < W.length; i++) {
             for (int j = 0; j < W[i].length; j++) {
-                if (W[i][j] != 0) {
+                if (W[i][j] > 0) {
                     Edge edge = graphModel.factory().newEdge(
                             graph.getNode(String.valueOf(i)),
                             graph.getNode(String.valueOf(j)),
@@ -70,40 +70,34 @@ public class NetworkSimulation {
             }
         }
 
-        for (int i = 0; i < newW.length; i++) {
-            for (int j = 0; j < newW.length; j++) {
-                if (newW[i][j] < Constants.LINK_THRES) {
-                    Edge edge = graph.getEdge(
-                            graph.getNode(String.valueOf(i)),
-                            graph.getNode(String.valueOf(j))
-                    );
-                    if (edge != null) {
-                        graph.removeEdge(edge); // エッジを削除
-                    }
-                }
-            }
-        }
-
-        // エッジの重みを更新
+        // エッジの更新
         for (int i = 0; i < newW.length; i++) {
             for (int j = 0; j < newW[i].length; j++) {
+                // 現在のエッジを取得
                 Edge edge = graph.getEdge(
                         graph.getNode(String.valueOf(i)),
                         graph.getNode(String.valueOf(j))
                 );
 
-                if (newW[i][j] != 0) {
-                    if (edge == null) {
+                if (newW[i][j] < Constants.LINK_THRES) {
+                    // 新しい重みがLINK_THRES未満の場合、エッジを削除
+                    if (edge != null) {
+                        graph.removeEdge(edge);
+                    }
+                } else {
+                    // LINK_THRES以上の場合、エッジの重みを設定
+                    if (edge != null) {
+                        edge.setWeight(newW[i][j]); // 既存エッジの重みを更新
+                    } else {
+                        // エッジが存在しない場合は新しく追加
                         edge = graphModel.factory().newEdge(
                                 graph.getNode(String.valueOf(i)),
                                 graph.getNode(String.valueOf(j)),
                                 true
                         );
+                        edge.setWeight(newW[i][j]); // 重みを設定
                         graph.addEdge(edge);
                     }
-                    edge.setWeight(newW[i][j]);
-                } else if (edge != null) {
-                    graph.removeEdge(edge);
                 }
             }
         }

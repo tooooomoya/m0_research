@@ -74,6 +74,11 @@ public class RunSimulate {
         for (int a = 0; a < AddedWeight.length; a++) {
             System.out.println("lambda : " + a + ", added weight : " + AddedWeight[a]);
         }
+        System.out.println("\nPolarization Convergence Speed\n");
+        for (double lambda : lamList) {
+            System.out.println("Time when polarization emerged : " + rdFix.get(lambda).getConv_speed());
+        }
+
 
         ResultPair resultPair = new ResultPair(rd, rdFix);
 

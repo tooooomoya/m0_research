@@ -59,26 +59,38 @@ public class AdminGame {
         boolean finderror = false;
         double weight_added = 0;
 
-        double[][] W_SIM = matrix_util.copyMatrix(W);
-        simulation.updateGraph(z, W_SIM);
+        simulation.updateGraph(z, W);
         simulation.exportGraph(i);
+        int conv_speed = 0;
+        boolean first_conv = true;
+
+        double[] deg = new double[z.length];
+        for (int k = 0; k < z.length; k++) {
+            for (int l = 0; l < z.length; l++) {
+                if (k != l) {
+                    deg[k] += W[k][l];
+                }
+            }
+        }
 
         while (flag) {
             System.out.println("--------------------------");
             System.out.println("Iteration:" + i);
 
-            try {
-                // Admin changes weight matrix
-                OptResult optResult = optimization.minWGurobi(z, lam, W, reducePls, gam, existing);
-                Wnew = optResult.getW();
+            if (lam != 0.0) {
+                try {
+                    // Admin changes weight matrix
+                    OptResult optResult = optimization.minWGurobi(z, lam, W, reducePls, gam, existing);
+                    Wnew = optResult.getW();
 
-                //System.out.println("\nnew W matrix");
-                //matrix_util.printMatrix(Wnew);
-                // ここのWがAだと最初の重み状態からの変化で、あんま意味ない気がする。
-            } catch (GRBException e) {
-                System.out.println("Gurobi optimization error: " + e.getMessage());
-                finderror = true;
-                e.printStackTrace();
+                    //System.out.println("\nnew W matrix");
+                    //matrix_util.printMatrix(Wnew);
+                    // ここのWがAだと最初の重み状態からの変化で、あんま意味ない気がする。
+                } catch (GRBException e) {
+                    System.out.println("Gurobi optimization error: " + e.getMessage());
+                    finderror = true;
+                    e.printStackTrace();
+                }
             }
 
             if (Wnew == null) {
@@ -87,11 +99,12 @@ public class AdminGame {
             }
 
             Wnew = calculater.friendRecommend(Wnew, z);
+
             double w_num = 0.0;
             if (random) {
                 /// My Method : randomly add weight
             List<int[]> selectedPairs = new ArrayList<>();
-                selectedPairs = calculater.selectPairs_v0(Wnew, z);
+                selectedPairs = calculater.selectPairs_v1(Wnew, z);
                 for (int[] pair : selectedPairs) {
                     Wnew[pair[0]][pair[1]] += Constants.ADD_WEIGHT;
                     w_num += 1;
@@ -106,8 +119,8 @@ public class AdminGame {
                 for (int j = 0; j < z.length; j++) {
                     if (Wnew[ii][j] > max_w) {
                         max_w = Wnew[ii][j];
-                    }else if(ii == j){
-                        if(Wnew[ii][j] != 0){
+                    } else if (ii == j) {
+                        if (Wnew[ii][j] != 0) {
                             System.out.println("Matrix error Occured!!!!!!!!!!!!");
                         }
                     }
@@ -126,19 +139,22 @@ public class AdminGame {
             // criterion)
             System.out.println("\nz-znew:\n" + norm(z, znew));
             System.out.println("W-Wnew:\n" + matrixNorm(W, Wnew));
-            if (Math.max(norm(z, znew), matrixNorm(W, Wnew)) < 5e-1 || i > maxIter - 1) {
+            if (Math.max(norm(z, znew), matrixNorm(W, Wnew) / 100) < 0.1 || i > maxIter - 1) {
                 System.out.println("\nTerminal Criterion!!!!!!!");
                 flag = false;
             }
 
             z = znew;
             W = Wnew;
-            
 
             //double PLS = calculateDiversity(znew, Wnew);
             double PLS = optimization.computePls(z);
             pls.add(PLS);
             //System.out.println("\npls: " + PLS);
+            if (PLS > 0.70 && first_conv) {
+                conv_speed = i;
+                first_conv = false;
+            }
 
             L = matrix_util.createL(W, W.length);
             double disagg = computeDisagreement(z, L);
@@ -183,16 +199,24 @@ public class AdminGame {
             System.out.printf("0.8 ~ 1.0: %d\n", e);
 
             i++;
-            
+
             GIFMaker.recordHistogram(lam, z);
             simulation.updateGraph(z, W);
             simulation.exportGraph(i);
-            
 
         }
+        double[] deg_aft = new double[z.length];
+        for (int k = 0; k < z.length; k++) {
+            for (int l = 0; l < z.length; l++) {
+                if (k != l) {
+                    deg_aft[k] += W[k][l];
+                }
+            }
+        }
+        System.out.println("Final distance in D(0) - D(-1) :"+norm(deg, deg_aft));
 
         System.out.println("The final sum of w added by my method: " + weight_added);
-        return new Result(pls, disaggs, gppls, stfs, udv, cdv, z, W, finderror, weight_added);
+        return new Result(pls, disaggs, gppls, stfs, udv, cdv, z, W, finderror, weight_added, conv_speed);
     }
 
     /// Helper Functions
