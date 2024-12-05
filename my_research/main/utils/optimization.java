@@ -33,16 +33,18 @@ public class optimization {
         //matrix_util.printDist(s1);
 
         double lambda = 0.5;
-        double coeff = 1.4;
+        double coeff = 1.0;
         // new_z の初期化
         double[] new_z = new double[n];
         for (int i = 0; i < n; i++) {
-            double temp = 0.0;
-            for (int j = 0; j < n; j++) {
-                temp += W[i][j] * z1[j];
+            if (d[i] != 0) {
+                double temp = 0.0;
+                for (int j = 0; j < n; j++) {
+                    temp += W[i][j] * z1[j];
+                }
+                new_z[i] = coeff * (s1[i] + temp) / d[i];
+                //new_z[i] = temp * lambda + (1 - lambda) * s[i]; 
             }
-            new_z[i] = coeff * (s1[i] + temp) / (d[i] + 1);
-            //new_z[i] = temp * lambda + (1 - lambda) * s[i]; 
         }
         //matrix_util.printDist(new_z);
 
@@ -99,7 +101,7 @@ public class optimization {
             for (int j = 0; j < n; j++) {
                 if (i != j) {
                     x[i][j] = model.addVar(0.0, 10.0, 0.0, GRB.CONTINUOUS, "x_" + i + "_" + j);
-                } 
+                }
             }
         }
         // x_1_2みたいなguroubi用の変数ができる。
@@ -162,7 +164,7 @@ public class optimization {
         double[] d = new double[n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if(i!=j){
+                if (i != j) {
                     d[i] += W0[i][j]; // W0の行ごとの総和を計算
                 }
             }
@@ -244,7 +246,7 @@ public class optimization {
                 if (i != j) {
                     W[i][j] = x[i][j].get(GRB.DoubleAttr.X); // Get the optimized value of x[i][j]
                     //あまりにリンクの重みが小さいとSNSから離れていっちゃう(孤立ノード)
-                    if (W[i][j] < 0.001) {
+                    if (W[i][j] < Constants.W_THRES) {
                         W[i][j] = 0;
                     }
                 }

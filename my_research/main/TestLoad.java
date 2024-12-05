@@ -34,7 +34,7 @@ public class TestLoad {
                         if (u >= 0 && u < nSNS && v >= 0 && v < nSNS && u != v) {
                             // 2 sets of nodes indexes in the "edges_SNS.txt" file mean interaction between
                             // them
-                            A[u][v] = 1.0;
+                            A[u][v] += 1.0;
                             
                         }
                     } catch (NumberFormatException e) {

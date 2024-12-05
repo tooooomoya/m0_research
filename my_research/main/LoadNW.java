@@ -45,8 +45,8 @@ public class LoadNW {
                         if (u >= 0 && u < nSNS && v >= 0 && v < nSNS && u != v) {
                             // 2 sets of nodes indexes in the "edges_SNS.txt" file mean interaction between
                             // them
-                            A[u][v] = 1;
-                            //A[v][u] = 1;
+                            A[u][v] += 1.0;
+                            
                         }
                     } catch (NumberFormatException e) {
                         System.err.println("Number format exception: " + e.getMessage());
@@ -84,8 +84,8 @@ public class LoadNW {
             e.printStackTrace();
         }
         // スケーリング範囲
-        double minTarget = 0.2;
-        double maxTarget = 0.8;
+        double minTarget = 0.0;
+        double maxTarget = 1.0;
 
         // 元データの最小値と最大値を計算
         double minZ = Arrays.stream(z).min().getAsDouble();
@@ -95,37 +95,36 @@ public class LoadNW {
         for (int i = 0; i < z.length; i++) {
             z[i] = minTarget + (z[i] - minZ) / (maxZ - minZ) * (maxTarget - minTarget);
         }
- 
+
         s = new double[z.length];
         for (int i = 0; i < z.length; i++) {
             s[i] = z[i];
         }
-       
-        
+
         //System.out.println("\nthe intrinsic s (calculate the situation before FJ model): ");
         //matrix_util.printVector(s);
 
         int a = 0, b = 0, c = 0, d = 0, e = 0;
-            for (int t = 0; t < z.length; t++) {
-                if (0 <= z[t] && z[t] < 0.2) {
-                    a++;
-                } else if (z[t] < 0.4) {
-                    b++;
-                } else if (z[t] < 0.6) {
-                    c++;
-                } else if (z[t] < 0.8) {
-                    d++;
-                } else if (z[t] <= 1.0) {
-                    e++;
-                }
+        for (int t = 0; t < z.length; t++) {
+            if (0 <= z[t] && z[t] < 0.2) {
+                a++;
+            } else if (z[t] < 0.4) {
+                b++;
+            } else if (z[t] < 0.6) {
+                c++;
+            } else if (z[t] < 0.8) {
+                d++;
+            } else if (z[t] <= 1.0) {
+                e++;
             }
+        }
 
-            System.out.println("Confirm the distribution of z (opinions) ↓↓↓");
-            System.out.printf("0 ~ 0.2: %d\n", a);
-            System.out.printf("0.2 ~ 0.4: %d\n", b);
-            System.out.printf("0.4 ~ 0.6: %d\n", c);
-            System.out.printf("0.6 ~ 0.8: %d\n", d);
-            System.out.printf("0.8 ~ 1.0: %d\n", e);
+        System.out.println("Confirm the distribution of z (opinions) ↓↓↓");
+        System.out.printf("0 ~ 0.2: %d\n", a);
+        System.out.printf("0.2 ~ 0.4: %d\n", b);
+        System.out.printf("0.4 ~ 0.6: %d\n", c);
+        System.out.printf("0.6 ~ 0.8: %d\n", d);
+        System.out.printf("0.8 ~ 1.0: %d\n", e);
 
     }
 

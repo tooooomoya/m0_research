@@ -18,6 +18,6 @@ edge_df = pd.DataFrame(edges, columns=["Source", "Target"])
 
 # タブ区切りのTSVファイルに書き出し
 tsv_filename = 'edges_random.txt'
-edge_df.to_csv(tsv_filename, sep='\t', index=False)
+edge_df.to_csv(tsv_filename, sep='\t', index=False, header=False)
 
 print(f"エッジ情報を {tsv_filename} に保存しました。")

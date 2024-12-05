@@ -61,17 +61,22 @@ public class AdminGame {
 
         simulation.updateGraph(z, W);
         simulation.exportGraph(i);
-        int conv_speed = 0;
+        int conv_speed = -1;
         boolean first_conv = true;
 
         double[] deg = new double[z.length];
+        int isolate = 0;
         for (int k = 0; k < z.length; k++) {
             for (int l = 0; l < z.length; l++) {
                 if (k != l) {
                     deg[k] += W[k][l];
                 }
             }
+            if (deg[k] == 0) {
+                isolate++;
+            }
         }
+        System.out.println("The num of Isolated Node : " + isolate);
 
         while (flag) {
             System.out.println("--------------------------");
@@ -98,27 +103,52 @@ public class AdminGame {
                 System.out.println("Wnew Error : Wnew and W will be Completely same");
             }
 
+            double[] deg_aft = new double[z.length];
+            for (int k = 0; k < z.length; k++) {
+                for (int l = 0; l < z.length; l++) {
+                    if (k != l) {
+                        deg_aft[k] += W[k][l];
+                    }
+                }
+                if ((deg_aft[k] - deg[k]) > 0.1 && !random) {
+                    System.out.println("Huge difference in degree -> " + (deg_aft[k] - deg[k]));
+                }
+
+            }
+
             Wnew = calculater.friendRecommend(Wnew, z);
 
             double w_num = 0.0;
+            int added_num = 0;
+            int zero_num = 0;
             if (random) {
                 /// My Method : randomly add weight
             List<int[]> selectedPairs = new ArrayList<>();
                 selectedPairs = calculater.selectPairs_v1(Wnew, z);
                 for (int[] pair : selectedPairs) {
-                    Wnew[pair[0]][pair[1]] += Constants.ADD_WEIGHT;
-                    w_num += 1;
+                    if ((10 - Wnew[pair[0]][pair[1]]) > Constants.ADD_WEIGHT) {
+                        if (Wnew[pair[0]][pair[1]] == 0) {
+                            zero_num++;
+                        }
+                        Wnew[pair[0]][pair[1]] += Constants.ADD_WEIGHT;
+                        w_num += Constants.ADD_WEIGHT;
+                        added_num++;
+                    }
                 }
                 System.out.println("The sum of w added by my method: " + w_num);
+                System.out.println("Added edges num :" + added_num + ", To Zero edges num : " + zero_num);
             }
             weight_added += w_num;
 
             /// confirm the maximum weight
             double max_w = 0.0;
+            double min_w = 1.0;
             for (int ii = 0; ii < z.length; ii++) {
                 for (int j = 0; j < z.length; j++) {
                     if (Wnew[ii][j] > max_w) {
                         max_w = Wnew[ii][j];
+                    } else if (Wnew[ii][j] > 0 && Wnew[ii][j] < min_w) {
+                        min_w = Wnew[ii][j];
                     } else if (ii == j) {
                         if (Wnew[ii][j] != 0) {
                             System.out.println("Matrix error Occured!!!!!!!!!!!!");
@@ -127,6 +157,16 @@ public class AdminGame {
                 }
             }
             System.out.println("\nMaximum Weight of W matrix : " + max_w);
+            System.out.println("Minimun Weight of W matrix : " + min_w);
+
+            //重みが小すぎるリンクは削除する。
+            for (int k = 0; k < z.length; k++) {
+                for (int l = 0; l < z.length; l++) {
+                    if (k != l && Wnew[k][l] < Constants.W_THRES) {
+                        Wnew[k][l] = 0.0;
+                    }
+                }
+            }
 
             // After Admin action, each user change its opinion according to the FJ model
             // System.out.println("\nz before this time Admin effect: ");
@@ -139,7 +179,7 @@ public class AdminGame {
             // criterion)
             System.out.println("\nz-znew:\n" + norm(z, znew));
             System.out.println("W-Wnew:\n" + matrixNorm(W, Wnew));
-            if (Math.max(norm(z, znew), matrixNorm(W, Wnew) / 100) < 0.1 || i > maxIter - 1) {
+            if (Math.max(norm(z, znew), matrixNorm(W, Wnew) / 100) < 0.01 || i > maxIter - 1) {
                 System.out.println("\nTerminal Criterion!!!!!!!");
                 flag = false;
             }
@@ -150,8 +190,8 @@ public class AdminGame {
             //double PLS = calculateDiversity(znew, Wnew);
             double PLS = optimization.computePls(z);
             pls.add(PLS);
-            //System.out.println("\npls: " + PLS);
-            if (PLS > 0.70 && first_conv) {
+            System.out.println("\npls: " + PLS);
+            if (PLS > 0.60 && first_conv) {
                 conv_speed = i;
                 first_conv = false;
             }
@@ -213,7 +253,7 @@ public class AdminGame {
                 }
             }
         }
-        System.out.println("Final distance in D(0) - D(-1) :"+norm(deg, deg_aft));
+        System.out.println("Final distance in D(0) - D(-1) :" + norm(deg, deg_aft));
 
         System.out.println("The final sum of w added by my method: " + weight_added);
         return new Result(pls, disaggs, gppls, stfs, udv, cdv, z, W, finderror, weight_added, conv_speed);

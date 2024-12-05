@@ -42,6 +42,7 @@ public class Main {
             plotResults.exportStfs(resultPair, "Reddit", lamvals);
             plotResults.exportUdv(resultPair, "Reddit", lamvals);
             plotResults.exportCdv(resultPair, "Reddit", lamvals);
+            GIFCreator.createGIF("Reddit_output.gif");
         } else if (whichSNS == 1) {
             plotResults.exportPls(resultPair, "Twitter", lamvals);
             plotResults.exportDisagg(resultPair, "Twitter", lamvals);
@@ -49,6 +50,7 @@ public class Main {
             plotResults.exportStfs(resultPair, "Twitter", lamvals);
             plotResults.exportUdv(resultPair, "Twitter", lamvals);
             plotResults.exportCdv(resultPair, "Twitter", lamvals);
+            GIFCreator.createGIF("Twitter_output.gif");
         } else if (whichSNS == 2) {
             plotResults.exportPls(resultPair, "Test", lamvals);
             plotResults.exportDisagg(resultPair, "Test", lamvals);
@@ -56,9 +58,10 @@ public class Main {
             plotResults.exportStfs(resultPair, "Test", lamvals);
             plotResults.exportUdv(resultPair, "Test", lamvals);
             plotResults.exportCdv(resultPair, "Test", lamvals);
+            GIFCreator.createGIF("Test_output.gif");
         }
 
-        GIFCreator.createGIF("output.gif");
+        
 
         scanner.close();
     }

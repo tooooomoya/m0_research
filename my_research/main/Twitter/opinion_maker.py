@@ -11,7 +11,7 @@ col2 = [0] * number
 
 # 3列目: 0から1までの正規分布値
 # 標準正規分布の値を生成し、最小値0, 最大値1にスケーリング
-normal_values = np.random.normal(loc=0.5, scale=0.15, size=number)  # 平均0.5、標準偏差0.15
+normal_values = np.random.normal(loc=0.5, scale=0.25, size=number)  # 平均0.5、標準偏差0.15
 col3 = np.clip(normal_values, 0, 1)  # 0から1の範囲にクリップ
 
 # データフレームに変換
@@ -23,6 +23,6 @@ df = pd.DataFrame({
 
 # タブ区切りでファイルに書き出し
 tsv_filename = 'twitter_opinion.txt'
-df.to_csv(tsv_filename, sep='\t', index=False)
+df.to_csv(tsv_filename, sep='\t', index=False, header=False)
 
 print(f"ファイル {tsv_filename} が作成されました。")

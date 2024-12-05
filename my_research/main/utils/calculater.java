@@ -78,7 +78,21 @@ public class calculater {
 
             // 接続ノードが存在する場合のみエントロピーを計算
             if (!neighborOpinions.isEmpty()) {
-                double[] probabilities = neighborOpinions.stream().mapToDouble(Double::doubleValue).toArray();
+                // 0.2刻みのビンに分類
+                int[] bins = new int[5]; // 0.2刻みで5グループ
+                for (double opinion : neighborOpinions) {
+                    int binIndex = (int) Math.min(opinion / 0.2, 4); // 0.2で割り、範囲外を防ぐ
+                    bins[binIndex]++;
+                }
+
+                // 確率を計算
+                double[] probabilities = new double[5];
+                int totalCount = neighborOpinions.size();
+                for (int k = 0; k < 5; k++) {
+                    probabilities[k] = (double) bins[k] / totalCount;
+                }
+
+                // エントロピーを計算
                 double entropy = calculateEntropy(probabilities);
                 totalEntropy += entropy;
                 validNodeCount++;
@@ -86,16 +100,19 @@ public class calculater {
         }
 
         // エントロピーの平均値を計算（接続のないノードは無視）
-        double avgentropy =  validNodeCount > 0 ? totalEntropy / validNodeCount : 0.0;
-        
+        double avgentropy = validNodeCount > 0 ? totalEntropy / validNodeCount : 0.0;
+        if (avgentropy > 1) {
+            avgentropy = 1.0;
+            System.out.println("Avg Entropy went over 1.0, so this gonna be clipped to 1.0.");
+        }
 
         /// calculate satisfaction
-        double alpha = 0.4;
-        double beta = 0.2;
+        double alpha = 0.5;
+        double beta = 0.0;
         double gamma = 1.0 - (alpha + beta);
-        double satisfaction = alpha * homogeneous + beta * connect + gamma * (avgentropy/2);
-        System.out.println("\nEcho effect in Stfs: "+homogeneous);
-        System.out.println("Diversity effect in Stfs: "+ avgentropy);
+        double satisfaction = alpha * homogeneous + beta * connect + gamma * avgentropy;
+        System.out.println("\nEcho effect in Stfs: " + homogeneous);
+        System.out.println("Diversity effect in Stfs: " + avgentropy);
 
         return satisfaction;
     }
@@ -121,7 +138,7 @@ public class calculater {
         return entropy;
     }
 
-    public static double computeUdv(double[] z, double[][] W) {
+    /*public static double computeUdv(double[] z, double[][] W) {
         double[] z_diversity = new double[z.length];
 
         for (int i = 0; i < z.length; i++) {
@@ -170,6 +187,30 @@ public class calculater {
         double diversity = temp / z_diversity.length;
 
         return diversity;
+    }*/
+    public static double computeUdv(double[] z, double[][] W) {
+        double entropy = 0.0;
+
+        for (int i = 0; i < z.length; i++) {
+            int[] bins = new int[20];
+            int totalCount = 0;
+            for (int j = 0; j < z.length; j++) {
+                if (W[i][j] > Constants.W_THRES) {
+                    int binIndex = (int) Math.min(z[j] / 0.05, 19);
+                    bins[binIndex]++;
+                    totalCount++;
+                }
+            }
+            if (totalCount == 0) {
+                continue;
+            }
+            double[] probabilities = new double[20];
+            for (int k = 0; k < 20; k++) {
+                probabilities[k] = (double) bins[k] / totalCount;
+            }
+            entropy += calculateEntropy(probabilities);
+        }
+        return entropy / z.length;
     }
 
     /// compute Community Diversity
@@ -256,8 +297,8 @@ public class calculater {
         // W行列から(i, j)ペアを見つけてリストに格納
         for (int i = 0; i < W.length; i++) {
             for (int j = 0; j < W[i].length; j++) {
-                if(i != j){
-                Pairs.add(new int[]{i, j});
+                if (i != j) {
+                    Pairs.add(new int[]{i, j});
                 }
             }
         }
@@ -284,7 +325,7 @@ public class calculater {
             for (int j = 0; j < n; j++) {
                 if (W1[i][j] > Constants.FR_THRES) {
                     W1[i][j] = 1;
-                }else{
+                } else {
                     W1[i][j] = 0;
                 }
             }
@@ -292,6 +333,7 @@ public class calculater {
 
         // 隣接行列を二乗して友達の友達を計算
         double[][] W2 = matrix_util.multiply(W1, W1);
+
         int changedlink = 0;
         double avWeight = 0.0;
 
@@ -302,7 +344,7 @@ public class calculater {
 
             // 最小重みのリンクを探索
             for (int j = 0; j < n; j++) {
-                if (W[i][j] > 0.1) {
+                if (W[i][j] > 0.0) {
                     double diff = Math.abs(z[i] - z[j]);
                     if (diff > maxDiff) {
                         maxDiff = diff;
@@ -312,7 +354,8 @@ public class calculater {
             }
 
             // 友達の友達からランダムに1つ選ぶ
-            if (dislike != -1) {//0.1以上の友達がいた。
+            if (dislike != -1 && maxDiff > Constants.MAX_DIFF) {//意見の差が0.1以上の友達がいた。
+                //System.out.println("Find Dislike !!!!!");
                 int newFriend = -1;
                 int attempts = 0; // 安全対策でループ回数を制限
                 do {
