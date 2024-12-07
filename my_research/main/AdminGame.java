@@ -29,9 +29,8 @@ public class AdminGame {
         //System.out.println("\npls before iteration: "+ optimization.computePls(z));
 
         ///// Set disaggs
-        double[][] L = matrix_util.createL(W, W.length);
         ArrayList<Double> disaggs = new ArrayList<>();
-        disaggs.add(computeDisagreement(z, L));
+        disaggs.add(calculater.computeDisagreement(z, W));
         //System.out.println("\ndisagg before iteration: "+computeDisagreement(z, L));
 
         ///// Set gppls
@@ -196,8 +195,7 @@ public class AdminGame {
                 first_conv = false;
             }
 
-            L = matrix_util.createL(W, W.length);
-            double disagg = computeDisagreement(z, L);
+            double disagg = calculater.computeDisagreement(z, W);
             disaggs.add(disagg);
             //System.out.println("\ndisagg: " + disagg);
 
@@ -288,25 +286,5 @@ public class AdminGame {
 
         // Return the square root of the sum of squared differences
         return Math.sqrt(sumSquaredDifferences);
-    }
-
-    // calculate z^T * L * z: Global disagreement is scalar
-    private static double computeDisagreement(double[] z, double[][] L) {
-        double[] temp = new double[z.length];
-        double disagreement = 0.0;
-
-        // calculate L * z
-        for (int i = 0; i < z.length; i++) {
-            for (int j = 0; j < z.length; j++) {
-                temp[i] += L[i][j] * z[j];
-            }
-        }
-
-        // then calculate z^T * temp
-        for (int i = 0; i < z.length; i++) {
-            disagreement += z[i] * temp[i];
-        }
-
-        return disagreement;
     }
 }

@@ -137,6 +137,7 @@ public class optimization {
                 for (int j = 0; j < n; j++) {
                     if (i != j) {
                         double diff = 10 - 25 * Math.abs(z[i] - z[j]);
+                        //double diff = (z[i] - z[j]) * (z[i] - z[j]);
                         objExp.addTerm(diff, x[i][j]);
                         // diff*x[i][j]という項(Term)をAddする、という意味
                     }

@@ -7,6 +7,19 @@ import java.util.Random;
 
 public class calculater {
 
+    // calculate Disagreement
+    public static double computeDisagreement(double[] z, double[][] W) {
+        double disagg = 0.0;
+        for (int i = 0; i < z.length; i++) {
+            for (int j = 0; j < z.length; j++) {
+                if (W[i][j] > 0) {
+                    disagg += W[i][j] * (z[i] - z[j]) * (z[i] - z[j]);
+                }
+            }
+        }
+        return disagg;
+    }
+
     // calculate Group Polarization
     public static double computeGpPls(double[] z) {
         int extreme = 0;
@@ -22,14 +35,16 @@ public class calculater {
     public static double computeStf(double[] z, double[][] W, Map<Integer, List<Integer>> communities) {
         /// homogeneous effect
         double homogeneous = 0.0;
+        double total = 0.0;
         for (int i = 0; i < z.length; i++) {
             int links = 0;
-            int similar = 0;
+            double similar = 0.0;
             for (int j = 0; j < z.length; j++) {
+                total += W[i][j];
                 if (W[i][j] > Constants.W_THRES) {
                     links++;
-                    if (z[j] >= z[i] - 0.2 && z[j] <= z[i] + 0.2) {
-                        similar++;
+                    if (z[j] >= z[i] - 0.1 && z[j] <= z[i] + 0.1) {
+                        similar += W[i][j];
                     }
                 }
             }
@@ -39,7 +54,9 @@ public class calculater {
                 homogeneous += 0;
             }
         }
+        //homogeneous = homogeneous / total;//全体のリンクのうち、何割が意見が近い人との交流に当てられたか。
         homogeneous = homogeneous / z.length;
+        homogeneous = 1 / (1 + Math.exp(- 2 * homogeneous + 4));
 
         /// connection effect
         double connect = 0.0;
@@ -113,6 +130,7 @@ public class calculater {
         double satisfaction = alpha * homogeneous + beta * connect + gamma * avgentropy;
         System.out.println("\nEcho effect in Stfs: " + homogeneous);
         System.out.println("Diversity effect in Stfs: " + avgentropy);
+        System.out.println("Connect effect in Stfs: " + connect);
 
         return satisfaction;
     }
