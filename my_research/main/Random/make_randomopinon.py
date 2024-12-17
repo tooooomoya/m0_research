@@ -13,11 +13,10 @@ col2 = [0] * number
 col3 = np.random.normal(0.5, 0.25, number)
 #col3 = np.random.uniform(0, 1, number)
 
-
 # 0.4を平均、0.2を標準偏差とした正規分布
-dist1 = np.random.normal(0.4, 0.2, number/2)
+dist1 = np.random.normal(0.2, 0.1, number//2)
 # 0.6を平均、0.2を標準偏差とした正規分布
-dist2 = np.random.normal(0.6, 0.2, number/2)
+dist2 = np.random.normal(0.8, 0.1, number//2)
 # 二つの分布を重ねる（結合する）
 #col3 = np.concatenate([dist1, dist2])
 np.random.shuffle(col3)
