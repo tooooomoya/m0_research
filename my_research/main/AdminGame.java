@@ -115,8 +115,6 @@ public class AdminGame {
 
             }
 
-            Wnew = calculater.friendRecommend(Wnew, z);
-
             double w_num = 0.0;
             int added_num = 0;
             int zero_num = 0;
@@ -159,6 +157,20 @@ public class AdminGame {
                 System.out.println("Added edges num :" + added_num + ", To Zero edges num : " + zero_num);
             }
             weight_added += w_num - total_sub_weight;
+
+            double total_vanish_weight = 0.0;
+            for (int k = 0; k < z.length; k++) {
+                for (int l = 0; l < z.length; l++) {
+                    //あまりにリンクの重みが小さいとSNSから離れていっちゃう(孤立ノード)
+                    if (Wnew[k][l] < Constants.W_THRES) {
+                        Wnew[k][l] = 0;
+                        total_vanish_weight += Constants.W_THRES;
+                    }
+                }
+            }
+            System.out.println("Total subbed weight because they were too small :" + total_vanish_weight);
+
+            Wnew = calculater.friendRecommend(Wnew, z);
 
             /// confirm the maximum weight
             double max_w = 0.0;

@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.math3.linear.*;
 import java.util.stream.IntStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import main.structure.OptResult;
 
@@ -15,6 +20,26 @@ public class optimization {
     public static double[] minZ(double[][] W, double[] s, double[] z) {
         int n = z.length;
 
+        //Wを行ごとに正規化
+        for (int i = 0; i < n; i++) {
+            double rowSum = 0.0;
+
+            // 行の総和を計算
+            for (int j = 0; j < n; j++) {
+                rowSum += W[i][j];
+            }
+
+            // 総和が0の場合は正規化をスキップ（ゼロ除算防止）
+            if (rowSum == 0.0) {
+                continue;
+            }
+
+            // 行の各要素を正規化
+            for (int j = 0; j < n; j++) {
+                W[i][j] /= rowSum;
+            }
+        }
+
         // d の初期化
         double[] d = new double[n];
         for (int i = 0; i < n; i++) {
@@ -23,6 +48,7 @@ public class optimization {
                 d[i] += W[i][j];
             }
         }
+
         double[] z1 = new double[n];
         double[] s1 = new double[n];
         for (int i = 0; i < n; i++) {
@@ -32,7 +58,19 @@ public class optimization {
         //matrix_util.printDist(z1);
         //matrix_util.printDist(s1);
 
-        double lambda = 0.5;
+        double[] tol = new double[n];
+        try (BufferedReader br = new BufferedReader(new FileReader(Constants.directory + "/tolerance_distribution.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split("\t");
+                int u = Integer.parseInt(parts[0]) - 1; // draw node index
+                double w = Double.parseDouble((parts[1]));// draw the node's tolerance
+                tol[u] = w;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         double coeff = 1.0;
         // new_z の初期化
         double[] new_z = new double[n];
@@ -42,8 +80,8 @@ public class optimization {
                 for (int j = 0; j < n; j++) {
                     temp += W[i][j] * z1[j];
                 }
-                new_z[i] = coeff * (s1[i] + temp) / d[i];
-                //new_z[i] = temp * lambda + (1 - lambda) * s[i]; 
+                //new_z[i] = coeff * (s1[i] + temp) / d[i];
+                new_z[i] = (1 - tol[i]) * s1[i] + tol[i] * temp;
             }
         }
         //matrix_util.printDist(new_z);
@@ -242,20 +280,13 @@ public class optimization {
 
         // Retrieve the updated weight matrix W
         double[][] W = new double[n][n];
-        double total_vanish_weight = 0.0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (i != j) {
                     W[i][j] = x[i][j].get(GRB.DoubleAttr.X); // Get the optimized value of x[i][j]
-                    //あまりにリンクの重みが小さいとSNSから離れていっちゃう(孤立ノード)
-                    if (W[i][j] < Constants.W_THRES) {
-                        W[i][j] = 0;
-                        total_vanish_weight += Constants.W_THRES;
-                    }
                 }
             }
         }
-        System.out.println("Total subbed weight because they were too small :" + total_vanish_weight);
 
         model.dispose();
         env.dispose();

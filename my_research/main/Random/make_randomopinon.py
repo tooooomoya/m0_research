@@ -3,6 +3,10 @@ import numpy as np
 
 number = 500
 
+#tolとは違うシード値にする
+seed_value = 42
+np.random.seed(seed_value)
+
 # 1列目: 1から100までの整数
 col1 = list(range(1, number + 1))
 

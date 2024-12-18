@@ -390,6 +390,34 @@ public class calculater {
                     changedlink++;
                     avWeight += swapWeight;
                 }
+            } else {//嫌いになれる（Unfollowしたくなる）人がいなかった->全体から間引く
+                int newFriend = -1;
+                int attempts = 0; // 安全対策でループ回数を制限
+                do {
+                    newFriend = random.nextInt(n);
+                    attempts++;
+                } while (attempts < 1000 && (W2[i][newFriend] != 1 || newFriend == i));//友達の友達でかつ、自分でもなければ->友達の友達じゃない、または、自分だったらTrueで続く。
+
+                if (newFriend != -1) {//見つかった
+                    changedlink ++;
+                    avWeight += Constants.NEW_WEIGHT;
+                    W[i][newFriend] = Constants.NEW_WEIGHT;
+                    int follow_num = 0;
+                    for (int k = 0; k < W.length; k++) {
+                        if (W[i][k] > 0) {
+                            follow_num++;
+                        }
+                    }
+                    if (follow_num > 0) {
+                        double sub_wieght = (double) Constants.NEW_WEIGHT / follow_num;
+                        for (int k = 0; k < W.length; k++) {
+                            if (W[i][k] > 0 && W[i][k] > sub_wieght) {
+                                W[i][k] -= sub_wieght;
+                            }
+                        }
+                    }
+                }
+
             }
         }
         System.out.println("\nthe num of links changed in friendRecommend: " + changedlink);
