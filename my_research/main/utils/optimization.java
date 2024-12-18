@@ -242,6 +242,7 @@ public class optimization {
 
         // Retrieve the updated weight matrix W
         double[][] W = new double[n][n];
+        double total_vanish_weight = 0.0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (i != j) {
@@ -249,10 +250,12 @@ public class optimization {
                     //あまりにリンクの重みが小さいとSNSから離れていっちゃう(孤立ノード)
                     if (W[i][j] < Constants.W_THRES) {
                         W[i][j] = 0;
+                        total_vanish_weight += Constants.W_THRES;
                     }
                 }
             }
         }
+        System.out.println("Total subbed weight because they were too small :" + total_vanish_weight);
 
         model.dispose();
         env.dispose();

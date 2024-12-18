@@ -120,6 +120,7 @@ public class AdminGame {
             double w_num = 0.0;
             int added_num = 0;
             int zero_num = 0;
+            double total_sub_weight = 0.0;
             if (random) {
                 /// My Method : randomly add weight
             List<int[]> selectedPairs = new ArrayList<>();
@@ -129,15 +130,35 @@ public class AdminGame {
                         if (Wnew[pair[0]][pair[1]] == 0) {
                             zero_num++;
                         }
+
+                        //あるユーザのSNS利用時間は変化しないとして、増えた人の分、他の人との関係性を目減りさせる.
+                        int follow_num = 0;
+                        for (int k = 0; k < W.length; k++) {
+                            if (Wnew[pair[0]][k] > 0) {
+                                follow_num++;
+                            }
+                        }
+                        if (follow_num > 0) {
+                            double sub_wieght = (double) Constants.ADD_WEIGHT / follow_num;
+                            for (int k = 0; k < W.length; k++) {
+                                if (Wnew[pair[0]][k] > 0 && Wnew[pair[0]][k] > sub_wieght) {
+                                    Wnew[pair[0]][k] -= sub_wieght;
+                                    total_sub_weight += sub_wieght;
+                                }
+                            }
+                        }
+
                         Wnew[pair[0]][pair[1]] += Constants.ADD_WEIGHT;
                         w_num += Constants.ADD_WEIGHT;
                         added_num++;
+
                     }
                 }
                 System.out.println("The sum of w added by my method: " + w_num);
+                System.out.println("The sum of w subbed by my method: " + total_sub_weight);
                 System.out.println("Added edges num :" + added_num + ", To Zero edges num : " + zero_num);
             }
-            weight_added += w_num;
+            weight_added += w_num - total_sub_weight;
 
             /// confirm the maximum weight
             double max_w = 0.0;
