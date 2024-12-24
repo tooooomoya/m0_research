@@ -11,13 +11,13 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import main.structure.OptResult;
 
 public class optimization {
 
     // minZ : the STEP where users change their opinion according to the FJ model
     public static double[] minZ(double[][] W, double[] s, double[] z) {
+        double[][] temp_W = matrix_util.copyMatrix(W);
         int n = z.length;
 
         //Wを行ごとに正規化
@@ -26,7 +26,7 @@ public class optimization {
 
             // 行の総和を計算
             for (int j = 0; j < n; j++) {
-                rowSum += W[i][j];
+                rowSum += temp_W[i][j];
             }
 
             // 総和が0の場合は正規化をスキップ（ゼロ除算防止）
@@ -36,7 +36,7 @@ public class optimization {
 
             // 行の各要素を正規化
             for (int j = 0; j < n; j++) {
-                W[i][j] /= rowSum;
+                temp_W[i][j] /= rowSum;
             }
         }
 
@@ -45,7 +45,7 @@ public class optimization {
         for (int i = 0; i < n; i++) {
             d[i] = 0.0;
             for (int j = 0; j < n; j++) {
-                d[i] += W[i][j];
+                d[i] += temp_W[i][j];
             }
         }
 
@@ -78,10 +78,10 @@ public class optimization {
             if (d[i] != 0) {
                 double temp = 0.0;
                 for (int j = 0; j < n; j++) {
-                    temp += W[i][j] * z1[j];
+                    temp += temp_W[i][j] * z1[j];
                 }
                 //new_z[i] = coeff * (s1[i] + temp) / d[i];
-                new_z[i] = (1 - tol[i]) * s1[i] + tol[i] * temp;
+                new_z[i] = tol[i] * s1[i] + (1 - tol[i]) * temp;
             }
         }
         //matrix_util.printDist(new_z);
@@ -293,8 +293,58 @@ public class optimization {
         return new OptResult(Opt, W);
     }
 
-    public static double computePls(double[] z) {
-        int n = z.length;
+    public static double computePls(double[] z, double[][] W) {
+
+        double[] z_diversity = new double[z.length];
+
+        for (int i = 0; i < z.length; i++) {
+            double my_opinion = z[i];
+            double adjacency_opinion_sum = 0; // calculate the number of agents having opposite opinion
+            double adjacency_sum = 0;
+
+            if (my_opinion > 0.5) {
+                for (int j = 0; j < z.length; j++) {
+                    if (W[i][j] > Constants.W_THRES) {
+                        adjacency_sum += W[i][j];
+                        if (z[j] < 0.5) {
+                            adjacency_opinion_sum += W[i][j];
+                        }
+                    }
+                }
+            } else if (my_opinion < 0.5) {
+                for (int j = 0; j < z.length; j++) {
+                    if (W[i][j] > Constants.W_THRES) {
+                        adjacency_sum += W[i][j];
+                        if (z[j] > 0.5) {
+                            adjacency_opinion_sum += W[i][j];
+                        }
+                    }
+                }
+            } else if (my_opinion == 0.5) {
+                for (int j = 0; j < z.length; j++) {
+                    if (W[i][j] > 0) {
+                        adjacency_sum += W[i][j];
+                        adjacency_opinion_sum += W[i][j];
+                    }
+                }
+            }
+
+            if (adjacency_sum > 0) {
+                z_diversity[i] = adjacency_opinion_sum / adjacency_sum;
+            } else {
+                z_diversity[i] = 0.0;
+            }
+        }
+
+        double temp = 0;
+        for (int i = 0; i < z.length; i++) {
+            temp += z_diversity[i];
+        }
+        double diversity = temp / z_diversity.length;
+
+        return diversity;
+
+        /*int n = z.length;
         // 平均を計算
         double mean = IntStream.range(0, n).mapToDouble(i -> z[i]).average().orElse(0.0);
 

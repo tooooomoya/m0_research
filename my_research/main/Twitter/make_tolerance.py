@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 # 人数を指定
-number_of_people = 500
+number_of_people = 548
 
 #opinionとは違うシード値にする
 seed_value = 10

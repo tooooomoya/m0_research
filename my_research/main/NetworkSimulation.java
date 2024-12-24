@@ -6,6 +6,10 @@ import org.openide.util.Lookup;
 
 import java.io.File;
 import main.utils.Constants;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class NetworkSimulation {
 
@@ -36,11 +40,19 @@ public class NetworkSimulation {
         if (zColumn == null) {
             graphModel.getNodeTable().addColumn("z", Double.class);
         }
+
+        // ノード属性テーブルに "community" 属性を追加
+        Column communityColumn = graphModel.getNodeTable().getColumn("community");
+        if (communityColumn == null) {
+            graphModel.getNodeTable().addColumn("community", Integer.class);
+        }
+
         // ノードを初期化
         for (int i = 0; i < nodeCount; i++) {
             Node node = graphModel.factory().newNode(String.valueOf(i));
             node.setLabel("Node " + i);
             node.setAttribute("z", z[i]);
+            node.setAttribute("community", -1); // 初期状態ではコミュニティ未定義 (-1)
             graph.addNode(node);
         }
 
@@ -55,6 +67,28 @@ public class NetworkSimulation {
                     );
                     edge.setWeight(W[i][j]);
                     graph.addEdge(edge);
+                }
+            }
+        }
+    }
+
+    // ノードにコミュニティ情報を付与
+    public void assignCommunities(Map<Integer, List<Integer>> communityGroups) {
+        // ノード属性テーブルに "community" 属性を追加
+        Column communityColumn = graphModel.getNodeTable().getColumn("community");
+        if (communityColumn == null) {
+            graphModel.getNodeTable().addColumn("community", Integer.class);
+        }
+
+        // 各ノードにコミュニティ情報を設定
+        for (Map.Entry<Integer, List<Integer>> entry : communityGroups.entrySet()) {
+            int communityId = entry.getKey();
+            List<Integer> nodes = entry.getValue();
+
+            for (int nodeId : nodes) {
+                Node node = graph.getNode(String.valueOf(nodeId));
+                if (node != null) {
+                    node.setAttribute("community", communityId);
                 }
             }
         }

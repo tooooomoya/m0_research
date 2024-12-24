@@ -12,7 +12,7 @@ public class calculater {
         double disagg = 0.0;
         for (int i = 0; i < z.length; i++) {
             for (int j = 0; j < z.length; j++) {
-                if (W[i][j] > 0) {
+                if (W[i][j] > 0 && i!=j) {
                     disagg += W[i][j] * (z[i] - z[j]) * (z[i] - z[j]);
                 }
             }
@@ -21,7 +21,7 @@ public class calculater {
     }
 
     // calculate Group Polarization
-    public static double computeGpPls(double[] z) {
+    /*public static double computeGpPls(double[] z) {
         int extreme = 0;
         for (int i = 0; i < z.length; i++) {
             if (z[i] <= 0.1 || z[i] >= 0.9) {
@@ -29,6 +29,19 @@ public class calculater {
             }
         }
         return (double) extreme / z.length;
+    }*/
+
+
+    public static double computeGpPls(double[] z, double[] s) {
+        double diff = 0;
+        for (int i = 0; i < z.length; i++) {
+            diff += Math.abs((z[i] - 0.5) / (s[i] - 0.5)) - 1;
+        }
+        if(diff == 0){
+            return 0;
+        }else{
+        return (double) diff / z.length;
+        }
     }
 
     // calculate user's satisfaction
@@ -37,26 +50,24 @@ public class calculater {
         double homogeneous = 0.0;
         double total = 0.0;
         for (int i = 0; i < z.length; i++) {
-            int links = 0;
+            double links = 0.0;
             double similar = 0.0;
             for (int j = 0; j < z.length; j++) {
                 total += W[i][j];
                 if (W[i][j] > Constants.W_THRES) {
-                    links++;
-                    if (z[j] >= z[i] - 0.1 && z[j] <= z[i] + 0.1) {
+                    links += W[i][j];
+                    if (z[j] >= z[i] - 0.15 && z[j] <= z[i] + 0.15) {
                         similar += W[i][j];
                     }
                 }
             }
             if (links > 0) {
                 homogeneous += (double) similar / links;
-            } else {
-                homogeneous += 0;
             }
         }
         //homogeneous = homogeneous / total;//全体のリンクのうち、何割が意見が近い人との交流に当てられたか。
         homogeneous = homogeneous / z.length;
-        homogeneous = 1 / (1 + Math.exp(- 2 * homogeneous + 4));
+        //homogeneous = 1 / (1 + Math.exp(- 2 * homogeneous + 4));
 
         /// connection effect
         double connect = 0.0;
@@ -80,7 +91,7 @@ public class calculater {
         connect = connect / z.length;
 
         ///Diversity Effect
-                int n = W.length; // ノード数
+        int n = W.length; // ノード数
         double totalEntropy = 0.0;
         int validNodeCount = 0;
 
@@ -118,10 +129,11 @@ public class calculater {
 
         // エントロピーの平均値を計算（接続のないノードは無視）
         double avgentropy = validNodeCount > 0 ? totalEntropy / validNodeCount : 0.0;
-        if (avgentropy > 1) {
+        avgentropy = avgentropy / 2.322;
+        /*if (avgentropy > 1) {
             avgentropy = 1.0;
             System.out.println("Avg Entropy went over 1.0, so this gonna be clipped to 1.0.");
-        }
+        }*/
 
         /// calculate satisfaction
         double alpha = 0.5;
@@ -130,7 +142,7 @@ public class calculater {
         double satisfaction = alpha * homogeneous + beta * connect + gamma * avgentropy;
         System.out.println("\nEcho effect in Stfs: " + homogeneous);
         System.out.println("Diversity effect in Stfs: " + avgentropy);
-        System.out.println("Connect effect in Stfs: " + connect);
+        //System.out.println("Connect effect in Stfs: " + connect);
 
         return satisfaction;
     }
@@ -335,6 +347,167 @@ public class calculater {
     }
 
     public static double[][] friendRecommend(double[][] W, double[] z) {
+        double[] sub_weight = new double[z.length];
+        double[] user_weight_sum = new double[z.length];
+        double[][] W_01 = new double[z.length][z.length];
+
+        for (int i = 0; i < z.length; i++) {
+            for (int j = 0; j < z.length; j++) {
+                if (W[i][j] > Constants.W_THRES && i != j) {
+                    W_01[i][j] = 1;
+                } else {
+                    W_01[i][j] = 0;
+                }
+            }
+        }
+
+        double[][] New_FR_Matrix = matrix_util.multiply(W_01, W_01);
+
+        for (int i = 0; i < z.length; i++) {
+            for (int j = 0; j < z.length; j++) {
+                user_weight_sum[i] += W[i][j];
+                if (i == j) {
+                    New_FR_Matrix[i][j] = 0;
+                }
+            }
+        }
+
+        int avg_ranking_size = 0;
+        double avg_ranking_score = 0.0;
+        int delete_num = 0;
+        boolean[] echo = new boolean[z.length];
+
+        for (int i = 0; i < z.length; i++) {
+            List<AgentRanking> rankings = new ArrayList<>();
+            double opinionDifference = 0.0;
+            for (int j = 0; j < z.length; j++) {
+                if (W[i][j] > 0) { // iがjをフォローしている場合
+                    double weight = W[i][j];
+                    opinionDifference = Math.abs(z[i] - z[j]);
+                    double score = weight * opinionDifference;
+
+                    if (opinionDifference < Constants.MAX_DIFF) {
+                        continue;
+                    }
+
+                    rankings.add(new AgentRanking(j, score));
+                }
+            }
+            if(rankings.isEmpty()){
+                echo[i] = true;
+            }
+            rankings.sort((a, b) -> Double.compare(b.getScore(), a.getScore()));
+            avg_ranking_size += rankings.size();
+
+            double temp = 0.0;
+
+            /*for (AgentRanking ranking : rankings) {
+                int agentId = ranking.getAgentId();
+                if (temp > user_weight_sum[i] * 0.1) {
+                    break;
+                }
+                temp += W[i][agentId];
+                W[i][agentId] = 0;
+                sub_weight[i] = temp;
+            }*/
+            if (!echo[i]) {
+                AgentRanking ranking = rankings.get(0);
+                int agentId = ranking.getAgentId();
+                double my_score = ranking.getScore();
+                avg_ranking_score += my_score;
+                delete_num++;
+                temp = W[i][agentId];
+                W[i][agentId] = 0;
+                sub_weight[i] = temp;
+            }
+        }
+
+        System.out.println("Avg ranking size: " + (double) avg_ranking_size / z.length);
+        System.out.println("Avg ranking score: " + (double) avg_ranking_score / delete_num);
+        System.out.println("Not Deleting just adding num"+(z.length-delete_num));
+
+        Random random = new Random(42);
+        double Rewire_weight = 0.0;
+        int Rewire_num = 0;
+        int candidates_num = 0;
+        int who_can_num = 0;
+
+        for (int i = 0; i < z.length; i++) {
+            int newFriend = -1;
+
+            List<Integer> candidates = new ArrayList<>();
+            for (int j = 0; j < z.length; j++) {
+                if (New_FR_Matrix[i][j] == 1 && j != i) {
+                    candidates.add(j);
+                }
+            }
+
+            if(echo[i] == true){
+                continue;
+            }else if (!candidates.isEmpty()) {//友達の友達がいる。
+                newFriend = candidates.get(random.nextInt(candidates.size()));
+                candidates_num += candidates.size();
+                who_can_num++;
+                if (sub_weight[i] > 0) {
+                    W[i][newFriend] += sub_weight[i];
+                    Rewire_weight += W[i][newFriend];
+                    Rewire_num++;
+                } else {
+                    int friend_num = 0;
+                    for (int j = 0; j < z.length; j++) {
+                        if (W[i][j] > 0) {
+                            friend_num++;
+                        }
+                    }
+                    for (int j = 0; j < z.length; j++) {
+                        if (W[i][j] > 0) {
+                            W[i][j] -= (double) Constants.NEW_WEIGHT / friend_num;
+                            if (W[i][j] < 0) {
+                                W[i][j] = 0;
+                            }
+                        }
+                    }
+                    W[i][newFriend] += Constants.NEW_WEIGHT;
+                }
+            } else if (sub_weight[i] > 0) {//友達の友達がいない->友達の友達が自分しかいない、という可能性もある。
+                System.out.println("Tomodachi no tomodachi inai !!!");
+                newFriend = random.nextInt(z.length);
+                W[i][newFriend] += sub_weight[i];
+            } else {
+                System.out.println("tomodachi ga inai !!!");
+            }
+        }
+        System.out.println("Rewire_num: " + Rewire_num + ", avg_rewire_weight" + Rewire_weight / Rewire_num);
+        System.out.println("Avg candidates num: "+ (double) candidates_num / who_can_num);
+
+        return W;
+    }
+
+    public static class AgentRanking {
+
+        private final int agentId;  // フォローされているエージェントのID
+        private final double score; // スコア（重み * 意見の差の絶対値）
+
+        public AgentRanking(int agentId, double score) {
+            this.agentId = agentId;
+            this.score = score;
+        }
+
+        public int getAgentId() {
+            return agentId;
+        }
+
+        public double getScore() {
+            return score;
+        }
+
+        @Override
+        public String toString() {
+            return "AgentID: " + agentId + ", Score: " + score;
+        }
+    }
+
+    /*public static double[][] friendRecommend(double[][] W, double[] z) {
 
         int n = W.length; // 隣接行列のサイズ
         Random random = new Random();
@@ -354,6 +527,7 @@ public class calculater {
 
         int changedlink = 0;
         double avWeight = 0.0;
+        int dislike_found = 0;
 
         // 各ノードの閾値以上の関係性がある隣接ノードのうち、最も意見が遠いノードを選ぶ。
         for (int i = 0; i < n; i++) {
@@ -373,6 +547,7 @@ public class calculater {
 
             // 友達の友達からランダムに1つ選ぶ
             if (dislike != -1 && maxDiff > Constants.MAX_DIFF) {//意見の差が0.1以上の友達がいた。
+            dislike_found++;
                 //System.out.println("Find Dislike !!!!!");
                 int newFriend = -1;
                 int attempts = 0; // 安全対策でループ回数を制限
@@ -399,9 +574,8 @@ public class calculater {
                 } while (attempts < 1000 && (W2[i][newFriend] != 1 || newFriend == i));//友達の友達でかつ、自分でもなければ->友達の友達じゃない、または、自分だったらTrueで続く。
 
                 if (newFriend != -1) {//見つかった
-                    changedlink ++;
+                    changedlink++;
                     avWeight += Constants.NEW_WEIGHT;
-                    W[i][newFriend] = Constants.NEW_WEIGHT;
                     int follow_num = 0;
                     for (int k = 0; k < W.length; k++) {
                         if (W[i][k] > 0) {
@@ -409,6 +583,7 @@ public class calculater {
                         }
                     }
                     if (follow_num > 0) {
+                        W[i][newFriend] = Constants.NEW_WEIGHT;
                         double sub_wieght = (double) Constants.NEW_WEIGHT / follow_num;
                         for (int k = 0; k < W.length; k++) {
                             if (W[i][k] > 0 && W[i][k] > sub_wieght) {
@@ -422,7 +597,7 @@ public class calculater {
         }
         System.out.println("\nthe num of links changed in friendRecommend: " + changedlink);
         System.out.println("the avg of weight changed in friendReccomend: " + avWeight / changedlink);
+        System.out.println("The num of agents did unfollow: "+dislike_found);
         return W;
-    }
-
+    }*/
 }

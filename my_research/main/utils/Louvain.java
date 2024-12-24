@@ -1,25 +1,16 @@
-package main.utils;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// 修正されたLouvain法のコード
 public class Louvain {
 
     // 隣接行列を受け取ってコミュニティに分割する
     public static Map<Integer, List<Integer>> louvainCommunityDetection(double[][] adjacencyMatrix) {
-        for (int a = 0; a < adjacencyMatrix.length; a++) {
-            for (int b = 0; b < adjacencyMatrix.length; b++) {
-                if (adjacencyMatrix[a][b] > 0) {
-                    adjacencyMatrix[a][b] = 1;
-                }
-            }
-        }
         int n = adjacencyMatrix.length;
 
         // 初期コミュニティ割当 (各ノードが独自のコミュニティ)
@@ -28,73 +19,48 @@ public class Louvain {
             communities[i] = i;
         }
 
+        double totalWeight = totalWeight(adjacencyMatrix);
         boolean improvement = true;
-        double lastModularity = calculateModularity(adjacencyMatrix, communities);
-        System.out.println("Modularity: " + lastModularity);
-        int iterationsWithoutImprovement = 0;
-        int maxIterationsWithoutImprovement = 2;  // ここで最大反復回数を設定
-        int maxiter = 15;
-        int num=0;
+        int maxIterations = 15;  // 最大反復回数
+        int numIterations = 0;
 
-        while (improvement) {
-            num++;
-            System.out.println("Iteration:"+num);
-            double currentModularity = 0;
-            //System.out.println("start calculation");
+        while (improvement && numIterations < maxIterations) {
+            numIterations++;
+            improvement = false;
 
-            int[] next_community = new int[n];
-            for (int a = 0; a < communities.length; a++) {
-                next_community[a] = communities[a];
-            }
-
-            // 各ノードに対して、最もモジュラリティが向上するコミュニティに移動
+            // 各ノードを移動させる
             for (int node = 0; node < n; node++) {
-                double my_basic_modu = lastModularity;
-                int my_community = communities[node];
+                int currentCommunity = communities[node];
+                double maxDeltaQ = 0.0;
+                int bestCommunity = currentCommunity;
 
-                // ノードの現在のコミュニティを一時的に解除
+                // ノードを一時的にコミュニティから外す
                 communities[node] = -1;
 
-                // 隣接ノードのコミュニティでのモジュラリティの計算
+                // 隣接ノードのコミュニティに対するΔQを計算
                 for (int neighbor = 0; neighbor < n; neighbor++) {
                     if (adjacencyMatrix[node][neighbor] > 0 && node != neighbor) {
-                        //nodeが隣接エージェントneighborに移動することを考えてみよう。で、このときのModularityが今より増えるなら記憶しておいて、それが最大となるコミュニティに移ろう。
-                        int community = communities[neighbor];
-                        communities[node] = community;
-                        double ifmodularity = calculateModularity(adjacencyMatrix, communities);
-                        if (ifmodularity > my_basic_modu) {
-                            next_community[node] = community;
-                            my_basic_modu = ifmodularity;
-                        }else{
-                            communities[node] = my_community;
+                        int neighborCommunity = communities[neighbor];
+                        double deltaQ = calculateDeltaQ(adjacencyMatrix, communities, node, neighborCommunity, totalWeight);
+
+                        // ΔQが最大となるコミュニティを記録
+                        if (deltaQ > maxDeltaQ) {
+                            maxDeltaQ = deltaQ;
+                            bestCommunity = neighborCommunity;
                         }
                     }
                 }
+
+                // 最適なコミュニティにノードを移動
+                if (bestCommunity != currentCommunity) {
+                    communities[node] = bestCommunity;
+                    improvement = true;
+                } else {
+                    communities[node] = currentCommunity;
+                }
             }
 
-            //各nodeが自分が移るべきcommunityを知っているから移る。そして新たにModularityを計算する。
-            for (int a = 0; a < communities.length; a++) {
-                communities[a] = next_community[a];
-            }
-            currentModularity = calculateModularity(adjacencyMatrix, communities);
-
-            // モジュラリティの増加が小さい場合、もしくは一定回数改善がない場合に終了
-            if (Math.abs(currentModularity - lastModularity) < 1e-6) {
-                iterationsWithoutImprovement++;
-            } else {
-                iterationsWithoutImprovement = 0;
-            }
-
-            // 収束判定：モジュラリティの増加が小さい、または一定回数改善がない
-            if (iterationsWithoutImprovement >= maxIterationsWithoutImprovement) {
-                break;
-            }
-            if(num >= maxiter){
-                break;
-            }
-
-            lastModularity = currentModularity;
-            System.out.println("improved modularity: "+lastModularity);
+            //System.out.println("Iteration " + numIterations + " completed.");
         }
 
         // 結果をコミュニティごとにまとめる
@@ -102,29 +68,73 @@ public class Louvain {
         for (int i = 0; i < n; i++) {
             communityGroups.computeIfAbsent(communities[i], k -> new ArrayList<>()).add(i);
         }
+        System.out.println("\nthe number of communities : " + communityGroups.size());
 
         return communityGroups;
     }
 
-    // モジュラリティを計算
-    private static double calculateModularity(double[][] adjacencyMatrix, int[] communities) {
-        double modularity = 0.0;
-        double total_weight = totalWeight(adjacencyMatrix);
-        for (int i = 0; i < adjacencyMatrix.length; i++) {
-            for (int j = 0; j < adjacencyMatrix[i].length; j++) {
-                if (communities[i] == communities[j]) {
-                    modularity += adjacencyMatrix[i][j] - (sumRow(adjacencyMatrix, i) * sumRow(adjacencyMatrix, j)) / (2.0 * total_weight);
-                }
-            }
-        }
-        return modularity / (2 * total_weight);
+    // 有向グラフ用のΔQを計算するメソッド
+    private static double calculateDeltaQ(double[][] adjacencyMatrix, int[] communities, int node, int targetCommunity, double totalWeight) {
+        double kout_i = sumRow(adjacencyMatrix, node); // ノード i の出次数
+        double kin_i = sumColumn(adjacencyMatrix, node); // ノード i の入次数
+        double kC_i = sumEdgesToCommunity(adjacencyMatrix, node, communities, targetCommunity); // ノード i とコミュニティC内のノードとのエッジ重みの合計
+
+        // コミュニティC内のノードに接続する入次数と出次数の合計
+        double sumC_tot_in = sumCommunityEdgesIn(adjacencyMatrix, communities, targetCommunity);
+        double sumC_tot_out = sumCommunityEdgesOut(adjacencyMatrix, communities, targetCommunity);
+
+        // ΔQ の計算式 (有向グラフ対応)
+        double deltaQ = (kC_i / totalWeight) - ((kout_i * sumC_tot_in + kin_i * sumC_tot_out) / (totalWeight * totalWeight));
+        return deltaQ;
     }
 
-    // 隣接行列の行の合計を計算
+    // ノード i とコミュニティC 内のノードとのエッジ重みの合計
+    private static double sumEdgesToCommunity(double[][] adjacencyMatrix, int node, int[] communities, int targetCommunity) {
+        double sum = 0.0;
+        for (int j = 0; j < adjacencyMatrix[node].length; j++) {
+            if (communities[j] == targetCommunity) {
+                sum += adjacencyMatrix[node][j];
+            }
+        }
+        return sum;
+    }
+
+    // コミュニティC内のノードに向かう入次数の合計
+    private static double sumCommunityEdgesIn(double[][] adjacencyMatrix, int[] communities, int targetCommunity) {
+        double sum = 0.0;
+        for (int i = 0; i < adjacencyMatrix.length; i++) {
+            if (communities[i] == targetCommunity) {
+                sum += sumColumn(adjacencyMatrix, i);
+            }
+        }
+        return sum;
+    }
+
+    // コミュニティC内のノードから出る出次数の合計
+    private static double sumCommunityEdgesOut(double[][] adjacencyMatrix, int[] communities, int targetCommunity) {
+        double sum = 0.0;
+        for (int i = 0; i < adjacencyMatrix.length; i++) {
+            if (communities[i] == targetCommunity) {
+                sum += sumRow(adjacencyMatrix, i);
+            }
+        }
+        return sum;
+    }
+
+    // 隣接行列の行 (出次数) の合計
     private static double sumRow(double[][] matrix, int row) {
         double sum = 0.0;
         for (double val : matrix[row]) {
             sum += val;
+        }
+        return sum;
+    }
+
+    // 隣接行列の列 (入次数) の合計
+    private static double sumColumn(double[][] matrix, int column) {
+        double sum = 0.0;
+        for (double[] row : matrix) {
+            sum += row[column];
         }
         return sum;
     }
@@ -138,6 +148,21 @@ public class Louvain {
             }
         }
         return total;
+    }
+
+    public static void main(String[] args) {
+        // 隣接行列を外部ファイルから読み込む
+        double[][] adjacencyMatrix = readAdjacencyMatrix("adjacency_matrix.csv");
+
+        if (adjacencyMatrix != null) {
+            Map<Integer, List<Integer>> communities = louvainCommunityDetection(adjacencyMatrix);
+            System.out.println("コミュニティに分割された結果:");
+            for (Map.Entry<Integer, List<Integer>> entry : communities.entrySet()) {
+                System.out.println("コミュニティ " + entry.getKey() + ": " + entry.getValue());
+            }
+        } else {
+            System.out.println("隣接行列の読み込みに失敗しました。");
+        }
     }
 
     // CSVファイルから隣接行列を読み込むメソッド
@@ -164,36 +189,5 @@ public class Louvain {
             adjacencyMatrix[i] = matrixList.get(i);
         }
         return adjacencyMatrix;
-    }
-
-    // コミュニティ結果をファイルに保存するメソッド
-    public static void saveCommunitiesToFile(Map<Integer, List<Integer>> communities, String filename) {
-        try (FileWriter writer = new FileWriter(filename)) {
-            for (Map.Entry<Integer, List<Integer>> entry : communities.entrySet()) {
-                writer.write("コミュニティ " + entry.getKey() + ": " + entry.getValue().toString() + "\n");
-            }
-        } catch (IOException e) {
-            System.err.println("Error writing community results to file: " + e.getMessage());
-        }
-    }
-
-    public static void main(String[] args) {
-
-        // 隣接行列を外部ファイルから読み込む
-        double[][] adjacencyMatrix = readAdjacencyMatrix("results/adjacency_matrix.csv");
-
-        if (adjacencyMatrix != null) {
-            Map<Integer, List<Integer>> communities = louvainCommunityDetection(adjacencyMatrix);
-            System.out.println("コミュニティに分割された結果:");
-            for (Map.Entry<Integer, List<Integer>> entry : communities.entrySet()) {
-                System.out.println("コミュニティ " + entry.getKey() + ": " + entry.getValue());
-            }
-
-            // 結果を外部ファイルに保存
-            saveCommunitiesToFile(communities, "community_results.csv");
-            System.out.println("結果が community_results.csv に保存されました。");
-        } else {
-            System.out.println("隣接行列の読み込みに失敗しました。");
-        }
     }
 }

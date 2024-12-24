@@ -1,6 +1,7 @@
 package main.utils;
 
 public class matrix_util {
+
     // COPY matrix
     public static double[][] copyMatrix(double[][] matrix) {
         int rows = matrix.length;
@@ -13,7 +14,14 @@ public class matrix_util {
         }
         return newMatrix;
     }
-    
+
+    public static double[] copyVector(double[] vector){
+        double[] new_v = new double[vector.length];
+        for(int i = 0; i < vector.length; i++){
+            new_v[i] = vector[i];
+        }
+        return new_v;
+    }
 
     //ADD with matrix
     public static double[][] add(double[][] matrix1, double[][] matrix2) {
@@ -72,23 +80,21 @@ public class matrix_util {
     public static double[] multiplyMatrixVector(double[][] matrix, double[] vector) {
         int rows = matrix.length;
         int cols = matrix[0].length;
-        
+
         if (cols != vector.length) {
             throw new IllegalArgumentException("Matrix columns must be equal to vector length");
         }
-        
+
         double[] result = new double[rows];
-        
+
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 result[i] += matrix[i][j] * vector[j];
             }
         }
-        
+
         return result;
     }
-
-
 
     // ScalarMUL with matrix
     public static double[][] scalarMultiply(double[][] matrix, double scalar) {
@@ -109,13 +115,13 @@ public class matrix_util {
         int rows = matrix.length;
         int cols = matrix[0].length;
         double[][] transposed = new double[cols][rows];
-        
+
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 transposed[j][i] = matrix[i][j];
             }
         }
-        
+
         return transposed;
     }
 
@@ -153,6 +159,19 @@ public class matrix_util {
         return identityMatrix;
     }
 
+    // calculate sum of weight
+    public static double calculateSumWeight(double[][] W) {
+        double sum = 0.0;
+        for (int i = 0; i < W.length; i++) {
+            for (int j = 0; j < W.length; j++) {
+                if (i != j) {
+                    sum += W[i][j];
+                }
+            }
+        }
+        return sum;
+    }
+
     public static double[][] createZeroMatrix(int rows, int cols) {
         double[][] matrix = new double[rows][cols]; // 指定されたサイズの行列を作成
         // デフォルトでは、double型の配列はすべて0で初期化される
@@ -176,31 +195,29 @@ public class matrix_util {
         }
     }
 
-    public static void printDist(double[] z){
+    public static void printDist(double[] z) {
         int a = 0, b = 0, c = 0, d = 0, e = 0;
-            for (int t = 0; t < z.length; t++) {
-                if (-1 <= z[t] && z[t] < -0.6) {
-                    a++;
-                } else if (z[t] < -0.2) {
-                    b++;
-                } else if (z[t] < 0.2) {
-                    c++;
-                } else if (z[t] < 0.6) {
-                    d++;
-                } else if (z[t] <= 1.0) {
-                    e++;
-                }
+        for (int t = 0; t < z.length; t++) {
+            if (-1 <= z[t] && z[t] < -0.6) {
+                a++;
+            } else if (z[t] < -0.2) {
+                b++;
+            } else if (z[t] < 0.2) {
+                c++;
+            } else if (z[t] < 0.6) {
+                d++;
+            } else if (z[t] <= 1.0) {
+                e++;
             }
+        }
 
-            System.out.println("Confirm the distribution of z (opinions) ↓↓↓");
-            System.out.printf("-1 ~ -0.6: %d\n", a);
-            System.out.printf("-0.6 ~ -0.2: %d\n", b);
-            System.out.printf("-0.2 ~ 0.2: %d\n", c);
-            System.out.printf("0.2 ~ 0.6: %d\n", d);
-            System.out.printf("0.6 ~ 1.0: %d\n", e);
+        System.out.println("Confirm the distribution of z (opinions) ↓↓↓");
+        System.out.printf("-1 ~ -0.6: %d\n", a);
+        System.out.printf("-0.6 ~ -0.2: %d\n", b);
+        System.out.printf("-0.2 ~ 0.2: %d\n", c);
+        System.out.printf("0.2 ~ 0.6: %d\n", d);
+        System.out.printf("0.6 ~ 1.0: %d\n", e);
     }
-    
-
 
     // use main to check
     public static void main(String[] args) {
