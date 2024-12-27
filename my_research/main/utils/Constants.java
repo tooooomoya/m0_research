@@ -16,13 +16,14 @@ public class Constants {
     public static final double MAX_DIFF = 0.05; //これより小さく意見が近いのに、縁を切る必要性はない。
     public static final double NEW_WEIGHT = 0.2;
     public static final int NEW_USER_NUM = 10;
+    public static final int FR_PROB = 50;
+    public static final double DIV_RATE = 0.0;
+    public static final double DIV_ACTION_RATE = 0.2;
+    public static final double DIV_DIFF = 0.2;
 
     //リンクのランダム追加アルゴリズムの定数
-    public static final double ALPHA = 2.0;//ユーザ数の何倍か
-    public static final double ADD_WEIGHT = 0.05;
-    //(1,0.5)は0.07, 0.1では議論していて素晴らしいが、0.2,0.3では弱い。
-    //0.2くらいで起こしたい。
-    //(2, 0.3)だと強い、というか0.2で二峰化しない。どうしたらしてくれる？
+    public static final double ALPHA = 0.5;//ユーザ数の何倍か
+    public static final double ADD_WEIGHT = 0.1;
 
     //グラフ構造描画の定数
     public static final double LINK_THRES = 0.01;

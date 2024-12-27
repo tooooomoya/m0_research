@@ -12,7 +12,7 @@ public class calculater {
         double disagg = 0.0;
         for (int i = 0; i < z.length; i++) {
             for (int j = 0; j < z.length; j++) {
-                if (W[i][j] > 0 && i!=j) {
+                if (W[i][j] > 0 && i != j) {
                     disagg += W[i][j] * (z[i] - z[j]) * (z[i] - z[j]);
                 }
             }
@@ -30,17 +30,20 @@ public class calculater {
         }
         return (double) extreme / z.length;
     }*/
-
-
     public static double computeGpPls(double[] z, double[] s) {
         double diff = 0;
+        int num = 0;
         for (int i = 0; i < z.length; i++) {
+            if (s[i] == 0.5) {
+                continue;
+            }
+            num++;
             diff += Math.abs((z[i] - 0.5) / (s[i] - 0.5)) - 1;
         }
-        if(diff == 0){
+        if (diff == 0) {
             return 0;
-        }else{
-        return (double) diff / z.length;
+        } else {
+            return (double) diff / num;
         }
     }
 
@@ -56,8 +59,9 @@ public class calculater {
                 total += W[i][j];
                 if (W[i][j] > Constants.W_THRES) {
                     links += W[i][j];
-                    if (z[j] >= z[i] - 0.15 && z[j] <= z[i] + 0.15) {
-                        similar += W[i][j];
+                    if (z[j] >= z[i] - 0.1 && z[j] <= z[i] + 0.1) {
+                        double z_diff = Math.abs(z[i] - z[j]);
+                        similar += W[i][j] * (-10 * z_diff + 1);
                     }
                 }
             }
@@ -320,8 +324,8 @@ public class calculater {
     }
 
     /// Algorithm of Randomy Change of W
-    public static List<int[]> selectPairs_v1(double[][] W, double[] z) {
-        int numPairs = (int) Constants.ALPHA * z.length;
+    public static List<int[]> selectPairs_v1(double[][] W) {
+        int numPairs = (int) (Constants.ALPHA * W.length);
         List<int[]> Pairs = new ArrayList<>();
 
         // W行列から(i, j)ペアを見つけてリストに格納
@@ -346,7 +350,7 @@ public class calculater {
         return selectedPairs;
     }
 
-    public static double[][] friendRecommend(double[][] W, double[] z) {
+    public static double[][] friendRecommend(double[][] W, double[] z, int[] diversityUserList) {
         double[] sub_weight = new double[z.length];
         double[] user_weight_sum = new double[z.length];
         double[][] W_01 = new double[z.length][z.length];
@@ -380,7 +384,31 @@ public class calculater {
         for (int i = 0; i < z.length; i++) {
             List<AgentRanking> rankings = new ArrayList<>();
             double opinionDifference = 0.0;
+
+            boolean youarediv = false;
+            for (int j = 0; j < diversityUserList.length; j++) {
+                if (i == diversityUserList[j]) {
+                    youarediv = true;
+                    break;
+                }
+            }
+
+            Random random_2 = new Random();
+            int randomNumber = random_2.nextInt(101);
+            if (youarediv && randomNumber < (int)(100 * Constants.DIV_ACTION_RATE)) {
+                int attempts = 0;
+                while (attempts < 100) {
+                    int new_follow_id = random_2.nextInt(z.length);
+                    if (W[i][new_follow_id] < Constants.W_THRES && Math.abs(z[i] - z[new_follow_id]) > Constants.DIV_DIFF) {
+                        echo[i] = true;
+                        break;
+                    }
+                    attempts++;
+                }
+            }
+
             for (int j = 0; j < z.length; j++) {
+
                 if (W[i][j] > 0) { // iがjをフォローしている場合
                     double weight = W[i][j];
                     opinionDifference = Math.abs(z[i] - z[j]);
@@ -393,7 +421,9 @@ public class calculater {
                     rankings.add(new AgentRanking(j, score));
                 }
             }
-            if(rankings.isEmpty()){
+            Random random = new Random();
+            int randomNum = random.nextInt(101);
+            if (rankings.isEmpty() || randomNum >= Constants.FR_PROB) {
                 echo[i] = true;
             }
             rankings.sort((a, b) -> Double.compare(b.getScore(), a.getScore()));
@@ -420,11 +450,12 @@ public class calculater {
                 W[i][agentId] = 0;
                 sub_weight[i] = temp;
             }
+
         }
 
         System.out.println("Avg ranking size: " + (double) avg_ranking_size / z.length);
         System.out.println("Avg ranking score: " + (double) avg_ranking_score / delete_num);
-        System.out.println("Not Deleting just adding num"+(z.length-delete_num));
+        System.out.println("Not Deleting just adding num" + (z.length - delete_num));
 
         Random random = new Random(42);
         double Rewire_weight = 0.0;
@@ -442,9 +473,9 @@ public class calculater {
                 }
             }
 
-            if(echo[i] == true){
+            if (echo[i] == true) {
                 continue;
-            }else if (!candidates.isEmpty()) {//友達の友達がいる。
+            } else if (!candidates.isEmpty()) {//友達の友達がいる。
                 newFriend = candidates.get(random.nextInt(candidates.size()));
                 candidates_num += candidates.size();
                 who_can_num++;
@@ -478,7 +509,7 @@ public class calculater {
             }
         }
         System.out.println("Rewire_num: " + Rewire_num + ", avg_rewire_weight" + Rewire_weight / Rewire_num);
-        System.out.println("Avg candidates num: "+ (double) candidates_num / who_can_num);
+        System.out.println("Avg candidates num: " + (double) candidates_num / who_can_num);
 
         return W;
     }

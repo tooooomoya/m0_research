@@ -109,7 +109,7 @@ public class PlotResults {
             double finalGppls = gppls.get(gppls.size() - 1);
             //System.out.println("finalGppls: "+ finalGppls);
 
-            gpplsRatioList[i] = finalGppls / initialGppls;
+            gpplsRatioList[i] = finalGppls;
         }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(("results/gppls" + filename + ".csv")))) {

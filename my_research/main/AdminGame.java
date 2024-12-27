@@ -4,6 +4,9 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.*;
+import java.util.Collections;
+
 
 import main.utils.*;
 import main.structure.*;
@@ -33,12 +36,12 @@ public class AdminGame {
         ///// Set disaggs
         ArrayList<Double> disaggs = new ArrayList<>();
         disaggs.add(calculater.computeDisagreement(z, W));
-        System.out.println("\ndisagg before iteration: "+calculater.computeDisagreement(z, W));
+        System.out.println("\ndisagg before iteration: " + calculater.computeDisagreement(z, W));
 
         ///// Set gppls
         ArrayList<Double> gppls = new ArrayList<>();
         gppls.add(calculater.computeGpPls(z, s));
-        System.out.println("gppls before iteration: "+calculater.computeGpPls(z, s));
+        System.out.println("gppls before iteration: " + calculater.computeGpPls(z, s));
 
         ///// Set stfs
         ArrayList<Double> stfs = new ArrayList<>();
@@ -66,9 +69,14 @@ public class AdminGame {
         simulation.updateGraph(z, W);
         simulation.assignCommunities(communities);
         simulation.exportGraph(i);
-        
+
         int conv_speed = -1;
         boolean first_conv = true;
+
+        int div_user_num = (int)(Constants.DIV_RATE * z.length);
+        List<Integer> userIndices = IntStream.range(0, z.length).boxed().collect(Collectors.toList());
+        Collections.shuffle(userIndices, new Random(56));
+        int[] diversityUserList = userIndices.subList(0, div_user_num).stream().mapToInt(Integer::intValue).toArray();
 
         double[] deg = new double[z.length];
         int isolate = 0;
@@ -85,7 +93,7 @@ public class AdminGame {
         System.out.println("The num of Isolated Node : " + isolate);
 
         while (flag) {
-            if(i % 10 == 0){
+            if (i % 10 == 0) {
                 communities = Louvain.louvainCommunityDetection(W);
             }
 
@@ -125,20 +133,23 @@ public class AdminGame {
                     System.out.println("Huge difference in degree -> " + (deg_aft[k] - deg[k]));
                 }
             }*/
-
             double w_num = 0.0;
             int added_num = 0;
             int zero_num = 0;
+            double avg_rec_weight = 0.0;
             double total_sub_weight = 0.0;
+            List<int[]> newFollowPairs = new ArrayList<>();
             if (random) {
                 /// My Method : randomly add weight
             List<int[]> selectedPairs = new ArrayList<>();
-                selectedPairs = calculater.selectPairs_v1(Wnew, z);
+                selectedPairs = calculater.selectPairs_v1(Wnew);
                 for (int[] pair : selectedPairs) {
                     int follow_num = 0;
                     double total_add = 0.0;
                     if ((10 - Wnew[pair[0]][pair[1]]) > Constants.ADD_WEIGHT) {
-                        if (Wnew[pair[0]][pair[1]] == 0) {
+                        newFollowPairs.add(pair);
+                        avg_rec_weight += Wnew[pair[0]][pair[1]];
+                        if (Wnew[pair[0]][pair[1]] < Constants.W_THRES) {
                             zero_num++;
                         }
 
@@ -150,7 +161,7 @@ public class AdminGame {
                         }
                         //System.out.println("Follow num" + follow_num);
                         if (follow_num > 1) {
-                            double sub_wieght = (double) Constants.ADD_WEIGHT / follow_num ;
+                            double sub_wieght = (double) Constants.ADD_WEIGHT / follow_num;
                             for (int k = 0; k < W.length; k++) {
                                 if (Wnew[pair[0]][k] > Constants.W_THRES) {
                                     Wnew[pair[0]][k] -= sub_wieght;
@@ -171,6 +182,7 @@ public class AdminGame {
                 System.out.println("The sum of w added by my method: " + w_num);
                 System.out.println("The sum of w subbed by my method: " + total_sub_weight);
                 System.out.println("Added edges num :" + added_num + ", To Zero edges num : " + zero_num);
+                System.out.println("Avg weight to which new weight added: " + avg_rec_weight / added_num);
             }
             weight_added += (w_num - total_sub_weight);
 
@@ -214,17 +226,27 @@ public class AdminGame {
                     }
                 }
             }
-            for(int k = 0; k < z.length ; k++){
+            for (int k = 0; k < z.length; k++) {
                 double temp = 0.0;
-                for(int l = 0; l < z.length; l++){
+                for (int l = 0; l < z.length; l++) {
                     temp += Wnew[k][l];
                 }
-                if(temp == 0){
+                if (temp == 0) {
                     System.out.println("oakdfasdjfajdfjas!!!!!!!!!!!!!!!!!!!!!!!!");
                 }
             }
 
-            Wnew = calculater.friendRecommend(Wnew, z);
+            Wnew = calculater.friendRecommend(Wnew, z, diversityUserList);
+
+            if (random) {
+                int unfollowed = 0;
+                for (int[] pair : newFollowPairs) {
+                    if (Wnew[pair[0]][pair[1]] == 0.0) {
+                        unfollowed++;
+                    }
+                }
+                System.out.println("unfollowed random recommend links " + unfollowed);
+            }
 
             /// confirm the maximum weight
             double max_w = 0.0;
@@ -242,9 +264,9 @@ public class AdminGame {
                         min_w = Wnew[ii][j];
                     }
 
-                    if(Wnew[ii][j] > 10.0){
+                    if (Wnew[ii][j] > 10.0) {
                         Wnew[ii][j] = 10.0;
-                    }else if(Wnew[ii][j] < 0){
+                    } else if (Wnew[ii][j] < 0) {
                         Wnew[ii][j] = 0.0;
                     }
                 }
@@ -295,7 +317,7 @@ public class AdminGame {
 
             double GPPLS = calculater.computeGpPls(z, s);
             gppls.add(GPPLS);
-            //System.out.println("\ngppls: " + GPPLS);
+            System.out.println("\ngppls: " + GPPLS);
 
             double stf = calculater.computeStf(z, W, communities);
             stfs.add(stf);
