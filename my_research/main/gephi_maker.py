@@ -23,7 +23,7 @@ def downgrade_gexf_version(file_path):
         file.write(content)
 
 # フォルダ内の全てのGEXFファイルを処理
-input_folder = "GEXF/lambda_0.02"
+input_folder = "GEXF/lambda_0.05"
 for file_name in os.listdir(input_folder):
     if file_name.endswith(".gexf"):
         downgrade_gexf_version(os.path.join(input_folder, file_name))
@@ -69,6 +69,6 @@ def create_dynamic_graph(gexf_folder, output_file):
 
 
 # 実行例
-input_folder = "GEXF/lambda_0.02/"
-output_file = "dynamic_graph_lambda_0.02.gexf"
+input_folder = "GEXF/lambda_0.05/"
+output_file = "dynamic_graph_lambda_0.05.gexf"
 create_dynamic_graph(input_folder, output_file)

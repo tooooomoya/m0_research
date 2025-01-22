@@ -42,7 +42,7 @@ public class GIFCreator {
 
     private static void drawBarGraph(Graphics2D g2d, int[] bins, double lambda, int width, int height) {
         int barWidth = (width - 50) / bins.length; // x軸左に50の余白を考慮
-        int maxCount = 200;
+        int maxCount = 300;
 
         // y軸のスケール
         int yAxisHeight = height - 70; // 上下の余白を考慮

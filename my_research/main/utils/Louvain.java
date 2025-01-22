@@ -21,7 +21,7 @@ public class Louvain {
 
         double totalWeight = totalWeight(adjacencyMatrix);
         boolean improvement = true;
-        int maxIterations = 15;  // 最大反復回数
+        int maxIterations = 10;  // 最大反復回数
         int numIterations = 0;
 
         while (improvement && numIterations < maxIterations) {

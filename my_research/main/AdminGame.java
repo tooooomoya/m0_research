@@ -7,7 +7,6 @@ import java.util.Random;
 import java.util.stream.*;
 import java.util.Collections;
 
-
 import main.utils.*;
 import main.structure.*;
 
@@ -28,15 +27,25 @@ public class AdminGame {
         //System.out.println("\nthe fisrst z after the FJ effect (basis): ");
         //matrix_util.printVector(z);
 
+        int div_user_num = (int) (Constants.DIV_RATE * z.length);
+        System.out.println("The num of user with diversity plan : " + div_user_num);
+        List<Integer> userIndices = IntStream.range(0, z.length).boxed().collect(Collectors.toList());
+        Collections.shuffle(userIndices, new Random(56));
+        int[] diversityUserList = userIndices.subList(0, div_user_num).stream().mapToInt(Integer::intValue).toArray();
+        boolean[] isDiversityUser = new boolean[z.length];
+        for (int m : diversityUserList) {
+            isDiversityUser[m] = true; // diversityUserList に含まれるインデックスを true に設定
+        }
+
         ///// Set pls
         ArrayList<Double> pls = new ArrayList<>();
-        pls.add(optimization.computePls(z, W));
+        pls.add(optimization.computePls(z, W, isDiversityUser));
         //System.out.println("\npls before iteration: "+ optimization.computePls(z));
 
         ///// Set disaggs
         ArrayList<Double> disaggs = new ArrayList<>();
-        disaggs.add(calculater.computeDisagreement(z, W));
-        System.out.println("\ndisagg before iteration: " + calculater.computeDisagreement(z, W));
+        disaggs.add(calculater.computeDisagreement(z, W, isDiversityUser));
+        System.out.println("\ndisagg before iteration: " + calculater.computeDisagreement(z, W, isDiversityUser));
 
         ///// Set gppls
         ArrayList<Double> gppls = new ArrayList<>();
@@ -45,12 +54,12 @@ public class AdminGame {
 
         ///// Set stfs
         ArrayList<Double> stfs = new ArrayList<>();
-        stfs.add(calculater.computeStf(z, W, communities));
-        System.out.println("\nstfs before iteration: " + calculater.computeStf(z, W, communities));
+        stfs.add(calculater.computeStf(z, W, communities, isDiversityUser));
+        System.out.println("\nstfs before iteration: " + calculater.computeStf(z, W, communities, isDiversityUser));
 
         ///// Set udv
         ArrayList<Double> udv = new ArrayList<>();
-        udv.add(calculater.computeUdv(z, W));
+        udv.add(calculater.computeUdv(z, W, isDiversityUser));
 
         ///// Set cdv
         ArrayList<Double> cdv = new ArrayList<>();
@@ -73,10 +82,25 @@ public class AdminGame {
         int conv_speed = -1;
         boolean first_conv = true;
 
-        int div_user_num = (int)(Constants.DIV_RATE * z.length);
-        List<Integer> userIndices = IntStream.range(0, z.length).boxed().collect(Collectors.toList());
-        Collections.shuffle(userIndices, new Random(56));
-        int[] diversityUserList = userIndices.subList(0, div_user_num).stream().mapToInt(Integer::intValue).toArray();
+
+        Random random_state0 = new Random(80);
+        for (int k = 0; k < z.length; k++) {
+            double total_w = 0.0;
+            for (int j = 0; j < z.length; j++) {
+                if (k != j && W[k][j] > 0.0) {
+                    total_w += W[k][j];
+                }
+            }
+            if (total_w == 0.0) {
+                System.out.println("Find Isolated Agent !!!!!!!!");
+                for (int l = 0; l < Constants.NEW_USER_NUM; l++) {
+                    int newFriend = random_state0.nextInt(z.length);
+                    if (newFriend != k) {
+                        W[k][newFriend] += (double) (Constants.NEW_WEIGHT_FOR_ISOLATED / Constants.NEW_USER_NUM);
+                    }
+                }
+            }
+        }
 
         double[] deg = new double[z.length];
         int isolate = 0;
@@ -122,7 +146,7 @@ public class AdminGame {
                 System.out.println("Wnew Error : Wnew and W will be Completely same");
             }
 
-            /*double[] deg_aft = new double[z.length];
+            double[] deg_aft = new double[z.length];
             for (int k = 0; k < z.length; k++) {
                 for (int l = 0; l < z.length; l++) {
                     if (k != l) {
@@ -130,9 +154,9 @@ public class AdminGame {
                     }
                 }
                 if ((deg_aft[k] - deg[k]) > 1.0 && !random) {
-                    System.out.println("Huge difference in degree -> " + (deg_aft[k] - deg[k]));
+                    System.out.println("Huge difference in degree -> " + (deg_aft[k] - deg[k] + " in " + k));
                 }
-            }*/
+            }
             double w_num = 0.0;
             int added_num = 0;
             int zero_num = 0;
@@ -196,7 +220,7 @@ public class AdminGame {
                         total_vanish_weight += Wnew[k][l];
                         user_balance_weight += Wnew[k][l];
                         Wnew[k][l] = 0;
-                    } else if (Wnew[k][l] > 0) {
+                    } else if (Wnew[k][l] > Constants.W_THRES) {
                         user_potential_num++;
                     }
                 }
@@ -212,16 +236,16 @@ public class AdminGame {
             for (int k = 0; k < z.length; k++) {
                 double total_w = 0.0;
                 for (int j = 0; j < z.length; j++) {
-                    if (k != j && W[k][j] > Constants.W_THRES) {
-                        total_w += W[k][j];
+                    if (k != j && Wnew[k][j] > 0.0) {
+                        total_w += Wnew[k][j];
                     }
                 }
-                if (total_w == 0) {
+                if (total_w == 0.0) {
                     System.out.println("Find Isolated Agent !!!!!!!!");
                     for (int l = 0; l < Constants.NEW_USER_NUM; l++) {
                         int newFriend = random_state.nextInt(z.length);
                         if (newFriend != k) {
-                            Wnew[k][newFriend] += Constants.NEW_WEIGHT / Constants.NEW_USER_NUM;
+                            Wnew[k][newFriend] += (double) (Constants.NEW_WEIGHT_FOR_ISOLATED / Constants.NEW_USER_NUM);
                         }
                     }
                 }
@@ -235,8 +259,12 @@ public class AdminGame {
                     System.out.println("oakdfasdjfajdfjas!!!!!!!!!!!!!!!!!!!!!!!!");
                 }
             }
+            double total_weight2 = matrix_util.calculateSumWeight(Wnew);
+            System.out.println("Total Weight : Initial->" + initil_total_weight + ", This step->" + total_weight2);
 
             Wnew = calculater.friendRecommend(Wnew, z, diversityUserList);
+            double total_weight1 = matrix_util.calculateSumWeight(Wnew);
+            System.out.println("Total Weight : Initial->" + initil_total_weight + ", This step->" + total_weight1);
 
             if (random) {
                 int unfollowed = 0;
@@ -264,11 +292,11 @@ public class AdminGame {
                         min_w = Wnew[ii][j];
                     }
 
-                    if (Wnew[ii][j] > 10.0) {
+                    /*if (Wnew[ii][j] > 10.0) {
                         Wnew[ii][j] = 10.0;
                     } else if (Wnew[ii][j] < 0) {
                         Wnew[ii][j] = 0.0;
-                    }
+                    }*/
                 }
             }
             System.out.println("\nMaximum Weight of W matrix : " + max_w);
@@ -303,7 +331,7 @@ public class AdminGame {
             }
 
             //double PLS = calculateDiversity(znew, Wnew);
-            double PLS = optimization.computePls(z, W);
+            double PLS = optimization.computePls(z, W, isDiversityUser);
             pls.add(PLS);
             System.out.println("\npls: " + PLS);
             if (PLS > 0.56 && first_conv) {
@@ -311,7 +339,7 @@ public class AdminGame {
                 first_conv = false;
             }
 
-            double disagg = calculater.computeDisagreement(z, W);
+            double disagg = calculater.computeDisagreement(z, W, isDiversityUser);
             disaggs.add(disagg);
             //System.out.println("\ndisagg: " + disagg);
 
@@ -319,11 +347,11 @@ public class AdminGame {
             gppls.add(GPPLS);
             System.out.println("\ngppls: " + GPPLS);
 
-            double stf = calculater.computeStf(z, W, communities);
+            double stf = calculater.computeStf(z, W, communities, isDiversityUser);
             stfs.add(stf);
             System.out.println("\nstf: " + stf);
 
-            double UDV = calculater.computeUdv(z, W);
+            double UDV = calculater.computeUdv(z, W, isDiversityUser);
             udv.add(UDV);
             //System.out.println("\nudv: " + UDV);
 

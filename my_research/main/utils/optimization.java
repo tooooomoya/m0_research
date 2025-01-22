@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import main.structure.OptResult;
+import java.util.Random;
 
 public class optimization {
 
@@ -111,10 +112,70 @@ public class optimization {
         return new_z;
     }
 
+    public static OptResult minWGurobi(double[] z, double lam, double[][] W, boolean reducePls, double gam, boolean existing) throws GRBException{
+        int n = z.length;
+        boolean Opt = false;
+        Random random = new Random();
+        int isolate = 0;
+
+        for(int i = 0; i < n ; i++){
+            double my_w_sum = 0.0;
+            int to_user = 0;
+            int follow_num = 0;
+            for(int j = 0; j < n; j++){
+                if(W[i][j] > Constants.W_THRES){
+                    my_w_sum += W[i][j];
+                    follow_num++;
+                }
+            }
+            if(follow_num <= 1){
+                //System.out.println("user "+i+" doesn't have more than 1 follow.");
+                isolate++;
+                continue;
+            }
+            double rand = random.nextDouble();
+            double prob = 0.0;
+            for(int j = 0; j < n; j++){
+                boolean found = false;
+                if(W[i][j] > Constants.W_THRES){
+                    prob += W[i][j] / my_w_sum;
+                    if(prob > rand){
+                        to_user = j;
+                        break;
+                    }
+                }
+            }
+            double diff = Math.abs(z[i] - z[to_user]);
+            double rate = (- 2 * Math.log(diff)) / 100;
+            //double rate = (-10 * diff + 5)/100;
+            double widen = rate * W[i][to_user];
+            //System.out.println("rate "+rate);
+            double overflow = 0.0;
+
+            for(int j = 0; j < n; j++){
+                if(W[i][j] > 0 && j != to_user){
+                    W[i][j] -= widen / (follow_num - 1);
+                    if(W[i][j] < 0){
+                        overflow += -W[i][j];
+                        W[i][j] = 0;
+                    }
+                    }
+            }
+            W[i][to_user] += widen - overflow;
+            /*if(W[i][to_user] > 10.0){
+                W[i][to_user] = 10.0;
+                System.out.println("Overflow in minW!!!!!!");
+            }*/
+        }
+        System.out.println("isolate num "+isolate);
+
+        return new OptResult(Opt, W);
+    }
+
     // minW : the STEP where Admin changes(minimizes) W matrix under some
     // constraints
     // find weight matrix W that minimizes z^T L z
-    public static OptResult minWGurobi(double[] z, double lam, double[][] W0, boolean reducePls, double gam,
+    /*public static OptResult minWGurobi(double[] z, double lam, double[][] W0, boolean reducePls, double gam,
             boolean existing) throws GRBException {
         int n = z.length;
         System.out.println("the number of n: " + n);
@@ -165,7 +226,8 @@ public class optimization {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
                     if (i > j && W0[i][j] > 0) {
-                        double diff = 10 - 25 * Math.abs(z[i] - z[j]);
+                        //double diff = 10 - 25 * Math.abs(z[i] - z[j]);
+                        double diff = Math.abs(z[i] - z[j]);
                         objExp.addTerm(diff, x[i][j]);
                     }
                 }
@@ -174,8 +236,8 @@ public class optimization {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
                     if (i != j) {
-                        double diff = 10 - 25 * Math.abs(z[i] - z[j]);
-                        //double diff = (z[i] - z[j]) * (z[i] - z[j]);
+                        //double diff = 10 - 25 * Math.abs(z[i] - z[j]);
+                        double diff = (z[i] - z[j]) * (z[i] - z[j]);
                         objExp.addTerm(diff, x[i][j]);
                         // diff*x[i][j]という項(Term)をAddする、という意味
                     }
@@ -194,7 +256,7 @@ public class optimization {
             }
         }
 
-        model.setObjective(objExp, GRB.MAXIMIZE);
+        model.setObjective(objExp, GRB.MINIMIZE);
         // System.out.println("Set the objective!");
 
         // Add constraints sum_j x[i,j] = di : the degree of each vertex should not
@@ -291,13 +353,16 @@ public class optimization {
         model.dispose();
         env.dispose();
         return new OptResult(Opt, W);
-    }
+    }*/
 
-    public static double computePls(double[] z, double[][] W) {
+    public static double computePls(double[] z, double[][] W, boolean[] isDiversityUser) {
 
         double[] z_diversity = new double[z.length];
 
         for (int i = 0; i < z.length; i++) {
+            if(isDiversityUser[i]){
+                continue;
+            }
             double my_opinion = z[i];
             double adjacency_opinion_sum = 0; // calculate the number of agents having opposite opinion
             double adjacency_sum = 0;

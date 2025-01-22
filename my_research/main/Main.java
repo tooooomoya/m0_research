@@ -58,10 +58,9 @@ public class Main {
             plotResults.exportStfs(resultPair, "Test", lamvals);
             plotResults.exportUdv(resultPair, "Test", lamvals);
             plotResults.exportCdv(resultPair, "Test", lamvals);
+            plotResults.generateHistogram(resultPair.getRdFix().get(lamvals[0]).getZ(), s,"results/testimg/");
             GIFCreator.createGIF("Test_output.gif");
         }
-
-        
 
         scanner.close();
     }
