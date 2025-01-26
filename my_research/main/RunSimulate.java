@@ -25,7 +25,7 @@ public class RunSimulate {
         HashMap<Double, Result> rdFix = new HashMap<>();    // results of regularized NA dynamics
 
         int maxIter = Constants.MAT_ITERATION;
-        double gam = 0.01; // L2 regularization coefficient 
+        double gam = 0.0; // L2 regularization coefficient 
         ArrayList<Double> ErrorLambda = new ArrayList<>();
         double[] AddedWeight = new double[lamList.length];
 

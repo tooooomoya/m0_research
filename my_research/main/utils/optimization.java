@@ -146,10 +146,14 @@ public class optimization {
                 }
             }
             double diff = Math.abs(z[i] - z[to_user]);
-            double rate = (- 2 * Math.log(diff)) / 100;
-            //double rate = (-10 * diff + 5)/100;
+            if(diff == 0){
+                diff = 0.01;
+            }
+            double rate = (- 1.5 * Math.log(diff)) / 100;
+            //double intercept = 10.0;
+            //double rate = -intercept/0.5 * (diff) + intercept;
             double widen = rate * W[i][to_user];
-            //System.out.println("rate "+rate);
+            //System.out.println("widen "+widen);
             double overflow = 0.0;
 
             for(int j = 0; j < n; j++){
@@ -162,10 +166,6 @@ public class optimization {
                     }
             }
             W[i][to_user] += widen - overflow;
-            /*if(W[i][to_user] > 10.0){
-                W[i][to_user] = 10.0;
-                System.out.println("Overflow in minW!!!!!!");
-            }*/
         }
         System.out.println("isolate num "+isolate);
 

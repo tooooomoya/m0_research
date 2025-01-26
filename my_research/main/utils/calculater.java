@@ -11,7 +11,7 @@ public class calculater {
     public static double computeDisagreement(double[] z, double[][] W, boolean[] isDiversityUser) {
         double disagg = 0.0;
         for (int i = 0; i < z.length; i++) {
-            if(isDiversityUser[i]){
+            if (isDiversityUser[i]) {
                 continue;
             }
             for (int j = 0; j < z.length; j++) {
@@ -41,7 +41,7 @@ public class calculater {
                 continue;
             }
             num++;
-            diff += Math.abs((z[i] - 0.5) / (s[i] - 0.5)) - 1;
+            diff += Math.abs((z[i] - 0.5) / (s[i] - 0.5));
         }
         if (diff == 0) {
             return 0;
@@ -56,7 +56,7 @@ public class calculater {
         double homogeneous = 0.0;
         double total = 0.0;
         for (int i = 0; i < z.length; i++) {
-            if(isDiversityUser[i]){
+            if (isDiversityUser[i]) {
                 continue;
             }
             double links = 0.0;
@@ -84,7 +84,7 @@ public class calculater {
         double connect_threshold = Constants.W_THRES;
         double p = 0.05;
         for (int i = 0; i < z.length; i++) {
-            if(isDiversityUser[i]){
+            if (isDiversityUser[i]) {
                 continue;
             }
             double my_connect = 0.0;
@@ -109,7 +109,7 @@ public class calculater {
         int validNodeCount = 0;
 
         for (int i = 0; i < n; i++) {
-            if(isDiversityUser[i]){
+            if (isDiversityUser[i]) {
                 continue;
             }
             // ノード i の接続ノードを収集
@@ -238,7 +238,7 @@ public class calculater {
         double entropy = 0.0;
 
         for (int i = 0; i < z.length; i++) {
-            if(isDiversityUser[i]){
+            if (isDiversityUser[i]) {
                 continue;
             }
             int[] bins = new int[20];
@@ -366,6 +366,8 @@ public class calculater {
     }
 
     public static double[][] friendRecommend(double[][] W, double[] z, int[] diversityUserList) {
+        Random random = new Random();
+        
         double[][] W_01 = new double[z.length][z.length];
         for (int i = 0; i < z.length; i++) {
             for (int j = 0; j < z.length; j++) {
@@ -398,10 +400,35 @@ public class calculater {
             }
         }
 
+        // ノードごとのフォロワーリストを事前計算
+        List<List<Integer>> followers = new ArrayList<>();
+        for (int i = 0; i < z.length; i++) {
+            followers.add(new ArrayList<>());
+            for (int j = 0; j < z.length; j++) {
+                if (W_01[j][i] == 1) {
+                    followers.get(i).add(j); // ノードiをフォローしているノードを記録
+                }
+            }
+        }
+
+        double[][] collabo_matrix = new double[z.length][z.length];
+        for (int i = 0; i < z.length; i++) {
+            for (int j = 0; j < z.length; j++) {
+                if (W_01[i][j] == 1) {
+                    for (int follower : followers.get(j)) {
+                        if (follower != i) {
+                            collabo_matrix[i][follower] = 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        int rnd = random.nextInt(101);
         boolean[] div_label = new boolean[z.length];
         for (int i = 0; i < z.length; i++) {
             for (int k = 0; k < diversityUserList.length; k++) {
-                if (i == diversityUserList[k]) {
+                if (i == diversityUserList[k] && rnd > Constants.DIV_NORMAL_RATE) {
                     div_label[i] = true;
                 }
             }
@@ -413,10 +440,10 @@ public class calculater {
             int echo_num = 0;
             int friend_num = 0;
             for (int j = 0; j < z.length; j++) {
-                if(W[i][j] > 0){
+                if (W[i][j] > 0) {
                     friend_num++;
                 }
-                if(W[i][j] > 0 && Math.abs(z[i] - z[j]) < Constants.MAX_DIFF){
+                if (W[i][j] > 0 && Math.abs(z[i] - z[j]) < Constants.MAX_DIFF) {
                     echo_num++;
                 }
             }
@@ -425,7 +452,7 @@ public class calculater {
             }
         }
 
-        Random random = new Random();
+        
         int div_action_num = 0;
         int unfollow_num = 0;
         double avg_unfollow_weight = 0.0;
@@ -440,7 +467,7 @@ public class calculater {
                 int randomNumber = random.nextInt(101);
                 if (randomNumber < (int) (100 * Constants.DIV_ACTION_RATE)) {
                     int attempts = 0;
-                    while (attempts < 100) {
+                    while (attempts < 10) {
                         int new_follow_id = random.nextInt(z.length);
                         if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) > Constants.DIV_DIFF) {
                             int friend_num = 0;
@@ -511,17 +538,18 @@ public class calculater {
                     }
                 }
             } else if(echo_label[i]){*/
-            else{
-                
+            else {
+
                 //探索してランダムに意見が近いユーザをFollowする
                 int randomNumber = random.nextInt(101);
                 if (randomNumber < (int) (100 * Constants.FR_PROB)) {
                     int attempts = 0;
                     while (attempts < 10) {
                         int new_follow_id = random.nextInt(z.length);
-                        
-                        if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && FRofFR[i][new_follow_id]==1) {
-                        //if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF) {
+
+                        //if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && collabo_matrix[i][new_follow_id] == 1) {
+                        //if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && FRofFR[i][new_follow_id] == 1) {
+                        if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF) {
                             double overflow = 0.0;
                             int friend_num = 0;
                             for (int j = 0; j < z.length; j++) {
@@ -539,7 +567,7 @@ public class calculater {
                                         W[i][j] = 0;
                                         //System.out.println("overflow" + temp);
                                     }
-                                    total_sub_weight +=  (Constants.NEW_WEIGHT / friend_num);
+                                    total_sub_weight += (Constants.NEW_WEIGHT / friend_num);
                                 }
                             }
                             //すでに重みがある人に関しては本当は別に実装する必要がある
@@ -562,16 +590,16 @@ public class calculater {
         System.out.println("avg unfollow weight : " + avg_unfollow_weight / unfollow_num);
         System.out.println("avg unfollow diff : " + avg_unfollow_diff / unfollow_num);
         System.out.println("echo & just follow action : " + echo_follow_num);
-        System.out.println("total added weight : "+total_add_weight);
-        System.out.println("total subed weight : "+total_sub_weight);
+        System.out.println("total added weight : " + total_add_weight);
+        System.out.println("total subed weight : " + total_sub_weight);
 
         return W;
     }
 
-    public static double[] calculateUserTotalWeight(double[][] W){
+    public static double[] calculateUserTotalWeight(double[][] W) {
         double[] user_total_weight = new double[W.length];
-        for(int i = 0; i < W.length; i++){
-            for(int j = 0; j < W.length; j++){
+        for (int i = 0; i < W.length; i++) {
+            for (int j = 0; j < W.length; j++) {
                 user_total_weight[i] += W[i][j];
             }
         }
