@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -6,14 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// 修正されたLouvain法のコード
+
 public class Louvain {
 
-    // 隣接行列を受け取ってコミュニティに分割する
     public static Map<Integer, List<Integer>> louvainCommunityDetection(double[][] adjacencyMatrix) {
         int n = adjacencyMatrix.length;
 
-        // 初期コミュニティ割当 (各ノードが独自のコミュニティ)
+        // 初期コミュニティ割り当て (各ノードが独自のコミュニティ)
         int[] communities = new int[n];
         for (int i = 0; i < n; i++) {
             communities[i] = i;
@@ -21,7 +21,7 @@ public class Louvain {
 
         double totalWeight = totalWeight(adjacencyMatrix);
         boolean improvement = true;
-        int maxIterations = 10;  // 最大反復回数
+        int maxIterations = 100;  // 適度な上限を設定
         int numIterations = 0;
 
         while (improvement && numIterations < maxIterations) {
@@ -30,20 +30,17 @@ public class Louvain {
 
             // 各ノードを移動させる
             for (int node = 0; node < n; node++) {
-                int currentCommunity = communities[node];
+                int originalCommunity = communities[node];  // 元のコミュニティを保持
                 double maxDeltaQ = 0.0;
-                int bestCommunity = currentCommunity;
+                int bestCommunity = originalCommunity;
 
-                // ノードを一時的にコミュニティから外す
-                communities[node] = -1;
-
-                // 隣接ノードのコミュニティに対するΔQを計算
+                // 隣接ノードのコミュニティに対する ΔQ を計算
                 for (int neighbor = 0; neighbor < n; neighbor++) {
                     if (adjacencyMatrix[node][neighbor] > 0 && node != neighbor) {
                         int neighborCommunity = communities[neighbor];
                         double deltaQ = calculateDeltaQ(adjacencyMatrix, communities, node, neighborCommunity, totalWeight);
 
-                        // ΔQが最大となるコミュニティを記録
+                        // ΔQ が最大となるコミュニティを記録
                         if (deltaQ > maxDeltaQ) {
                             maxDeltaQ = deltaQ;
                             bestCommunity = neighborCommunity;
@@ -51,16 +48,14 @@ public class Louvain {
                     }
                 }
 
-                // 最適なコミュニティにノードを移動
-                if (bestCommunity != currentCommunity) {
+                // ΔQ > 0 の場合のみコミュニティを変更
+                if (maxDeltaQ > 0 && bestCommunity != originalCommunity) {
                     communities[node] = bestCommunity;
                     improvement = true;
                 } else {
-                    communities[node] = currentCommunity;
+                    communities[node] = originalCommunity;
                 }
             }
-
-            //System.out.println("Iteration " + numIterations + " completed.");
         }
 
         // 結果をコミュニティごとにまとめる
@@ -68,7 +63,8 @@ public class Louvain {
         for (int i = 0; i < n; i++) {
             communityGroups.computeIfAbsent(communities[i], k -> new ArrayList<>()).add(i);
         }
-        System.out.println("\nthe number of communities : " + communityGroups.size());
+
+        System.out.println("The number of communities: " + communityGroups.size());
 
         return communityGroups;
     }

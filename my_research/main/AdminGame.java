@@ -117,7 +117,7 @@ public class AdminGame {
         System.out.println("The num of Isolated Node : " + isolate);
 
         while (flag) {
-            if (i % 10 == 0) {
+            if (i != 0 && i % 10 == 0) {
                 communities = Louvain.louvainCommunityDetection(W);
             }
 

@@ -87,6 +87,27 @@ public class PlotResults {
         }
     }
 
+    public void exportStepDisagg(ResultPair resultPair, String filename, double[] lamvals) {
+        HashMap<Double, Result> rd = resultPair.getRd();
+        HashMap<Double, Result> rdFix = resultPair.getRdFix();
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(("results/disaggStep" + filename + ".csv")))) {
+            writer.write("Lambda, step, val");
+            writer.newLine();
+
+            for (int i = 0; i < lamvals.length; i++) {
+                ArrayList<Double> disaggs = rdFix.get(lamvals[i]).getDisaggs();
+                for(int j = 0; j < disaggs.size(); j++){
+                    writer.write(lamvals[i] + "," + j + "," + disaggs.get(j));
+                    writer.newLine();
+                }
+            }
+            //System.out.println("data has been written to the csv file");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void exportGppls(ResultPair resultPair, String filename, double[] lamvals) {
         HashMap<Double, Result> rd = resultPair.getRd();
         HashMap<Double, Result> rdFix = resultPair.getRdFix();
@@ -133,6 +154,27 @@ public class PlotResults {
         }
     }
 
+    public void exportStepGppls(ResultPair resultPair, String filename, double[] lamvals) {
+        HashMap<Double, Result> rd = resultPair.getRd();
+        HashMap<Double, Result> rdFix = resultPair.getRdFix();
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(("results/gpplsStep" + filename + ".csv")))) {
+            writer.write("Lambda, step, val");
+            writer.newLine();
+
+            for (int i = 0; i < lamvals.length; i++) {
+                ArrayList<Double> gppls = rdFix.get(lamvals[i]).getCdv();
+                for(int j = 0; j < gppls.size(); j++){
+                    writer.write(lamvals[i] + "," + j + "," + gppls.get(j));
+                    writer.newLine();
+                }
+            }
+            //System.out.println("data has been written to the csv file");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void exportStfs(ResultPair resultPair, String filename, double[] lamvals) {
         HashMap<Double, Result> rd = resultPair.getRd();
         HashMap<Double, Result> rdFix = resultPair.getRdFix();
@@ -161,6 +203,27 @@ public class PlotResults {
             for (int i = 0; i < lamvals.length; i++) {
                 writer.write(lamvals[i] + "," + stfsRatioList[i]);
                 writer.newLine();
+            }
+            //System.out.println("data has been written to the csv file");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportStepStfs(ResultPair resultPair, String filename, double[] lamvals) {
+        HashMap<Double, Result> rd = resultPair.getRd();
+        HashMap<Double, Result> rdFix = resultPair.getRdFix();
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(("results/stfsStep" + filename + ".csv")))) {
+            writer.write("Lambda, step, val");
+            writer.newLine();
+
+            for (int i = 0; i < lamvals.length; i++) {
+                ArrayList<Double> stfs = rdFix.get(lamvals[i]).getStfs();
+                for(int j = 0; j < stfs.size(); j++){
+                    writer.write(lamvals[i] + "," + j + "," + stfs.get(j));
+                    writer.newLine();
+                }
             }
             //System.out.println("data has been written to the csv file");
         } catch (IOException e) {
@@ -254,6 +317,27 @@ public class PlotResults {
             for (int i = 0; i < lamvals.length; i++) {
                 writer.write(lamvals[i] + "," + cdvRatioList[i]);
                 writer.newLine();
+            }
+            //System.out.println("data has been written to the csv file");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportStepCdv(ResultPair resultPair, String filename, double[] lamvals) {
+        HashMap<Double, Result> rd = resultPair.getRd();
+        HashMap<Double, Result> rdFix = resultPair.getRdFix();
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(("results/cdvStep" + filename + ".csv")))) {
+            writer.write("Lambda, step, val");
+            writer.newLine();
+
+            for (int i = 0; i < lamvals.length; i++) {
+                ArrayList<Double> cdvs = rdFix.get(lamvals[i]).getCdv();
+                for(int j = 0; j < cdvs.size(); j++){
+                    writer.write(lamvals[i] + "," + j + "," + cdvs.get(j));
+                    writer.newLine();
+                }
             }
             //System.out.println("data has been written to the csv file");
         } catch (IOException e) {

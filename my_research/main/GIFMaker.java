@@ -8,7 +8,7 @@ public class GIFMaker {
 
     // z[]を記録する関数
     public static void recordHistogram(double lambda, double[] z) {
-        int numBins = 20;
+        int numBins = 40;
         int[] bins = new int[numBins];
         double binWidth = 1.0 / numBins;
 

@@ -65,9 +65,8 @@ public class calculater {
                 total += W[i][j];
                 if (W[i][j] > Constants.W_THRES) {
                     links += W[i][j];
-                    if (z[j] >= z[i] - 0.1 && z[j] <= z[i] + 0.1) {
-                        double z_diff = Math.abs(z[i] - z[j]);
-                        similar += W[i][j] * (-10 * z_diff + 1);
+                    if (Math.abs(z[i]-z[j]) < 0.1) {
+                        similar += W[i][j];
                     }
                 }
             }
@@ -460,6 +459,8 @@ public class calculater {
         int echo_follow_num = 0;
         double total_add_weight = 0.0;
         double total_sub_weight = 0.0;
+        int total_search = 0;
+        int total_froffr = 0;
 
         for (int i = 0; i < z.length; i++) {
             if (div_label[i]) {
@@ -544,12 +545,44 @@ public class calculater {
                 int randomNumber = random.nextInt(101);
                 if (randomNumber < (int) (100 * Constants.FR_PROB)) {
                     int attempts = 0;
-                    while (attempts < 10) {
+                    double which = random.nextDouble();
+                    while (attempts < 5) {
                         int new_follow_id = random.nextInt(z.length);
 
                         //if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && collabo_matrix[i][new_follow_id] == 1) {
                         //if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && FRofFR[i][new_follow_id] == 1) {
-                        if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF) {
+                        if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && W_01[i][new_follow_id] == 0 && which > Constants.ALL_RATE){
+                            total_search++;
+                            double overflow = 0.0;
+                            int friend_num = 0;
+                            for (int j = 0; j < z.length; j++) {
+                                if (W[i][j] > 0 && i != j) {
+                                    friend_num++;
+                                }
+                            }
+                            for (int j = 0; j < z.length; j++) {
+                                if (W[i][j] > 0 && i != j) {
+                                    double temp = 0.0;
+                                    W[i][j] -= (double) Constants.NEW_WEIGHT / friend_num;
+                                    if (W[i][j] < 0) {
+                                        overflow += Math.abs(W[i][j]);
+                                        temp = Math.abs(W[i][j]);
+                                        W[i][j] = 0;
+                                        //System.out.println("overflow" + temp);
+                                    }
+                                    total_sub_weight += (Constants.NEW_WEIGHT / friend_num);
+                                }
+                            }
+                            //すでに重みがある人に関しては本当は別に実装する必要がある
+
+                            W[i][new_follow_id] += (Constants.NEW_WEIGHT - overflow);
+                            total_add_weight += (Constants.NEW_WEIGHT - overflow);
+                            echo_follow_num++;
+                            //double[] weight_temp = calculateUserTotalWeight(W);
+                            //System.out.println("DIFF : "+(user_weight_sum[i] - weight_temp[i]));
+                            break;
+                        } else if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && W_01[i][new_follow_id] == 0 && FRofFR[i][new_follow_id] != 0){
+                            total_froffr++;
                             double overflow = 0.0;
                             int friend_num = 0;
                             for (int j = 0; j < z.length; j++) {
@@ -592,6 +625,8 @@ public class calculater {
         System.out.println("echo & just follow action : " + echo_follow_num);
         System.out.println("total added weight : " + total_add_weight);
         System.out.println("total subed weight : " + total_sub_weight);
+        System.out.println("total search num: "+total_search);
+        System.out.println("total Friend of Friend num : "+ total_froffr);
 
         return W;
     }

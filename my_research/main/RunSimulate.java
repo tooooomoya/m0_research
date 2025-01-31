@@ -29,14 +29,7 @@ public class RunSimulate {
         ArrayList<Double> ErrorLambda = new ArrayList<>();
         double[] AddedWeight = new double[lamList.length];
 
-        Map<Integer, List<Integer>> communities = null;
-        if (whichSNS == 0) {
-            communities = loadCommunitiesFromFile("community/Redditcommunity_results.csv");
-        } else if (whichSNS == 1) {
-            communities = loadCommunitiesFromFile("community/Twittercommunity_results.csv");
-        } else {
-            communities = loadCommunitiesFromFile("community/Testcommunity_results.csv");
-        }
+        Map<Integer, List<Integer>> communities = Louvain.louvainCommunityDetection(A);
 
         for (int i = 0; i < lamList.length; i++) {
             System.out.println("\n---------------Start the Experiment with lambda:" + lamList[i]);

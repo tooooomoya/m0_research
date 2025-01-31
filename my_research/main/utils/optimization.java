@@ -112,11 +112,13 @@ public class optimization {
         return new_z;
     }
 
-    public static OptResult minWGurobi(double[] z, double lam, double[][] W, boolean reducePls, double gam, boolean existing) throws GRBException{
+    /*public static OptResult minWGurobi(double[] z, double lam, double[][] W, boolean reducePls, double gam, boolean existing) throws GRBException{
         int n = z.length;
         boolean Opt = false;
         Random random = new Random();
         int isolate = 0;
+        double total_add_w = 0.0;
+        int total_add_num = 0;
 
         for(int i = 0; i < n ; i++){
             double my_w_sum = 0.0;
@@ -146,14 +148,21 @@ public class optimization {
                 }
             }
             double diff = Math.abs(z[i] - z[to_user]);
+            System.out.println("diff " + diff);
             if(diff == 0){
                 diff = 0.01;
+            }else if(diff == 1){
+                diff = 0.99;
             }
-            double rate = (- 1.5 * Math.log(diff)) / 100;
-            //double intercept = 10.0;
-            //double rate = -intercept/0.5 * (diff) + intercept;
+            //double rate = (- 5 * Math.log(1.3 * diff)) / 100;
+            //double intercept = 10;
+            //double rate = (- intercept/0.2 * (diff) + intercept)/100;
+            double rate = - 0.0005 * Math.tan(0.5 * Math.PI*diff - Math.PI / 2);
+            if(rate > 0.05){
+                rate = 0.05;
+            }
             double widen = rate * W[i][to_user];
-            //System.out.println("widen "+widen);
+            System.out.println("rate "+rate);
             double overflow = 0.0;
 
             for(int j = 0; j < n; j++){
@@ -166,16 +175,19 @@ public class optimization {
                     }
             }
             W[i][to_user] += widen - overflow;
+            total_add_w += widen - overflow;
+            total_add_num++;
         }
         System.out.println("isolate num "+isolate);
+        System.out.println("avg added weight" + total_add_w / total_add_num);
 
         return new OptResult(Opt, W);
-    }
+    }*/
 
     // minW : the STEP where Admin changes(minimizes) W matrix under some
     // constraints
     // find weight matrix W that minimizes z^T L z
-    /*public static OptResult minWGurobi(double[] z, double lam, double[][] W0, boolean reducePls, double gam,
+    public static OptResult minWGurobi(double[] z, double lam, double[][] W0, boolean reducePls, double gam,
             boolean existing) throws GRBException {
         int n = z.length;
         System.out.println("the number of n: " + n);
@@ -353,7 +365,7 @@ public class optimization {
         model.dispose();
         env.dispose();
         return new OptResult(Opt, W);
-    }*/
+    }
 
     public static double computePls(double[] z, double[][] W, boolean[] isDiversityUser) {
 
