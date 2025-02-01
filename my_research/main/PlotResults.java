@@ -163,7 +163,7 @@ public class PlotResults {
             writer.newLine();
 
             for (int i = 0; i < lamvals.length; i++) {
-                ArrayList<Double> gppls = rdFix.get(lamvals[i]).getCdv();
+                ArrayList<Double> gppls = rdFix.get(lamvals[i]).getGppls();
                 for(int j = 0; j < gppls.size(); j++){
                     writer.write(lamvals[i] + "," + j + "," + gppls.get(j));
                     writer.newLine();
@@ -270,6 +270,27 @@ public class PlotResults {
             for (int i = 0; i < lamvals.length; i++) {
                 writer.write(lamvals[i] + "," + udvRatioList[i]);
                 writer.newLine();
+            }
+            //System.out.println("data has been written to the csv file");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportStepUdv(ResultPair resultPair, String filename, double[] lamvals) {
+        HashMap<Double, Result> rd = resultPair.getRd();
+        HashMap<Double, Result> rdFix = resultPair.getRdFix();
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(("results/udvStep" + filename + ".csv")))) {
+            writer.write("Lambda, step, val");
+            writer.newLine();
+
+            for (int i = 0; i < lamvals.length; i++) {
+                ArrayList<Double> udvs = rdFix.get(lamvals[i]).getUdv();
+                for(int j = 0; j < udvs.size(); j++){
+                    writer.write(lamvals[i] + "," + j + "," + udvs.get(j));
+                    writer.newLine();
+                }
             }
             //System.out.println("data has been written to the csv file");
         } catch (IOException e) {

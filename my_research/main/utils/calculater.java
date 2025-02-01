@@ -234,7 +234,20 @@ public class calculater {
         return diversity;
     }*/
     public static double computeUdv(double[] z, double[][] W, boolean[] isDiversityUser) {
-        double entropy = 0.0;
+        double sum = 0.0;
+        for (double value : z) {
+            sum += value;
+        }
+        double ZMean = sum / z.length;
+
+        double sumSquareDifferences = 0.0;
+        for (double value : z) {
+            double difference = value - ZMean;
+            sumSquareDifferences += difference * difference;
+        }
+        return sumSquareDifferences;
+        
+        /*double entropy = 0.0;
 
         for (int i = 0; i < z.length; i++) {
             if (isDiversityUser[i]) {
@@ -258,7 +271,7 @@ public class calculater {
             }
             entropy += calculateEntropy(probabilities);
         }
-        return entropy / z.length;
+        return entropy / z.length;*/
     }
 
     /// compute Community Diversity

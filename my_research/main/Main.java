@@ -54,6 +54,7 @@ public class Main {
             plotResults.exportStepGppls(resultPair, "Twitter", lamvals);
             plotResults.exportStepStfs(resultPair, "Twitter", lamvals);
             plotResults.exportStepCdv(resultPair, "Twitter", lamvals);
+            plotResults.exportStepUdv(resultPair, "Twitter", lamvals);
             GIFCreator.createGIF("Twitter_output.gif");
         } else if (whichSNS == 2) {
             plotResults.exportPls(resultPair, "Test", lamvals);
