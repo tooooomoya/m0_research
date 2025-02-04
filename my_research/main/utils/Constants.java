@@ -8,8 +8,8 @@ public class Constants {
     public static final int MAT_ITERATION = 100;
     //public static final double[] LAMBDA_ARRAY = { 0.0, 0.03, 0.07, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 };
     //public static final double[] LAMBDA_ARRAY = {0.03, 0.05};
-    public static final double[] LAMBDA_ARRAY = {0.0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};
-    //public static final double[] LAMBDA_ARRAY = {0.0};
+    //public static final double[] LAMBDA_ARRAY = {0.0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};
+    public static final double[] LAMBDA_ARRAY = {0.04};
 
     //FriendRecommendRewiringの紹介できる友達の重み閾値（ゆるいつながりの友達は紹介しない。本当に仲良い友達）
     public static final double FR_THRES = 0.01;
@@ -20,10 +20,10 @@ public class Constants {
     public static final double ALL_RATE = 1.0; //友達の友達から探索する確率
 
     //多様性志向のユーザ戦略
-    public static final double DIV_RATE = 0.0;
+    public static final double DIV_RATE = 0.2;
     public static final double DIV_ACTION_RATE = 0.5;
     public static final double DIV_NORMAL_RATE = 0.5;
-    public static final double DIV_DIFF = 0.1;
+    public static final double DIV_DIFF = 0.3;
     public static final double DIV_NEW_WEIGHT = 0.5;
 
     //孤立したエージェントは新しくフォローさせて

@@ -262,7 +262,7 @@ public class AdminGame {
             double total_weight2 = matrix_util.calculateSumWeight(Wnew);
             System.out.println("Total Weight : Initial->" + initil_total_weight + ", This step->" + total_weight2);
 
-            Wnew = calculater.friendRecommend(Wnew, z, diversityUserList);
+            Wnew = calculater.friendRecommend(Wnew, z, isDiversityUser);
             double total_weight1 = matrix_util.calculateSumWeight(Wnew);
             System.out.println("Total Weight : Initial->" + initil_total_weight + ", This step->" + total_weight1);
 

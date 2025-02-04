@@ -47,6 +47,8 @@ public class NetworkSimulation {
             graphModel.getNodeTable().addColumn("community", Integer.class);
         }
 
+        
+
         // ノードを初期化
         for (int i = 0; i < nodeCount; i++) {
             Node node = graphModel.factory().newNode(String.valueOf(i));

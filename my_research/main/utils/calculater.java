@@ -377,7 +377,7 @@ public class calculater {
         return selectedPairs;
     }
 
-    public static double[][] friendRecommend(double[][] W, double[] z, int[] diversityUserList) {
+    public static double[][] friendRecommend(double[][] W, double[] z, boolean[] isDiversityUser) {
         Random random = new Random();
         
         double[][] W_01 = new double[z.length][z.length];
@@ -436,15 +436,25 @@ public class calculater {
             }
         }
 
-        int rnd = random.nextInt(101);
         boolean[] div_label = new boolean[z.length];
-        for (int i = 0; i < z.length; i++) {
-            for (int k = 0; k < diversityUserList.length; k++) {
-                if (i == diversityUserList[k] && rnd > Constants.DIV_NORMAL_RATE) {
-                    div_label[i] = true;
-                }
+
+        int div_num = 0;
+        for(int i =  0; i < z.length; i++){
+            if(isDiversityUser[i]){
+            double rnd = random.nextDouble();
+            div_label[i] = true;
+            div_num++;
+            if(rnd > Constants.DIV_NORMAL_RATE){
+                div_label[i] = false;
+                div_num--;
+            }
             }
         }
+        System.out.println("div num : "+div_num);
+        
+
+
+        
 
         boolean[] echo_label = new boolean[z.length];
 
@@ -478,12 +488,12 @@ public class calculater {
         for (int i = 0; i < z.length; i++) {
             if (div_label[i]) {
                 //多様性志向のあるユーザは意見が遠い人を意図的に選んでいく。
-                int randomNumber = random.nextInt(101);
-                if (randomNumber < (int) (100 * Constants.DIV_ACTION_RATE)) {
+                double randomNumber = random.nextDouble();
+                if (randomNumber < Constants.DIV_ACTION_RATE) {
                     int attempts = 0;
-                    while (attempts < 10) {
+                    while (attempts < 100) {
                         int new_follow_id = random.nextInt(z.length);
-                        if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) > Constants.DIV_DIFF) {
+                        if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) > Constants.DIV_DIFF && W_01[i][new_follow_id] == 0) {
                             int friend_num = 0;
                             double overflow = 0.0;
                             for (int j = 0; j < z.length; j++) {
@@ -559,12 +569,12 @@ public class calculater {
                 if (randomNumber < (int) (100 * Constants.FR_PROB)) {
                     int attempts = 0;
                     double which = random.nextDouble();
-                    while (attempts < 5) {
+                    while (attempts < 100) {
                         int new_follow_id = random.nextInt(z.length);
 
                         //if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && collabo_matrix[i][new_follow_id] == 1) {
                         //if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && FRofFR[i][new_follow_id] == 1) {
-                        if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && W_01[i][new_follow_id] == 0 && which > Constants.ALL_RATE){
+                        if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && W_01[i][new_follow_id] == 0 && which > Constants.ALL_RATE && FRofFR[i][new_follow_id] == 1){
                             total_search++;
                             double overflow = 0.0;
                             int friend_num = 0;
