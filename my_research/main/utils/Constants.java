@@ -17,7 +17,7 @@ public class Constants {
     public static final double NEW_WEIGHT = 0.5;
     public static final double FR_PROB = 0.5;
     public static final double NOT_DIV_DIFF = 0.2; //最大でも意見齟齬がこの閾値以内のユーザを新しくフォロー
-    public static final double ALL_RATE = 1.0; //友達の友達から探索する確率
+    public static final double ALL_RATE = 0.0; //友達の友達から探索しない確率
 
     //多様性志向のユーザ戦略
     public static final double DIV_RATE = 0.2;

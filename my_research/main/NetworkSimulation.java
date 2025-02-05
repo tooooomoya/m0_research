@@ -47,7 +47,10 @@ public class NetworkSimulation {
             graphModel.getNodeTable().addColumn("community", Integer.class);
         }
 
-        
+        Column divColumn = graphModel.getNodeTable().getColumn("div_user");
+        if (divColumn == null) {
+            graphModel.getNodeTable().addColumn("div_user", Integer.class);
+        }
 
         // ノードを初期化
         for (int i = 0; i < nodeCount; i++) {
@@ -55,6 +58,7 @@ public class NetworkSimulation {
             node.setLabel("Node " + i);
             node.setAttribute("z", z[i]);
             node.setAttribute("community", -1); // 初期状態ではコミュニティ未定義 (-1)
+            node.setAttribute("div_user", 0);
             graph.addNode(node);
         }
 
@@ -91,6 +95,24 @@ public class NetworkSimulation {
                 Node node = graph.getNode(String.valueOf(nodeId));
                 if (node != null) {
                     node.setAttribute("community", communityId);
+                }
+            }
+        }
+    }
+
+    public void assignDivUser(boolean[] isDiversityUser) {
+
+        Column divColumn = graphModel.getNodeTable().getColumn("div_user");
+        if (divColumn == null) {
+            graphModel.getNodeTable().addColumn("div_user", Integer.class);
+        }
+
+        
+        for(int i = 0; i < isDiversityUser.length; i++){
+            if(isDiversityUser[i]){
+                Node node = graph.getNode(String.valueOf(i));
+                if (node != null) {
+                    node.setAttribute("div_user", 1);
                 }
             }
         }

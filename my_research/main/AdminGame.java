@@ -49,8 +49,8 @@ public class AdminGame {
 
         ///// Set gppls
         ArrayList<Double> gppls = new ArrayList<>();
-        gppls.add(calculater.computeGpPls(z, s));
-        System.out.println("gppls before iteration: " + calculater.computeGpPls(z, s));
+        gppls.add(calculater.computeGpPls(z, s, isDiversityUser));
+        System.out.println("gppls before iteration: " + calculater.computeGpPls(z, s, isDiversityUser));
 
         ///// Set stfs
         ArrayList<Double> stfs = new ArrayList<>();
@@ -78,6 +78,7 @@ public class AdminGame {
         simulation.updateGraph(z, W);
         simulation.assignCommunities(communities);
         simulation.exportGraph(i);
+        simulation.assignDivUser(isDiversityUser);
 
         int conv_speed = -1;
         boolean first_conv = true;
@@ -343,7 +344,7 @@ public class AdminGame {
             disaggs.add(disagg);
             //System.out.println("\ndisagg: " + disagg);
 
-            double GPPLS = calculater.computeGpPls(z, s);
+            double GPPLS = calculater.computeGpPls(z, s, isDiversityUser);
             gppls.add(GPPLS);
             System.out.println("\ngppls: " + GPPLS);
 

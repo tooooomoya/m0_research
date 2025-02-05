@@ -33,11 +33,11 @@ public class calculater {
         }
         return (double) extreme / z.length;
     }*/
-    public static double computeGpPls(double[] z, double[] s) {
+    public static double computeGpPls(double[] z, double[] s, boolean[] isDiversityUser) {
         double diff = 0;
         int num = 0;
         for (int i = 0; i < z.length; i++) {
-            if (s[i] == 0.5) {
+            if (s[i] == 0.5 || isDiversityUser[i]) {
                 continue;
             }
             num++;
@@ -451,10 +451,6 @@ public class calculater {
             }
         }
         System.out.println("div num : "+div_num);
-        
-
-
-        
 
         boolean[] echo_label = new boolean[z.length];
 
@@ -568,13 +564,13 @@ public class calculater {
                 int randomNumber = random.nextInt(101);
                 if (randomNumber < (int) (100 * Constants.FR_PROB)) {
                     int attempts = 0;
-                    double which = random.nextDouble();
+                    //double which = random.nextDouble();
                     while (attempts < 100) {
                         int new_follow_id = random.nextInt(z.length);
 
                         //if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && collabo_matrix[i][new_follow_id] == 1) {
                         //if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && FRofFR[i][new_follow_id] == 1) {
-                        if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && W_01[i][new_follow_id] == 0 && which > Constants.ALL_RATE && FRofFR[i][new_follow_id] == 1){
+                        if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && W_01[i][new_follow_id] == 0 && FRofFR[i][new_follow_id] > 0){
                             total_search++;
                             double overflow = 0.0;
                             int friend_num = 0;
@@ -604,7 +600,7 @@ public class calculater {
                             //double[] weight_temp = calculateUserTotalWeight(W);
                             //System.out.println("DIFF : "+(user_weight_sum[i] - weight_temp[i]));
                             break;
-                        } else if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && W_01[i][new_follow_id] == 0 && FRofFR[i][new_follow_id] != 0){
+                        } /*else if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && W_01[i][new_follow_id] == 0 && FRofFR[i][new_follow_id] != 0){
                             total_froffr++;
                             double overflow = 0.0;
                             int friend_num = 0;
@@ -634,7 +630,7 @@ public class calculater {
                             //double[] weight_temp = calculateUserTotalWeight(W);
                             //System.out.println("DIFF : "+(user_weight_sum[i] - weight_temp[i]));
                             break;
-                        }
+                        }*/
                         attempts++;
                     }
                 }
