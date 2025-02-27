@@ -1,5 +1,7 @@
 import os
 import networkx as nx
+import xml.etree.ElementTree as ET
+import numpy as np 
 
 import os
 
@@ -23,7 +25,7 @@ def downgrade_gexf_version(file_path):
         file.write(content)
 
 # フォルダ内の全てのGEXFファイルを処理
-input_folder = "GEXF/lambda_0.05"
+input_folder = "GEXF/lambda_0.04"
 for file_name in os.listdir(input_folder):
     if file_name.endswith(".gexf"):
         downgrade_gexf_version(os.path.join(input_folder, file_name))
@@ -66,9 +68,87 @@ def create_dynamic_graph(gexf_folder, output_file):
     # 統合された動的グラフを出力
     nx.write_gexf(dynamic_graph, output_file)
     print(f"動的グラフが作成されました: {output_file}")
+    
+def create_dynamic_graph2(gexf_folder, output_file):
+    """
+    指定されたフォルダ内の .gexf ファイルを 10 ステップごとに統合し、
+    各ノードの "z" の平均値を時間情報とともに保存する。
 
+    Args:
+        gexf_folder (str): .gexf ファイルが格納されたフォルダのパス
+        output_file (str): 統合された動的グラフの出力ファイル名
+    """
+    gexf_files = sorted(
+        [f for f in os.listdir(gexf_folder) if f.endswith(".gexf")],
+        key=lambda x: int(x.split('_')[-1].split('.')[0])  # ステップ番号でソート
+    )
+
+    dynamic_graph = nx.DiGraph()
+    node_history = {}  # 各ノードの "z" の履歴
+
+    # 10 ステップごとにグループ化
+    step_groups = [gexf_files[i:i+10] for i in range(0, len(gexf_files), 10)]
+
+    for time_step, group in enumerate(step_groups):
+        t = time_step * 10  # 時間は 0, 10, 20, ..., 100
+
+        z_values = {}  # ノードごとの "z" のリスト
+
+        for gexf_file in group:
+            file_path = os.path.join(gexf_folder, gexf_file)
+            g = nx.read_gexf(file_path)
+
+            for node, data in g.nodes(data=True):
+                z = float(data.get("z", 0))  # "z" がない場合は 0
+                if node not in z_values:
+                    z_values[node] = []
+                z_values[node].append(z)
+
+        # 10 ステップの平均値を計算し、動的属性として保存
+        for node, values in z_values.items():
+            avg_z = np.mean(values)  # 10ステップの平均
+
+            if node not in node_history:
+                node_history[node] = []
+
+            node_history[node].append((t, avg_z))  # (時間, 平均 z)
+
+            dynamic_graph.add_node(node)
+            dynamic_graph.nodes[node]["z"] = node_history[node]  # "z" の時間変化を保存
+
+    # GEXF にエクスポート
+    write_dynamic_gexf(dynamic_graph, output_file)
+
+def write_dynamic_gexf(graph, output_file):
+    """
+    networkx のグラフを GEXF フォーマットにエクスポート。
+    ノードごとの "z" の時間変化を動的属性として出力。
+
+    Args:
+        graph (nx.DiGraph): 動的グラフ
+        output_file (str): 出力 GEXF ファイル
+    """
+    root = ET.Element("gexf", xmlns="http://www.gexf.net/1.2draft", version="1.2")
+    graph_elem = ET.SubElement(root, "graph", mode="dynamic", timeformat="integer")
+
+    # 属性の定義
+    attributes = ET.SubElement(graph_elem, "attributes", class_="node")
+    attr = ET.SubElement(attributes, "attribute", id="0", title="z", type="float")
+
+    nodes_elem = ET.SubElement(graph_elem, "nodes")
+
+    for node, data in graph.nodes(data=True):
+        node_elem = ET.SubElement(nodes_elem, "node", id=str(node))
+        attvalues = ET.SubElement(node_elem, "attvalues")
+
+        if "z" in data:
+            for t, z_value in data["z"]:
+                ET.SubElement(attvalues, "attvalue", {"for": "0", "value": str(z_value), "start": str(t)})
+
+    tree = ET.ElementTree(root)
+    tree.write(output_file, encoding="utf-8", xml_declaration=True)
 
 # 実行例
-input_folder = "GEXF/lambda_0.05/"
-output_file = "dynamic_graph_lambda_0.05.gexf"
-create_dynamic_graph(input_folder, output_file)
+input_folder = "GEXF/lambda_0.04/"
+output_file = "dynamic_graph_lambda_0.04.gexf"
+create_dynamic_graph2(input_folder, output_file)

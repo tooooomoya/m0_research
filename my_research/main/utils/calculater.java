@@ -65,7 +65,7 @@ public class calculater {
                 total += W[i][j];
                 if (W[i][j] > Constants.W_THRES) {
                     links += W[i][j];
-                    if (Math.abs(z[i]-z[j]) < 0.1) {
+                    if (Math.abs(z[i] - z[j]) < 0.1) {
                         similar += W[i][j];
                     }
                 }
@@ -111,28 +111,26 @@ public class calculater {
             if (isDiversityUser[i]) {
                 continue;
             }
+
             // ノード i の接続ノードを収集
-            List<Double> neighborOpinions = new ArrayList<>();
+            //List<Double> neighborOpinions = new ArrayList<>();
+            double totalCount = 0.0;
+            double[] bins = new double[5]; // int → double に変更
+
             for (int j = 0; j < n; j++) {
                 if (W[i][j] > Constants.W_THRES) {
-                    neighborOpinions.add(z[j]);
+                    //neighborOpinions.add(z[j]);
+                    int binIndex = Math.min((int) (z[j] / 0.2), 4); // 型キャストを明示的に
+                    bins[binIndex] += W[i][j];
+                    totalCount += W[i][j];
                 }
             }
 
             // 接続ノードが存在する場合のみエントロピーを計算
-            if (!neighborOpinions.isEmpty()) {
-                // 0.2刻みのビンに分類
-                int[] bins = new int[5]; // 0.2刻みで5グループ
-                for (double opinion : neighborOpinions) {
-                    int binIndex = (int) Math.min(opinion / 0.2, 4); // 0.2で割り、範囲外を防ぐ
-                    bins[binIndex]++;
-                }
-
-                // 確率を計算
+            if (totalCount > 0) {
                 double[] probabilities = new double[5];
-                int totalCount = neighborOpinions.size();
                 for (int k = 0; k < 5; k++) {
-                    probabilities[k] = (double) bins[k] / totalCount;
+                    probabilities[k] = bins[k] / totalCount;
                 }
 
                 // エントロピーを計算
@@ -151,7 +149,7 @@ public class calculater {
         }*/
 
         /// calculate satisfaction
-        double alpha = 0.5;
+        double alpha = 1.0;
         double beta = 0.0;
         double gamma = 1.0 - (alpha + beta);
         double satisfaction = alpha * homogeneous + beta * connect + gamma * avgentropy;
@@ -161,6 +159,8 @@ public class calculater {
 
         return satisfaction;
     }
+
+    
 
     // エントロピーを計算する関数
     private static double calculateEntropy(double[] values) {
@@ -246,7 +246,7 @@ public class calculater {
             sumSquareDifferences += difference * difference;
         }
         return sumSquareDifferences;
-        
+
         /*double entropy = 0.0;
 
         for (int i = 0; i < z.length; i++) {
@@ -379,7 +379,7 @@ public class calculater {
 
     public static double[][] friendRecommend(double[][] W, double[] z, boolean[] isDiversityUser) {
         Random random = new Random();
-        
+
         double[][] W_01 = new double[z.length][z.length];
         for (int i = 0; i < z.length; i++) {
             for (int j = 0; j < z.length; j++) {
@@ -439,18 +439,18 @@ public class calculater {
         boolean[] div_label = new boolean[z.length];
 
         int div_num = 0;
-        for(int i =  0; i < z.length; i++){
-            if(isDiversityUser[i]){
-            double rnd = random.nextDouble();
-            div_label[i] = true;
-            div_num++;
-            if(rnd > Constants.DIV_NORMAL_RATE){
-                div_label[i] = false;
-                div_num--;
-            }
+        for (int i = 0; i < z.length; i++) {
+            if (isDiversityUser[i]) {
+                double rnd = random.nextDouble();
+                div_label[i] = true;
+                div_num++;
+                if (rnd > Constants.DIV_NORMAL_RATE) {
+                    div_label[i] = false;
+                    div_num--;
+                }
             }
         }
-        System.out.println("div num : "+div_num);
+        System.out.println("div num : " + div_num);
 
         boolean[] echo_label = new boolean[z.length];
 
@@ -470,7 +470,6 @@ public class calculater {
             }
         }
 
-        
         int div_action_num = 0;
         int unfollow_num = 0;
         double avg_unfollow_weight = 0.0;
@@ -482,6 +481,12 @@ public class calculater {
         int total_froffr = 0;
 
         for (int i = 0; i < z.length; i++) {
+            double div_diff = 0.0;
+            if(z[i] < 0.3 || z[i] > 0.7){
+                div_diff = 0.5;
+            }else{
+                div_diff = 0.3;
+            }
             if (div_label[i]) {
                 //多様性志向のあるユーザは意見が遠い人を意図的に選んでいく。
                 double randomNumber = random.nextDouble();
@@ -490,6 +495,7 @@ public class calculater {
                     while (attempts < 100) {
                         int new_follow_id = random.nextInt(z.length);
                         if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) > Constants.DIV_DIFF && W_01[i][new_follow_id] == 0) {
+                        //if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) > div_diff && W_01[i][new_follow_id] == 0) {
                             int friend_num = 0;
                             double overflow = 0.0;
                             for (int j = 0; j < z.length; j++) {
@@ -518,7 +524,7 @@ public class calculater {
                         attempts++;
                     }
                 }
-            } /*else if (!echo_label[i]) {
+            } else if (!echo_label[i]) {
                 //ランキング最下位をUnfollowして、探索してランダムに意見が近いユーザをFollowする
                 int randomNumber = random.nextInt(101);
                 if (randomNumber < (int) (100 * Constants.FR_PROB)) {
@@ -557,8 +563,8 @@ public class calculater {
                         attempts++;
                     }
                 }
-            } else if(echo_label[i]){*/
-            else {
+            } //else if(echo_label[i]){ 
+                else {
 
                 //探索してランダムに意見が近いユーザをFollowする
                 int randomNumber = random.nextInt(101);
@@ -570,7 +576,7 @@ public class calculater {
 
                         //if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && collabo_matrix[i][new_follow_id] == 1) {
                         //if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && FRofFR[i][new_follow_id] == 1) {
-                        if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && W_01[i][new_follow_id] == 0 && FRofFR[i][new_follow_id] > 0){
+                        if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && W_01[i][new_follow_id] == 0 && FRofFR[i][new_follow_id] > 0) {
                             total_search++;
                             double overflow = 0.0;
                             int friend_num = 0;
@@ -600,7 +606,8 @@ public class calculater {
                             //double[] weight_temp = calculateUserTotalWeight(W);
                             //System.out.println("DIFF : "+(user_weight_sum[i] - weight_temp[i]));
                             break;
-                        } /*else if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && W_01[i][new_follow_id] == 0 && FRofFR[i][new_follow_id] != 0){
+                        }
+                        /*else if (i != new_follow_id && Math.abs(z[i] - z[new_follow_id]) < Constants.NOT_DIV_DIFF && W_01[i][new_follow_id] == 0 && FRofFR[i][new_follow_id] != 0){
                             total_froffr++;
                             double overflow = 0.0;
                             int friend_num = 0;
@@ -644,8 +651,8 @@ public class calculater {
         System.out.println("echo & just follow action : " + echo_follow_num);
         System.out.println("total added weight : " + total_add_weight);
         System.out.println("total subed weight : " + total_sub_weight);
-        System.out.println("total search num: "+total_search);
-        System.out.println("total Friend of Friend num : "+ total_froffr);
+        System.out.println("total search num: " + total_search);
+        System.out.println("total Friend of Friend num : " + total_froffr);
 
         return W;
     }
