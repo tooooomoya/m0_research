@@ -12,6 +12,8 @@ public class Constants {
     //public static final double[] LAMBDA_ARRAY = {0.04, 0.05, 0.06, 0.07};
     public static final double[] LAMBDA_ARRAY = {0.04};
 
+    public static final double OPINION_THRESHOLD = 0.2;
+
     //FriendRecommendRewiringの紹介できる友達の重み閾値（ゆるいつながりの友達は紹介しない。本当に仲良い友達）
     public static final double FR_THRES = 0.01;
     public static final double MAX_DIFF = 0.5; //これより小さく意見が近いのに、縁を切る必要性はない。
@@ -21,7 +23,7 @@ public class Constants {
     public static final double ALL_RATE = 0.0; //友達の友達から探索しない確率
 
     //多様性志向のユーザ戦略
-    public static final double DIV_RATE = 0.2;
+    public static final double DIV_RATE = 0.0;
     public static final double DIV_ACTION_RATE = 0.5;
     public static final double DIV_NORMAL_RATE = 0.5;//Div行動をする確率
     public static final double DIV_DIFF = 0.3;

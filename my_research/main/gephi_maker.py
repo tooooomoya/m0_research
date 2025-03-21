@@ -118,11 +118,78 @@ def create_dynamic_graph2(gexf_folder, output_file):
 
     # GEXF にエクスポート
     write_dynamic_gexf(dynamic_graph, output_file)
+    
+def create_dynamic_graph_edges_only(gexf_folder, output_file):
+    """
+    指定されたフォルダ内の .gexf ファイルを順番に読み込んで、
+    動的グラフとしてエッジ情報のみ動的に統合し、1つの出力ファイルに保存します。
+
+    Args:
+        gexf_folder (str): .gexf ファイルが格納されたフォルダのパス
+        output_file (str): 統合された動的グラフの出力ファイル名
+    """
+    gexf_files = sorted(
+        [f for f in os.listdir(gexf_folder) if f.endswith(".gexf")],
+        key=lambda x: int(x.split('_')[-1].split('.')[0])  # ステップ番号でソート
+    )
+
+    dynamic_graph = nx.DiGraph()
+
+    # ノードは最初のファイルでのみ登録（属性は静的）
+    first_file_path = os.path.join(gexf_folder, gexf_files[0])
+    g_first = nx.read_gexf(first_file_path)
+    for node, data in g_first.nodes(data=True):
+        dynamic_graph.add_node(node, **data)
+
+    # エッジ情報を動的に登録
+    for time_step, gexf_file in enumerate(gexf_files):
+        file_path = os.path.join(gexf_folder, gexf_file)
+        g = nx.read_gexf(file_path)
+
+        # 現在存在するエッジのセット
+        current_edges = set(g.edges())
+
+        # 既存のエッジを更新または削除
+        for source, target, data in dynamic_graph.edges(data=True):
+            if (source, target) in current_edges:
+                # エッジがまだ存在するなら終了時刻を延長
+                dynamic_graph.edges[source, target]["end"] = time_step + 1
+            else:
+                # エッジが消滅したら終了時刻を確定
+                if "end" not in dynamic_graph.edges[source, target]:
+                    dynamic_graph.edges[source, target]["end"] = time_step
+
+        # 新規エッジを追加
+        for source, target, data in g.edges(data=True):
+            if not dynamic_graph.has_edge(source, target):
+                dynamic_graph.add_edge(source, target, **data)
+                dynamic_graph.edges[source, target]["start"] = time_step
+                dynamic_graph.edges[source, target]["end"] = time_step + 1
+
+    # 統合された動的グラフを出力
+    write_dynamic_gexf(dynamic_graph, output_file)
+    print(f"動的グラフが作成されました（エッジのみ動的）: {output_file}")
+
+def indent(elem, level=0):
+    """
+    XML要素をインデントして整形するヘルパー関数
+    """
+    i = "\n" + level * "  "
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "  "
+        for child in elem:
+            indent(child, level + 1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i
 
 def write_dynamic_gexf(graph, output_file):
     """
     networkx のグラフを GEXF フォーマットにエクスポート。
-    ノードごとの "z" の時間変化を動的属性として出力。
+    エッジの時間変化を動的属性として出力。
 
     Args:
         graph (nx.DiGraph): 動的グラフ
@@ -131,24 +198,33 @@ def write_dynamic_gexf(graph, output_file):
     root = ET.Element("gexf", xmlns="http://www.gexf.net/1.2draft", version="1.2")
     graph_elem = ET.SubElement(root, "graph", mode="dynamic", timeformat="integer")
 
-    # 属性の定義
-    attributes = ET.SubElement(graph_elem, "attributes", class_="node")
-    attr = ET.SubElement(attributes, "attribute", id="0", title="z", type="float")
-
+    # ノード定義
     nodes_elem = ET.SubElement(graph_elem, "nodes")
-
     for node, data in graph.nodes(data=True):
-        node_elem = ET.SubElement(nodes_elem, "node", id=str(node))
+        node_elem = ET.SubElement(nodes_elem, "node", id=str(node), label=str(node))
         attvalues = ET.SubElement(node_elem, "attvalues")
-
         if "z" in data:
-            for t, z_value in data["z"]:
-                ET.SubElement(attvalues, "attvalue", {"for": "0", "value": str(z_value), "start": str(t)})
+            ET.SubElement(attvalues, "attvalue", {"for": "0", "value": str(data["z"])})
 
+    # エッジ定義
+    edges_elem = ET.SubElement(graph_elem, "edges")
+    for i, (source, target, data) in enumerate(graph.edges(data=True)):
+        start = str(data.get("start", 0))
+        end = str(data.get("end", 0))
+        edge_elem = ET.SubElement(edges_elem, "edge", id=str(i), source=str(source), target=str(target), start=start, end=end)
+        attvalues = ET.SubElement(edge_elem, "attvalues")
+        for key, value in data.items():
+            if key not in ["start", "end"]:
+                ET.SubElement(attvalues, "attvalue", {"for": key, "value": str(value)})
+
+    # 整形して出力
+    indent(root)
     tree = ET.ElementTree(root)
     tree.write(output_file, encoding="utf-8", xml_declaration=True)
+    print(f"動的グラフがGEXF形式で保存されました: {output_file}")
+
 
 # 実行例
 input_folder = "GEXF/lambda_0.04/"
 output_file = "dynamic_graph_lambda_0.04.gexf"
-create_dynamic_graph2(input_folder, output_file)
+create_dynamic_graph_edges_only(input_folder, output_file)

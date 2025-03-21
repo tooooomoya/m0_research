@@ -118,9 +118,9 @@ public class AdminGame {
         System.out.println("The num of Isolated Node : " + isolate);
 
         while (flag) {
-            if (i != 0 && i % 10 == 0) {
+            /*if (i != 0 && i % 10 == 0) {
                 communities = Louvain.louvainCommunityDetection(W);
-            }
+            }*/
 
             Wnew = null;
             System.out.println("--------------------------");
@@ -263,7 +263,7 @@ public class AdminGame {
             double total_weight2 = matrix_util.calculateSumWeight(Wnew);
             System.out.println("Total Weight : Initial->" + initil_total_weight + ", This step->" + total_weight2);
 
-            Wnew = calculater.friendRecommend(Wnew, z, isDiversityUser);
+            Wnew = calculater.friendRecommend(Wnew, z, isDiversityUser, i);
             double total_weight1 = matrix_util.calculateSumWeight(Wnew);
             System.out.println("Total Weight : Initial->" + initil_total_weight + ", This step->" + total_weight1);
 

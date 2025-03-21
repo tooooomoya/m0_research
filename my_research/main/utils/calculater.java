@@ -377,7 +377,7 @@ public class calculater {
         return selectedPairs;
     }
 
-    public static double[][] friendRecommend(double[][] W, double[] z, boolean[] isDiversityUser) {
+    public static double[][] friendRecommend(double[][] W, double[] z, boolean[] isDiversityUser, int iteration_num) {
         Random random = new Random();
 
         double[][] W_01 = new double[z.length][z.length];
@@ -440,7 +440,7 @@ public class calculater {
 
         int div_num = 0;
         for (int i = 0; i < z.length; i++) {
-            if (isDiversityUser[i]) {
+            if (isDiversityUser[i] && iteration_num < 80 && iteration_num > 50) {
                 double rnd = random.nextDouble();
                 div_label[i] = true;
                 div_num++;

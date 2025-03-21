@@ -79,7 +79,9 @@ public class optimization {
             if (d[i] != 0) {
                 double temp = 0.0;
                 for (int j = 0; j < n; j++) {
+                    if(Math.abs(z[i]-z[j]) < Constants.OPINION_THRESHOLD){
                     temp += temp_W[i][j] * z1[j];
+                    }
                 }
                 //new_z[i] = coeff * (s1[i] + temp) / d[i];
                 new_z[i] = tol[i] * s1[i] + (1 - tol[i]) * temp;
@@ -137,7 +139,7 @@ public class optimization {
             }
             double rand = random.nextDouble();
             double prob = 0.0;
-            for(int j = 0; j < n; j++){
+            /*for(int j = 0; j < n; j++){
                 boolean found = false;
                 if(W[i][j] > Constants.W_THRES){
                     prob += W[i][j] / my_w_sum;
@@ -146,9 +148,25 @@ public class optimization {
                         break;
                     }
                 }
+            }*/
+            /*
+            
+            double min_diff = 1.0;
+            for(int j = 0; j < n; j++){
+                if(W[i][j] > Constants.W_THRES){
+                    if(min_diff > Math.abs(z[i]-z[j])){
+                        min_diff = Math.abs(z[i]-z[j]);
+                        to_user = j;
+                    }
+                }
             }
+
+
             double diff = Math.abs(z[i] - z[to_user]);
-            System.out.println("diff " + diff);
+            if(diff > Constants.OPINION_THRESHOLD){
+                continue;
+            }
+            //System.out.println("diff " + diff);
             if(diff == 0){
                 diff = 0.01;
             }else if(diff == 1){
@@ -161,8 +179,9 @@ public class optimization {
             if(rate > 0.05){
                 rate = 0.05;
             }
+            rate = 0.1;
             double widen = rate * W[i][to_user];
-            System.out.println("rate "+rate);
+            //System.out.println("rate "+rate);
             double overflow = 0.0;
 
             for(int j = 0; j < n; j++){
